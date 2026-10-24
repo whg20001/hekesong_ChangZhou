@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>雨落之后 · 书桌前</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1d3fae;--phos:#d9e6ff;--amber:#ffb45e;--ink:#0b1530}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#070d1f;color:#e8eefc;font-family:"Noto Serif SC",serif}
+canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+canvas#gl.hot{cursor:pointer}
+canvas#gl.drag{cursor:grabbing}
+#hud{position:fixed;left:20px;top:16px;z-index:5;pointer-events:none;text-shadow:0 1px 6px #000}
+#hud b{display:block;font-family:"Ma Shan Zheng",serif;font-weight:400;font-size:28px;letter-spacing:.15em}
+#hud small{font-size:12px;letter-spacing:.2em;opacity:.7}
+#help{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;font-size:13px;letter-spacing:.12em;background:rgba(7,13,31,.6);
+  border:1px solid rgba(255,255,255,.15);padding:8px 16px;border-radius:4px;pointer-events:none;transition:opacity .6s;white-space:nowrap}
+#tipBox{position:fixed;z-index:6;pointer-events:none;font-size:14px;letter-spacing:.1em;background:rgba(255,180,94,.95);color:#2a1606;padding:6px 12px;border-radius:3px;
+  transform:translate(16px,-50%);opacity:0;transition:opacity .2s;white-space:nowrap}
+#tipBox.on{opacity:1}
+#btns{position:fixed;right:18px;top:16px;z-index:5;display:flex;gap:8px}
+#btns button{background:rgba(7,13,31,.6);color:#e8eefc;border:1px solid rgba(255,255,255,.2);padding:6px 12px;border-radius:3px;cursor:pointer;font-size:13px;letter-spacing:.1em}
+#pad{position:fixed;left:18px;bottom:18px;z-index:5;display:none;grid-template-columns:repeat(3,48px);gap:6px}
+#pad button{width:48px;height:48px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(7,13,31,.55);color:#fff;font-size:20px;touch-action:none}
+@media (pointer:coarse){#pad{display:grid}}
+
+/* 开场 / 加载 */
+#start{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#18306b 0%,#070d1f 70%);transition:opacity 1s}
+#start.hide{opacity:0;pointer-events:none}
+#start .box{text-align:center}
+#start h1{font-family:"Ma Shan Zheng",serif;font-weight:400;font-size:clamp(48px,9vw,96px);letter-spacing:.25em;text-shadow:0 0 30px rgba(120,160,255,.5)}
+#start p{margin-top:8px;font-size:14px;letter-spacing:.35em;opacity:.7}
+#start .bar{width:min(360px,70vw);height:3px;background:rgba(255,255,255,.12);margin:28px auto 0;overflow:hidden}
+#start .bar i{display:block;height:100%;width:0;background:var(--amber);transition:width .3s}
+#start button{margin-top:26px;padding:12px 34px;background:var(--amber);color:#2a1606;border:none;border-radius:3px;font-size:18px;letter-spacing:.3em;cursor:pointer;opacity:.35;pointer-events:none}
+#start button.ready{opacity:1;pointer-events:auto}
+#start small{display:block;margin-top:16px;font-size:12px;letter-spacing:.15em;opacity:.55}
+#err{color:#ff9b8a;margin-top:14px;font-size:13px;max-width:80vw;line-height:1.7}
+
+/* 进入屏幕时的闪光 */
+#flash{position:fixed;inset:0;z-index:18;background:#cfe0ff;opacity:0;pointer-events:none;transition:opacity .35s}
+
+/* 电脑桌面（CRT 风格） */
+#desk{position:fixed;inset:0;z-index:20;display:none;background:#1b3aa6;font-family:"VT323","Noto Serif SC",monospace;color:var(--phos)}
+#desk.on{display:block}
+#desk::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 2px,transparent 2px 4px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,10,.55) 100%)}
+#desk .wrap{position:absolute;inset:0;display:grid;place-items:center;padding:20px}
+#desk .win{width:min(760px,94vw);background:#c9d3ea;color:#12204d;border:3px solid #fff;box-shadow:6px 6px 0 #0b1a5c;font-family:"Noto Serif SC",serif}
+#desk .tt{display:flex;justify-content:space-between;align-items:center;background:#12204d;color:#fff;padding:6px 10px;font-family:"VT323",monospace;font-size:22px;letter-spacing:.08em}
+#desk .tt button{background:#c9d3ea;border:2px solid #fff;color:#12204d;font-family:"VT323",monospace;font-size:18px;padding:0 10px;cursor:pointer}
+#desk .body{padding:20px 22px 18px}
+#desk h2{font-family:"Ma Shan Zheng",serif;font-weight:400;font-size:44px;letter-spacing:.2em;color:#12204d}
+#desk .sub{font-size:13px;letter-spacing:.2em;color:#3b4a7a;margin-bottom:14px}
+#desk .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+#desk .ch{position:relative;padding:14px 12px 12px;border:2px solid #12204d;background:#e9eefb;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:transform .15s}
+#desk .ch:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 #12204d}
+#desk .ch b{display:block;font-size:20px;letter-spacing:.1em;margin:4px 0}
+#desk .ch small{font-size:12px;color:#3b4a7a}
+#desk .ch .tag{font-family:"VT323",monospace;font-size:16px;letter-spacing:.1em;color:#fff;padding:0 6px;display:inline-block}
+#desk .ch .st{position:absolute;right:8px;top:8px;font-size:12px;color:#2f8f83}
+#desk .foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12px;color:#3b4a7a}
+#desk .foot button{font-family:"Noto Serif SC",serif;font-size:13px;background:#12204d;color:#fff;border:none;padding:8px 14px;cursor:pointer;letter-spacing:.15em}
+#desk .clock{position:absolute;right:16px;bottom:12px;font-size:22px;z-index:2;opacity:.8}
+#desk .boot{position:absolute;left:18px;top:14px;font-size:20px;z-index:2;opacity:.85;line-height:1.2;white-space:pre}
+
+/* 游戏窗口 */
+#game{position:fixed;inset:0;z-index:22;display:none;background:#000}
+#game.on{display:block}
+#game iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#game .exit{position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:2;background:rgba(18,32,77,.85);color:#fff;border:1px solid rgba(255,255,255,.3);border-top:0;
+  padding:3px 14px 5px;font-size:12px;letter-spacing:.15em;cursor:pointer;border-radius:0 0 6px 6px;opacity:.55;transition:opacity .2s}
+#game .exit:hover{opacity:1}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div id="hud"><b>雨落之后</b><small>AFTER HOURS · 雨夜的书桌</small></div>
+<div id="btns"><button id="bRain">雨声：开</button><button id="bLook">锁定视角</button></div>
+<div id="help">拖动画面环顾 · W A S D / 方向键走动 · 走到书桌前点击电脑屏幕</div>
+<div id="tipBox"></div>
+<div id="pad"><span></span><button data-k="KeyW">▲</button><span></span><button data-k="KeyA">◀</button><button data-k="KeyS">▼</button><button data-k="KeyD">▶</button></div>
+<div id="flash"></div>
+
+<section id="start">
+  <div class="box">
+    <h1>雨落之后</h1>
+    <p>雨夜 · 书桌 · 一台旧电脑</p>
+    <div class="bar"><i id="prog"></i></div>
+    <button id="enter">进入房间</button>
+    <small id="loadTxt">正在载入房间……</small>
+    <div id="err"></div>
+  </div>
+</section>
+
+<section id="desk">
+  <div class="boot" id="boot"></div>
+  <div class="wrap">
+    <div class="win">
+      <div class="tt"><span>C:\纸上常州.EXE</span><button id="dClose">关机 · 离开电脑</button></div>
+      <div class="body">
+        <h2>纸上常州</h2>
+        <div class="sub">一条可以玩出来的常州时间长卷 · 选择篇章</div>
+        <div class="list" id="chList"></div>
+        <div class="foot"><span id="saveInfo"></span><button id="dReset">清除存档</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="clock" id="clock"></div>
+</section>
+
+<section id="game"><button class="exit" id="gExit">⏏ 退出到电脑桌面（Esc）</button><iframe id="frame" title="纸上常州" allow="autoplay; fullscreen"></iframe></section>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ================= 配置 ================= */
+const MODEL = 'web/room.glb';
+const GAME_ROOT = '../';                              // 游戏文件相对本页的位置，组合时可改
+const CHAPTERS = [
+  { file: 'scene-01-sushi.html', id: 'sushi', name: '行舟入墨', sub: '古代篇 · 苏轼 × 舣舟亭', tag: '水墨', col: '#1c1b19' },
+  { file: 'scene-02-liu.html', id: 'liu', name: '经纬织城', sub: '近代篇 · 刘国钧 × 大成纺织', tag: '木刻', col: '#b5321f' },
+  { file: 'scene-03-hua.html', id: 'hua', name: '巧排任务', sub: '现代篇 · 华罗庚 × 统筹与优选', tag: '纸艺', col: '#2f8f83' },
+  { file: 'scene-04-finale.html', id: 'finale', name: '纸上常州', sub: '终章 · 六位人物与文化广场', tag: '终章', col: '#e0a526' },
+];
+const SAVE_KEY = 'cz-scroll-v1';
+// Blender（Z 向上）→ three（Y 向上）：(x, y, z) → (x, z, -y)
+const B = (x, y, z) => new THREE.Vector3(x, z, -y);
+const SCREEN = { c: B(-0.1505, 1.972, 1.595), w: 0.857, h: 0.626 };   // CRT 显示面中心与尺寸
+const EYE = 1.58;
+const BOUNDS = { x0: -3.05, x1: 1.4, z0: -1.42, z1: 2.8 };      // 只在书桌与床这一侧走动
+// 视野边界：画面右边缘不越过右侧窗帘的墙垛，左边缘不越过左墙后端（右边和后面没有建模）
+const EDGE_R = new THREE.Vector3(2.85, 0, -3.2), EDGE_L = new THREE.Vector3(-3.4, 0, 3.0);
+const LOOK = { drag: .0016, lock: .0011, damp: 9, pitchMin: -.6, pitchMax: .42, speed: 1.15 };
+const BLOCKS = [                                                  // 不能穿过的家具（three 坐标的 x / z 范围）
+  { x0: -3.25, x1: -1.6, z0: -1.0, z1: 1.35 },                    // 床
+  { x0: -1.78, x1: -0.9, z0: -0.86, z1: -0.08 },                  // 椅子
+];
+
+/* ================= 渲染器与场景 ================= */
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.18;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+RectAreaLightUniformsLib.init();
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0a1330');
+scene.fog = new THREE.Fog('#0a1330', 14, 40);
+const camera = new THREE.PerspectiveCamera(55, 1, .03, 80);
+// 柔和的环境反射：让铜灯罩、金属件和桌面有一点光泽
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+
+// 灯光：照着 Blender 里的布置重建（面光源在网页端用聚光 / 点光 / 矩形光近似）
+const lamp = new THREE.Group(); scene.add(lamp);
+const lampSpot = new THREE.SpotLight('#ffb36b', 9, 6, Math.PI / 3.2, .55, 2);
+lampSpot.position.copy(B(-1.0, 2.12, 1.62)); lampSpot.target.position.copy(B(-0.7, 1.95, .88));
+lampSpot.castShadow = true; lampSpot.shadow.mapSize.set(2048, 2048); lampSpot.shadow.bias = -.0004; lampSpot.shadow.radius = 4;
+lamp.add(lampSpot, lampSpot.target);
+const lampGlow = new THREE.PointLight('#ff9a4d', 2.2, 7, 2); lampGlow.position.copy(B(-1.0, 2.05, 1.72)); lamp.add(lampGlow);
+const crtLight = new THREE.RectAreaLight('#5b8cff', 7, SCREEN.w, SCREEN.h);
+crtLight.position.copy(SCREEN.c).add(new THREE.Vector3(0, 0, .02)); crtLight.lookAt(crtLight.position.clone().add(new THREE.Vector3(0, 0, 1))); scene.add(crtLight);
+const windowLight = new THREE.RectAreaLight('#5d7fe0', 2.2, 5.4, 2.1);
+windowLight.position.copy(B(.13, 3.24, 2.1)); windowLight.lookAt(windowLight.position.clone().add(new THREE.Vector3(0, 0, 1))); scene.add(windowLight);
+scene.add(new THREE.HemisphereLight('#2f4590', '#4a2c18', .38));
+scene.add(new THREE.AmbientLight('#ffcf9e', .22));            // 暖色底光，接近渲染图的琥珀色氛围
+const fill = new THREE.PointLight('#ffb37a', 4.2, 10, 2); fill.position.copy(B(1.7, -1.2, 3.1)); scene.add(fill);
+const bedFill = new THREE.PointLight('#ffa866', 2.2, 7, 2); bedFill.position.copy(B(-2.0, -.5, 3.1)); scene.add(bedFill);
+
+// 雨：窗外下落的雨丝
+const RAIN = 1400, rainGeo = new THREE.BufferGeometry(), rainPos = new Float32Array(RAIN * 6), rainV = new Float32Array(RAIN);
+for (let i = 0; i < RAIN; i++) {
+  const x = -9 + Math.random() * 18, y = Math.random() * 9 - 2, z = -3.6 - Math.random() * 9;
+  rainPos.set([x, y, z, x - .02, y - .32, z], i * 6); rainV[i] = 5 + Math.random() * 4;
+}
+rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rain = new THREE.LineSegments(rainGeo, new THREE.LineBasicMaterial({ color: '#9fb6ff', transparent: true, opacity: .35, fog: false }));
+scene.add(rain);
+
+/* ================= 电脑屏幕：用画布实时绘制游戏标题，再加 CRT 着色 ================= */
+const sc = document.createElement('canvas'); sc.width = 1024; sc.height = 748;
+const sx = sc.getContext('2d');
+const screenTex = new THREE.CanvasTexture(sc); screenTex.colorSpace = THREE.SRGBColorSpace;
+const screenMat = new THREE.ShaderMaterial({
+  uniforms: { map: { value: screenTex }, time: { value: 0 }, hover: { value: 0 }, power: { value: 1 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+  fragmentShader: `uniform sampler2D map; uniform float time, hover, power; varying vec2 vUv;
+    void main(){
+      vec2 c = vUv - .5; float r = dot(c, c);
+      vec2 uv = .5 + c * (1. + .14 * r);                       // 球面屏的桶形畸变
+      if (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) { gl_FragColor = vec4(0.,0.,0.,1.); return; }
+      vec3 col = texture2D(map, uv).rgb;
+      col *= .86 + .14 * sin(uv.y * 900.);                     // 扫描线
+      col *= 1. - .55 * r * 2.2;                               // 暗角
+      col += vec3(.02, .03, .07) * sin(time * 50. + uv.y * 30.) * .4;
+      col *= (1.05 + hover * .35) * power;
+      gl_FragColor = vec4(col, 1.);
+    }`,
+  toneMapped: false,
+});
+const screen = new THREE.Mesh(new THREE.PlaneGeometry(SCREEN.w * .985, SCREEN.h * .985), screenMat);
+screen.position.copy(SCREEN.c).add(new THREE.Vector3(0, 0, .004));
+screen.name = 'GAME_SCREEN';
+scene.add(screen);
+function loadSave() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || { chapters: {} }; } catch (e) { return { chapters: {} }; } }
+function drawScreen(t) {
+  const W = sc.width, H = sc.height, save = loadSave().chapters || {};
+  sx.fillStyle = '#1d3fae'; sx.fillRect(0, 0, W, H);
+  const g = sx.createRadialGradient(W / 2, H / 2, 50, W / 2, H / 2, W * .7);
+  g.addColorStop(0, 'rgba(90,140,255,.25)'); g.addColorStop(1, 'rgba(0,0,30,.35)'); sx.fillStyle = g; sx.fillRect(0, 0, W, H);
+  sx.fillStyle = '#d9e6ff'; sx.font = '28px VT323, monospace'; sx.textBaseline = 'top';
+  sx.fillText('RAINY NIGHT  /  C:\\纸上常州.EXE', 56, 46);
+  sx.fillRect(56, 88, W - 112, 3);
+  sx.textAlign = 'center';
+  sx.font = '120px "Ma Shan Zheng", serif'; sx.fillText('纸上常州', W / 2, 150);
+  sx.font = '30px "Noto Serif SC", serif'; sx.globalAlpha = .85; sx.fillText('一条可以玩出来的常州时间长卷', W / 2, 300); sx.globalAlpha = 1;
+  sx.font = '30px "Noto Serif SC", serif';
+  CHAPTERS.forEach((c, i) => {
+    const x = 170 + i * 228, y = 400, done = !!save[c.id];
+    sx.strokeStyle = '#d9e6ff'; sx.lineWidth = 3; sx.strokeRect(x - 92, y, 184, 110);
+    if (done) { sx.fillStyle = 'rgba(217,230,255,.2)'; sx.fillRect(x - 92, y, 184, 110); }
+    sx.fillStyle = '#d9e6ff'; sx.fillText(c.tag, x, y + 18);
+    sx.font = '24px "Noto Serif SC", serif'; sx.fillText(done ? '已完成 ✓' : c.name, x, y + 64); sx.font = '30px "Noto Serif SC", serif';
+  });
+  sx.textAlign = 'left'; sx.font = '34px VT323, monospace';
+  const blink = Math.floor(t * 2) % 2 ? '_' : ' ';
+  sx.fillText('> 点击屏幕，开始游戏' + blink, 56, 600);
+  const done = CHAPTERS.filter(c => save[c.id]).length;
+  sx.fillText(`[${'■'.repeat(done * 5)}${'□'.repeat(20 - done * 5)}]  ${done}/4`, 56, 650);
+  screenTex.needsUpdate = true;
+}
+
+/* ================= 载入模型 ================= */
+const prog = document.getElementById('prog');
+const draco = new DRACOLoader(); draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
+const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
+let lampshade = null;
+loader.load(MODEL, gltf => {
+  const root = gltf.scene;
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    const name = o.name + ' ' + (o.parent ? o.parent.name : '');
+    const city = /city|Midnight/i.test(name), glass = /glass|Window/i.test(name);
+    o.castShadow = !city; o.receiveShadow = !city;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    for (const m of mats) {
+      if (!m) continue;
+      if (m.transmission > 0) {                              // 玻璃：网页端改为半透明，省掉昂贵的透射
+        m.transmission = 0; m.transparent = true; m.opacity = .14; m.depthWrite = false; m.roughness = .05; m.metalness = 0;
+        o.castShadow = false;
+      }
+      if (m.emissiveIntensity > 0 && m.emissive && m.emissive.getHex() !== 0) m.emissiveIntensity = Math.min(m.emissiveIntensity, city ? 3.2 : 2.4);
+      if (/Phosphor/i.test(m.name)) { m.emissiveIntensity = .2; }   // 原屏幕底色，被我们的画面盖住
+      m.envMapIntensity = m.metalness > .5 ? .6 : .12;
+    }
+    if (/KEEP_lampshade/.test(o.name) || /KEEP_lampshade/.test(o.parent && o.parent.name)) lampshade = o;
+  });
+  scene.add(root);
+  prog.style.width = '100%';
+  document.getElementById('loadTxt').textContent = '房间已就绪';
+  document.getElementById('enter').classList.add('ready');
+}, e => { if (e.total) prog.style.width = (e.loaded / e.total * 100).toFixed(0) + '%'; }, err => {
+  document.getElementById('err').textContent = '模型载入失败：请通过本地服务器打开本页（不能直接双击 html），并确认 web/room.glb 存在。' + (err && err.message ? ' ' + err.message : '');
+});
+
+/* ================= 后期：泛光 + 暗角颗粒 ================= */
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), .55, .55, .82);
+composer.addPass(bloom);
+const grade = new ShaderPass({
+  uniforms: { tDiffuse: { value: null }, time: { value: 0 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float time; varying vec2 vUv;
+    float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+    void main(){ vec4 c = texture2D(tDiffuse, vUv); vec2 d = vUv - .5;
+      c.rgb *= 1. - dot(d, d) * .9; c.rgb += (h(vUv * 900. + time) - .5) * .035; gl_FragColor = c; }`,
+});
+composer.addPass(grade);
+composer.addPass(new OutputPass());
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false); composer.setSize(w, h); bloom.setSize(w, h);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+/* ================= 第一人称：环顾 + 走动 ================= */
+const pos = new THREE.Vector3(0.05, EYE, 1.05);
+let yaw = 0, pitch = -.08, yawT = 0, pitchT = -.08;   // yaw/pitch 为当前朝向，yawT/pitchT 为目标朝向（带阻尼缓动）
+const look = () => { const t = SCREEN.c.clone().sub(pos); yawT = yaw = Math.atan2(-t.x, -t.z); pitchT = pitch = Math.atan2(t.y, Math.hypot(t.x, t.z)); };
+look();
+const keys = new Set();
+let mode = 'start', drag = null, locked = false, bob = 0, bobAmp = 0;
+const vel = new THREE.Vector3();
+// 调试：网址带 #debug 时可在控制台用 __view(x, z, yaw, pitch) 摆机位
+if (location.hash === '#debug') window.__view = (x, z, y, p) => { pos.x = x; pos.z = z; yawT = yaw = y; pitchT = pitch = p; };
+addEventListener('keydown', e => { keys.add(e.code); if (e.code === 'Escape' && mode === 'game') exitGame(); });
+addEventListener('keyup', e => keys.delete(e.code));
+document.querySelectorAll('#pad button').forEach(b => {
+  b.addEventListener('pointerdown', e => { e.preventDefault(); keys.add(b.dataset.k); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => keys.delete(b.dataset.k)));
+});
+canvas.addEventListener('pointerdown', e => { if (mode !== 'room') return; drag = { x: e.clientX, y: e.clientY, moved: 0 }; canvas.classList.add('drag'); canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove', e => {
+  mouse.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); mousePx = [e.clientX, e.clientY];
+  if (mode !== 'room') return;
+  if (locked) { yawT -= e.movementX * LOOK.lock; pitchT -= e.movementY * LOOK.lock; return; }
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved += Math.abs(dx) + Math.abs(dy); drag.x = e.clientX; drag.y = e.clientY;
+  yawT += dx * LOOK.drag; pitchT += dy * LOOK.drag;
+});
+canvas.addEventListener('pointerup', e => {
+  canvas.classList.remove('drag');
+  const click = !drag || drag.moved < 6; drag = null;
+  if (mode === 'room' && click) onClick();
+});
+document.getElementById('bLook').onclick = () => { if (mode === 'room') canvas.requestPointerLock(); };
+document.addEventListener('pointerlockchange', () => { locked = document.pointerLockElement === canvas; if (locked) mouse.set(0, 0); });
+
+/* 指向与点击：屏幕进入游戏，灯罩开关台灯 */
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(9, 9); let mousePx = [0, 0], hot = null;   // 鼠标移进画面前不判定悬停
+const tipBox = document.getElementById('tipBox');
+function pick() {
+  ray.setFromCamera(locked ? new THREE.Vector2(0, 0) : mouse, camera);
+  const targets = [screen]; if (lampshade) targets.push(lampshade);
+  const hit = ray.intersectObjects(targets, false)[0];
+  return hit ? { obj: hit.object, d: hit.distance } : null;
+}
+function onClick() {
+  const h = pick(); if (!h) return;
+  if (h.obj === screen) { if (h.d < 3.2) enterScreen(); else showTip('再走近一点'); }
+  else if (h.obj === lampshade) { lamp.visible = !lamp.visible; }
+}
+let tipT = 0;
+function showTip(t) { tipBox.textContent = t; tipBox.style.left = mousePx[0] + 'px'; tipBox.style.top = mousePx[1] + 'px'; tipBox.classList.add('on'); tipT = performance.now() + 1200; }
+
+/* ================= 进入屏幕 / 电脑桌面 / 游戏 ================= */
+const desk = document.getElementById('desk'), game = document.getElementById('game'), frame = document.getElementById('frame'), flash = document.getElementById('flash');
+let camAnim = null, roomPose = null;
+function animateCam(toPos, toTarget, ms) {
+  return new Promise(res => {
+    const fromPos = camera.position.clone(), fromT = camera.position.clone().add(new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion));
+    camAnim = { fromPos, fromT, toPos, toTarget, t0: performance.now(), ms, res };
+  });
+}
+async function enterScreen() {
+  mode = 'zoom'; document.exitPointerLock?.(); tipBox.classList.remove('on');
+  roomPose = { pos: pos.clone(), yaw, pitch };
+  const dist = (SCREEN.h / 2) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.02;
+  await animateCam(SCREEN.c.clone().add(new THREE.Vector3(0, 0, dist)), SCREEN.c.clone(), 1500);
+  flash.style.opacity = 1;
+  await new Promise(r => setTimeout(r, 380));
+  openDesk(); flash.style.opacity = 0;
+}
+function openDesk() {
+  mode = 'desk'; desk.classList.add('on');
+  const save = loadSave().chapters || {};
+  document.getElementById('chList').innerHTML = CHAPTERS.map((c, i) => `<button class="ch" data-i="${i}"><span class="tag" style="background:${c.col}">${c.tag}</span>
+    ${save[c.id] ? '<span class="st">✓ 已完成</span>' : ''}<b>${c.name}</b><small>${c.sub}</small></button>`).join('');
+  document.querySelectorAll('#chList .ch').forEach(b => b.onclick = () => openGame(CHAPTERS[+b.dataset.i]));
+  const n = CHAPTERS.filter(c => save[c.id]).length;
+  document.getElementById('saveInfo').textContent = `进度 ${n} / 4 · 存档保存在本机浏览器`;
+  const boot = document.getElementById('boot'), lines = ['AFTER HOURS BIOS v1.0', 'MEMORY TEST ........ OK', 'LOADING 纸上常州.EXE ...'];
+  boot.textContent = ''; lines.forEach((l, i) => setTimeout(() => { boot.textContent += l + '\n'; }, i * 180));
+}
+function openGame(c) {
+  mode = 'game'; frame.src = GAME_ROOT + c.file; game.classList.add('on');
+  setTimeout(() => frame.focus(), 300);
+}
+function exitGame() {
+  game.classList.remove('on'); frame.src = 'about:blank'; openDesk();
+}
+document.getElementById('gExit').onclick = exitGame;
+// 游戏页里按 Esc 也能退出（同源 iframe）
+frame.addEventListener('load', () => { try { frame.contentWindow.addEventListener('keydown', e => { if (e.code === 'Escape') exitGame(); }); } catch (e) {} });
+document.getElementById('dClose').onclick = async () => {
+  desk.classList.remove('on'); mode = 'zoom';
+  const t = roomPose.pos.clone().add(new THREE.Vector3(-Math.sin(roomPose.yaw) * Math.cos(roomPose.pitch), Math.sin(roomPose.pitch), -Math.cos(roomPose.yaw) * Math.cos(roomPose.pitch)));
+  await animateCam(roomPose.pos.clone(), t, 1300);
+  pos.copy(roomPose.pos); yawT = yaw = roomPose.yaw; pitchT = pitch = roomPose.pitch; mode = 'room';
+};
+document.getElementById('dReset').onclick = () => { if (confirm('确定清除四个篇章的存档吗？')) { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} openDesk(); } };
+
+/* ================= 雨声（WebAudio 合成，无需音频文件） ================= */
+let audio = null, rainOn = true;
+function startRain() {
+  if (audio) return;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+  let last = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + .02 * w) / 1.02; d[i] = last * 3.5 + w * .04; }
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+  const gain = ctx.createGain(); gain.gain.value = .35;
+  src.connect(lp).connect(gain).connect(ctx.destination); src.start();
+  audio = { ctx, gain };
+}
+document.getElementById('bRain').onclick = () => {
+  rainOn = !rainOn; document.getElementById('bRain').textContent = '雨声：' + (rainOn ? '开' : '关');
+  if (audio) audio.gain.gain.value = rainOn ? .35 : 0;
+};
+
+document.getElementById('enter').onclick = () => {
+  document.getElementById('start').classList.add('hide'); mode = 'room'; startRain();
+  setTimeout(() => document.getElementById('help').style.opacity = .0, 9000);
+};
+setInterval(() => { document.getElementById('clock').textContent = new Date().toTimeString().slice(0, 5); }, 1000);
+
+/* ================= 主循环 ================= */
+const clock = new THREE.Clock();
+let lastScreen = -1;
+function collide(p) {
+  p.x = THREE.MathUtils.clamp(p.x, BOUNDS.x0, BOUNDS.x1); p.z = THREE.MathUtils.clamp(p.z, BOUNDS.z0, BOUNDS.z1);
+  for (const b of BLOCKS) {
+    if (p.x > b.x0 && p.x < b.x1 && p.z > b.z0 && p.z < b.z1) {
+      const dx = Math.min(p.x - b.x0, b.x1 - p.x), dz = Math.min(p.z - b.z0, b.z1 - p.z);
+      if (dx < dz) p.x = p.x - b.x0 < b.x1 - p.x ? b.x0 : b.x1; else p.z = p.z - b.z0 < b.z1 - p.z ? b.z0 : b.z1;
+    }
+  }
+}
+function tick() {
+  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
+  if (mode === 'room') {
+    const f = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
+    const r = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
+    const fw = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw)), rt = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+    const want = fw.multiplyScalar(f).add(rt.multiplyScalar(r));
+    if (want.lengthSq() > 1) want.normalize();
+    vel.lerp(want.multiplyScalar(LOOK.speed), 1 - Math.exp(-dt * 6));        // 起步、停步都有缓冲
+    pos.addScaledVector(vel, dt); collide(pos);
+    const spd = vel.length(); bob += dt * 6 * spd; bobAmp += ((spd > .2 ? .0045 : 0) - bobAmp) * .1;
+    // 视野限制：按当前站位算出能转到的最右 / 最左朝向（考虑横向视角的一半）
+    const hh = Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect), m = .05;
+    const angTo = q => Math.atan2(-(q.x - pos.x), -(q.z - pos.z));
+    let yMin = angTo(EDGE_R) + hh + m, yMax = angTo(EDGE_L) - hh - m;
+    if (yMin > yMax) yMin = yMax = (yMin + yMax) / 2;
+    yawT = THREE.MathUtils.clamp(yawT, yMin, yMax); pitchT = THREE.MathUtils.clamp(pitchT, LOOK.pitchMin, LOOK.pitchMax);
+    const k = 1 - Math.exp(-dt * LOOK.damp);
+    yaw += (yawT - yaw) * k; pitch += (pitchT - pitch) * k;
+    camera.position.set(pos.x, pos.y + Math.sin(bob) * bobAmp, pos.z);
+    camera.rotation.set(0, 0, 0); camera.rotateY(yaw); camera.rotateX(pitch);
+    const h = pick(); const nowHot = h && (h.obj === screen ? h.d < 3.2 : true) ? h.obj : null;
+    if (nowHot !== hot) { hot = nowHot; canvas.classList.toggle('hot', !!hot); }
+    if (hot && !drag) { tipBox.textContent = hot === screen ? '点击屏幕 · 进入《纸上常州》' : (lamp.visible ? '点击关灯' : '点击开灯'); tipBox.style.left = (locked ? innerWidth / 2 : mousePx[0]) + 'px'; tipBox.style.top = (locked ? innerHeight / 2 : mousePx[1]) + 'px'; tipBox.classList.add('on'); }
+    else if (performance.now() > tipT) tipBox.classList.remove('on');
+    screenMat.uniforms.hover.value += ((hot === screen ? 1 : 0) - screenMat.uniforms.hover.value) * .15;
+  }
+  if (camAnim) {
+    const k = Math.min(1, (performance.now() - camAnim.t0) / camAnim.ms), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    camera.position.lerpVectors(camAnim.fromPos, camAnim.toPos, e);
+    camera.lookAt(new THREE.Vector3().lerpVectors(camAnim.fromT, camAnim.toTarget, e));
+    if (k >= 1) { const r = camAnim.res; camAnim = null; r(); }
+  }
+  // 雨丝下落
+  const p = rainGeo.attributes.position.array;
+  for (let i = 0; i < RAIN; i++) {
+    const o = i * 6, v = rainV[i] * dt; p[o + 1] -= v; p[o + 4] -= v;
+    if (p[o + 4] < -2) { p[o + 1] += 9; p[o + 4] += 9; }
+  }
+  rainGeo.attributes.position.needsUpdate = true;
+  if (Math.floor(t * 2) !== lastScreen) { lastScreen = Math.floor(t * 2); drawScreen(t); }
+  screenMat.uniforms.time.value = t; grade.uniforms.time.value = t;
+  lampGlow.intensity = 2.2 + Math.sin(t * 3.1) * .04;
+  if (mode !== 'game' && mode !== 'desk') composer.render(dt);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+// 字体载入后重绘一次屏幕
+document.fonts && document.fonts.ready.then(() => drawScreen(0));
+</script>
+</body>
+</html>

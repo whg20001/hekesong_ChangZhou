@@ -1,0 +1,21 @@
+{
+  "blender": "5.2.1 LTS",
+  "objects": 1772,
+  "cameras": [
+    "Camera • quiet rainy evening",
+    "CAM 01 • Rain at the window",
+    "CAM 02 • Personal room",
+    "CAM 03 • Lamp and reading"
+  ],
+  "external_unpacked_images": [],
+  "rain_frames": [
+    1,
+    48
+  ],
+  "engine": "CYCLES",
+  "resolution": [
+    2560,
+    1440
+  ],
+  "samples": 256
+}

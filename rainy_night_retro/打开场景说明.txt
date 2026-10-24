@@ -1,0 +1,27 @@
+雨落之后 · AFTER HOURS
+
+使用本机 Blender 5.2.1 和 Cycles 制作，参照提供图片的暖色复古书桌氛围。
+
+主要文件
+After_Hours_Rainy_Room.blend   可继续编辑的完整 Blender 场景
+雨落之后_窗前书桌.png           2560 × 1440 主画面
+雨落之后_房间全景.png           2400 × 1600 房间视角
+
+打开 .blend，按小键盘 0 查看相机画面，F12 渲染。
+右侧 Outliner 中选择其他相机后，按 Ctrl + 小键盘 0 切换当前相机。
+CAM 01：窗前书桌；CAM 02：房间全景；CAM 03：斜侧书桌近景。
+
+时间轴 1–48 帧，24 fps，包含两秒循环落雨；空格播放。
+玻璃水珠和流淌水痕为静态几何。未输出动画视频。
+
+电脑、书籍、台灯、房间家具、植物、城市楼宇和霓虹均为可编辑模型。
+材质为程序节点，字体已打包。打开 .blend 无需联网或下载贴图。
+暖色台灯与冷色雨夜灯光分别可在 Outliner 中调整。
+
+render_views.py 可从已保存工程重新渲染两个视角。
+build_retro.py 是新版构建脚本，重建时依赖相邻 rainy_night_room 文件夹中的原始 .blend；
+直接打开和编辑最终 After_Hours_Rainy_Room.blend 不依赖原始文件。
+
+PowerShell 重新渲染：
+& 'D:\blender\blender.exe' --background '.\After_Hours_Rainy_Room.blend' --python '.\render_views.py' -- all
+先将工作目录切换到本文件所在文件夹。

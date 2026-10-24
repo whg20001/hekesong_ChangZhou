@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>行舟入墨 · 苏轼 × 舣舟亭</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#efe7d6; --paper-hi:#f7f1e4; --paper-lo:#e3d8c1;
+  --ink:#1c1b19; --ink-2:#3a3833; --ink-soft:rgba(28,27,25,.55);
+  --seal:#b03a2e;
+  --brush:"Ma Shan Zheng","STXingkai","STKaiti","KaiTi",serif;
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--serif)}
+button{font:inherit;color:inherit}
+
+/* ---------- 场景层 ---------- */
+#stage{position:fixed;inset:0;overflow:hidden;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#stage.dragging{cursor:grabbing}
+#sky{position:absolute;inset:0;background:
+  radial-gradient(ellipse 70% 55% at 50% 28%, var(--paper-hi) 0%, transparent 70%),
+  linear-gradient(180deg,#ece3cf 0%,var(--paper) 45%,#e8dfcb 100%)}
+.layer{position:absolute;left:0;top:0;will-change:transform}
+.layer svg{display:block;overflow:visible}
+#boat{position:absolute;left:0;top:0;will-change:transform;transform-origin:50% 56%}
+#boat svg{display:block;overflow:visible}
+#grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.5}
+#vignette{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(ellipse at center, transparent 52%, rgba(92,66,32,.20) 100%)}
+
+.marker .ring{transform-box:fill-box;transform-origin:center;animation:pulse 2.2s ease-out infinite}
+.marker .ring.r2{animation-delay:1.1s}
+@keyframes pulse{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+.marker .dot{transform-box:fill-box;transform-origin:center;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;
+  padding:18px 22px;pointer-events:none;z-index:5}
+.chapter{display:flex;gap:12px;align-items:center}
+.seal-sm{width:34px;height:34px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);
+  font-family:var(--brush);font-size:22px;border-radius:3px;box-shadow:inset 0 0 0 2px rgba(255,240,220,.25)}
+.chapter b{display:block;font-family:var(--brush);font-weight:400;font-size:26px;letter-spacing:.12em;line-height:1}
+.chapter small{display:block;margin-top:5px;font-size:12px;letter-spacing:.18em;color:var(--ink-soft)}
+#progress{list-style:none;display:flex;gap:18px;margin-top:4px}
+#progress li{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;letter-spacing:.2em;color:var(--ink-soft)}
+#progress i{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ink-soft);transition:background .6s,border-color .6s,transform .6s}
+#progress li.done i{background:var(--ink);border-color:var(--ink);transform:scale(1.15)}
+#progress li.done{color:var(--ink)}
+
+/* ---------- 故事卡 ---------- */
+#card{position:fixed;left:24px;top:92px;width:min(380px,calc(100vw - 32px));z-index:6;
+  background:rgba(247,241,228,.93);border:1px solid rgba(28,27,25,.28);
+  box-shadow:0 10px 30px rgba(60,40,10,.12), inset 0 0 0 5px rgba(247,241,228,.93), inset 0 0 0 6px rgba(28,27,25,.15);
+  padding:22px 24px 20px 24px;opacity:0;transform:translateY(16px);filter:blur(6px);
+  transition:opacity .8s ease, transform .8s ease, filter .8s ease;pointer-events:none}
+#card.show{opacity:1;transform:none;filter:none}
+#card .seal{position:absolute;right:18px;top:-14px;width:40px;height:40px;display:grid;place-items:center;
+  background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:26px;border-radius:3px;transform:rotate(-4deg)}
+#card h2{font-family:var(--brush);font-weight:400;font-size:32px;letter-spacing:.14em;margin-bottom:8px}
+#card p{font-size:15px;line-height:1.95;color:var(--ink-2);text-align:justify}
+#card small{display:block;margin-top:10px;font-size:12px;color:var(--ink-soft);letter-spacing:.05em}
+#card small:empty{display:none}
+
+#hint{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);z-index:6;text-align:center;
+  font-size:15px;letter-spacing:.2em;color:var(--ink-2);pointer-events:none;transition:opacity .8s}
+#hint .arrow{display:inline-block;font-family:var(--brush);font-size:22px;animation:nudge 1.4s ease-in-out infinite}
+#hint small{display:block;margin-top:4px;font-size:12px;color:var(--ink-soft);letter-spacing:.15em}
+@keyframes nudge{50%{transform:translateX(8px)}}
+#hint.hide{opacity:0}
+
+#foot{position:fixed;right:18px;bottom:12px;font-size:11px;letter-spacing:.12em;color:var(--ink-soft);z-index:5;pointer-events:none}
+
+.drop{position:fixed;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50% 46% 52% 48%;background:var(--ink);
+  z-index:7;pointer-events:none;transition:left .95s cubic-bezier(.6,.05,.3,1), top .95s cubic-bezier(.6,.05,.3,1), transform .95s, opacity .3s .9s;
+  box-shadow:0 0 0 3px rgba(28,27,25,.12)}
+
+/* ---------- 开场 ---------- */
+#intro{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:var(--paper);
+  clip-path:inset(0 0 0 0);transition:clip-path 1.6s cubic-bezier(.7,0,.2,1)}
+#intro.open{clip-path:inset(0 50% 0 50%)}
+#intro .rod{position:absolute;top:0;bottom:0;width:14px;background:linear-gradient(90deg,#5a3d22,#8b6236 45%,#4a301a);opacity:.9}
+#intro .rod.l{left:0}#intro .rod.r{right:0}
+#intro .inner{display:flex;gap:44px;align-items:center}
+#intro h1{writing-mode:vertical-rl;font-family:var(--brush);font-weight:400;font-size:clamp(64px,11vh,108px);letter-spacing:.18em;line-height:1}
+#intro .meta{writing-mode:vertical-rl;font-size:15px;letter-spacing:.4em;color:var(--ink-soft);line-height:2.2}
+#intro .meta em{font-style:normal;color:var(--seal)}
+#startBtn{margin-top:0;width:86px;height:86px;border:none;border-radius:4px;background:var(--seal);color:var(--paper-hi);
+  font-family:var(--brush);font-size:30px;letter-spacing:.1em;cursor:pointer;box-shadow:inset 0 0 0 3px rgba(255,240,220,.3);
+  transform:rotate(-3deg);transition:transform .25s}
+#startBtn:hover{transform:rotate(0) scale(1.06)}
+
+/* ---------- 结尾 ---------- */
+#ending{position:fixed;left:24px;top:92px;z-index:9;pointer-events:none;opacity:0;transition:opacity 1.2s}
+#ending.show{opacity:1;pointer-events:auto}
+#ending .panel{position:relative;width:min(400px,calc(100vw - 32px));background:rgba(247,241,228,.95);
+  border:1px solid rgba(28,27,25,.3);padding:34px 32px 26px;text-align:center;
+  box-shadow:0 20px 60px rgba(60,40,10,.18), inset 0 0 0 6px rgba(247,241,228,.95), inset 0 0 0 7px rgba(28,27,25,.14)}
+#ending .stamp{width:92px;height:92px;margin:0 auto 18px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);
+  font-family:var(--brush);font-size:38px;line-height:1;writing-mode:vertical-rl;letter-spacing:.05em;border-radius:4px;
+  box-shadow:inset 0 0 0 4px rgba(255,240,220,.28);transform:scale(2.2) rotate(-12deg);opacity:0;transition:transform .5s cubic-bezier(.3,1.6,.5,1) .4s, opacity .2s .4s}
+#ending.show .stamp{transform:scale(1) rotate(-4deg);opacity:1}
+#ending p{font-size:16px;line-height:2;color:var(--ink-2)}
+#ending .got{margin-top:12px;font-size:13px;color:var(--ink-soft);letter-spacing:.1em}
+#ending .got b{color:var(--ink);font-weight:600}
+#ending .btns{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+#ending button{padding:10px 18px;border:1px solid var(--ink);background:transparent;cursor:pointer;letter-spacing:.15em;font-size:14px}
+#ending button.primary{background:var(--ink);color:var(--paper-hi)}
+#ending button:disabled{opacity:.45;cursor:not-allowed}
+
+@media (max-width:640px){
+  #hud{padding:12px 14px}
+  .chapter b{font-size:20px}
+  .chapter small{display:none}
+  #progress{gap:10px}
+  #card{left:16px;top:auto;bottom:16px;padding:18px 18px 16px}
+  #ending{left:16px;top:auto;bottom:16px}
+  #card h2{font-size:26px}
+  #card p{font-size:14px}
+  #foot{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 共享滤镜与渐变 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="fInkEdge" x="-5%" y="-10%" width="110%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.7"/>
+    </filter>
+    <filter id="fWash" x="-10%" y="-20%" width="120%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01 0.035" numOctaves="3" seed="8" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="30" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="3.5"/>
+    </filter>
+    <filter id="fSoft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <filter id="fBleed" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="5" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.35"/>
+    </filter>
+    <filter id="fRipple" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.09" numOctaves="2" seed="2" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="1.4"/>
+    </filter>
+    <filter id="fGhost" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+
+    <linearGradient id="gFar1" gradientUnits="userSpaceOnUse" x1="0" y1="290" x2="0" y2="590">
+      <stop offset="0" stop-color="#1c1b19" stop-opacity=".17"/><stop offset="1" stop-color="#1c1b19" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gFar2" gradientUnits="userSpaceOnUse" x1="0" y1="380" x2="0" y2="610">
+      <stop offset="0" stop-color="#1c1b19" stop-opacity=".27"/><stop offset="1" stop-color="#1c1b19" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gMid" gradientUnits="userSpaceOnUse" x1="0" y1="360" x2="0" y2="620">
+      <stop offset="0" stop-color="#1c1b19" stop-opacity=".58"/>
+      <stop offset=".6" stop-color="#1c1b19" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#1c1b19" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gMist" gradientUnits="userSpaceOnUse" x1="0" y1="440" x2="0" y2="600">
+      <stop offset="0" stop-color="#efe7d6" stop-opacity="0"/><stop offset=".75" stop-color="#efe7d6" stop-opacity=".92"/>
+      <stop offset="1" stop-color="#efe7d6" stop-opacity=".95"/>
+    </linearGradient>
+    <linearGradient id="gBank" gradientUnits="userSpaceOnUse" x1="0" y1="470" x2="0" y2="570">
+      <stop offset="0" stop-color="#1c1b19" stop-opacity=".03"/><stop offset="1" stop-color="#1c1b19" stop-opacity=".15"/>
+    </linearGradient>
+    <linearGradient id="gWater" gradientUnits="userSpaceOnUse" x1="0" y1="566" x2="0" y2="800">
+      <stop offset="0" stop-color="#1c1b19" stop-opacity=".09"/><stop offset=".45" stop-color="#1c1b19" stop-opacity=".025"/>
+      <stop offset="1" stop-color="#1c1b19" stop-opacity=".06"/>
+    </linearGradient>
+    <linearGradient id="gNear" gradientUnits="userSpaceOnUse" x1="0" y1="780" x2="0" y2="900">
+      <stop offset="0" stop-color="#1c1b19" stop-opacity=".30"/><stop offset=".35" stop-color="#1c1b19" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#1c1b19" stop-opacity=".04"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div id="stage">
+  <div id="sky"></div>
+  <div class="layer" id="L-far"></div>
+  <div class="layer" id="L-mid"></div>
+  <div class="layer" id="L-main"></div>
+  <div class="layer" id="L-fx"></div>
+  <div id="boat"></div>
+  <div class="layer" id="L-front"></div>
+  <div id="grain"></div>
+  <div id="vignette"></div>
+</div>
+
+<header id="hud">
+  <div class="chapter">
+    <span class="seal-sm">古</span>
+    <div><b>行舟入墨</b><small>古代篇 · 墨染成景 · 苏轼 × 舣舟亭</small></div>
+  </div>
+  <ol id="progress">
+    <li><i></i><span>来路</span></li>
+    <li><i></i><span>择居</span></li>
+    <li><i></i><span>筑亭</span></li>
+  </ol>
+</header>
+
+<aside id="card" aria-live="polite">
+  <div class="seal" id="cardSeal">壹</div>
+  <h2 id="cardTitle"></h2>
+  <p id="cardText"></p>
+  <small id="cardNote"></small>
+</aside>
+
+<div id="hint" class="hide">按住画面向右拖动 <span class="arrow">→</span><small>或使用 → 键 / 滚轮</small></div>
+<div id="foot">画面为艺术化表现，非历史场景复原</div>
+
+<section id="intro">
+  <div class="rod l"></div><div class="rod r"></div>
+  <div class="inner">
+    <div class="meta">古代篇 · <em>墨染成景</em><br>苏轼 × 舣舟亭</div>
+    <h1>行舟入墨</h1>
+    <button id="startBtn" aria-label="开始">展卷</button>
+  </div>
+</section>
+
+<section id="ending">
+  <div class="panel">
+    <div class="stamp">舣舟</div>
+    <p>一叶小舟靠岸的地方，<br>后人筑起了一座亭。</p>
+    <div class="got">收集 <b>墨迹 ×3</b> · 将在终章「纸上常州」中汇成文化广场</div>
+    <div class="btns">
+      <button id="againBtn">再泛一次</button>
+      <button class="primary" disabled title="样本中未包含">下一章 · 经纬织城 →</button>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+const W = 4400, H = 900, NS = 'http://www.w3.org/2000/svg';
+const FAR = 566, NEAR = 792, WATER = 668;
+const PAPER = '#efe7d6', WALL = '#f7f1e4', STONE = '#e7ddc8';
+
+/* ---------- 工具 ---------- */
+let sd = 20261023;
+const rnd = () => (sd = (sd * 16807) % 2147483647, (sd - 1) / 2147483646);
+const R = (a, b) => a + (b - a) * rnd();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ink = a => `rgba(28,27,25,${a})`;
+const paper = a => `rgba(239,231,214,${a})`;
+const f1 = n => n.toFixed(1);
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) k === 'text' ? (e.textContent = attrs[k]) : e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function noise1() {
+  const p = [R(0, 6.3), R(0, 6.3), R(0, 6.3), R(0, 6.3)];
+  return x => Math.sin(x * .0037 + p[0]) * .5 + Math.sin(x * .011 + p[1]) * .28 + Math.sin(x * .031 + p[2]) * .14 + Math.sin(x * .09 + p[3]) * .08;
+}
+function smooth(pts) {
+  let d = `M${f1(pts[0][0])},${f1(pts[0][1])}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+    d += ` Q${f1(pts[i][0])},${f1(pts[i][1])} ${f1(mx)},${f1(my)}`;
+  }
+  const l = pts[pts.length - 1];
+  return d + ` L${f1(l[0])},${f1(l[1])}`;
+}
+
+/* ---------- 图层 ---------- */
+const LAYERS = { far: { f: .18 }, mid: { f: .45 }, main: { f: 1 }, fx: { f: 1 }, front: { f: 1.35 } };
+for (const [k, L] of Object.entries(LAYERS)) {
+  L.w = L.f >= 1 ? Math.round(W * L.f) : Math.round(W * L.f + 2400);
+  L.div = document.getElementById('L-' + k);
+  L.svg = el('svg', { viewBox: `0 0 ${L.w} ${H}` }, L.div);
+}
+
+/* ---------- 山 ---------- */
+function ridge(x0, x1, base, hmin, hmax, wmin, wmax, gap) {
+  const peaks = [];
+  for (let c = x0 - 150; c < x1 + 250; c += R(gap * .55, gap * 1.4)) peaks.push({ c, w: R(wmin, wmax), h: R(hmin, hmax) });
+  const nz = noise1(), pts = [];
+  for (let x = x0; x <= x1; x += 5) {
+    let m = 0;
+    for (const p of peaks) { const t = Math.abs(x - p.c) / p.w; m = Math.max(m, p.h * Math.exp(-Math.pow(t, 1.35))); }
+    pts.push([x, base - m + nz(x * 2.5) * 7]);
+  }
+  return pts;
+}
+const areaD = (pts, x0, x1) => `M${x0},${H} ` + pts.map(p => `L${p[0]},${f1(p[1])}`).join('') + `L${x1},${H}Z`;
+
+{ // 远山 + 日
+  const g = LAYERS.far.svg, w = LAYERS.far.w;
+  el('circle', { cx: 1150, cy: 215, r: 46, fill: 'rgba(176,58,46,.30)', filter: 'url(#fSoft)' }, g);
+  el('path', { d: areaD(ridge(0, w, 545, 150, 330, 90, 210, 300), 0, w), fill: 'url(#gFar1)', filter: 'url(#fWash)' }, g);
+  el('path', { d: areaD(ridge(0, w, 590, 60, 190, 70, 170, 230), 0, w), fill: 'url(#gFar2)', filter: 'url(#fWash)' }, g);
+  // 飞鸟
+  for (let i = 0; i < 5; i++) {
+    const x = 1480 + i * R(28, 46), y = 250 + R(-26, 26), s = R(5, 9);
+    el('path', { d: `M${x - s},${y - s * .35} Q${x - s * .4},${y - s * .5} ${x},${y} Q${x + s * .4},${y - s * .5} ${x + s},${y - s * .4}`,
+      stroke: ink(.55), 'stroke-width': 1.3, fill: 'none', 'stroke-linecap': 'round' }, g);
+  }
+}
+{ // 中景山
+  const g = LAYERS.mid.svg, w = LAYERS.mid.w;
+  const pts = ridge(0, w, 610, 70, 230, 70, 160, 260);
+  el('path', { d: areaD(pts, 0, w), fill: 'url(#gMid)', filter: 'url(#fInkEdge)' }, g);
+  el('path', { d: 'M' + pts.map(p => `${p[0]},${f1(p[1])}`).join('L'), fill: 'none', stroke: ink(.42), 'stroke-width': 2.2, filter: 'url(#fInkEdge)' }, g);
+  const dots = el('g', { fill: ink(.75) }, g);
+  for (let i = 2; i < pts.length - 2; i++) {
+    const y = pts[i][1];
+    if (y < pts[i - 2][1] && y < pts[i + 2][1] && y < 520) {
+      for (let k = 0; k < 3; k++) el('ellipse', { cx: f1(pts[i][0] + R(-14, 14)), cy: f1(y + R(3, 16)), rx: f1(R(1.8, 3.6)), ry: f1(R(1.2, 2.6)) }, dots);
+    }
+  }
+  el('rect', { x: 0, y: 440, width: w, height: 460, fill: 'url(#gMist)' }, g);
+}
+
+/* ---------- 主景：两岸与运河 ---------- */
+const M = LAYERS.main.svg;
+const mdefs = el('defs', {}, M);
+const nb = noise1(), nw = noise1(), nn = noise1();
+const farTop = x => 498 + nb(x) * 26, farEdge = x => FAR + nw(x) * 3, nearTop = x => NEAR + nn(x) * 16;
+const SCENES_X = [1300, 2460, 3720];
+const nearScene = (x, pad) => SCENES_X.some(c => Math.abs(x - c) < pad);
+
+{ // 北岸
+  let d = `M0,${f1(farTop(0))}`;
+  for (let x = 0; x <= W; x += 10) d += `L${x},${f1(farTop(x))}`;
+  for (let x = W; x >= 0; x -= 10) d += `L${x},${f1(farEdge(x))}`;
+  d += 'Z';
+  el('path', { d, fill: PAPER }, M);
+  el('path', { d, fill: 'url(#gBank)' }, M);
+  let s = 'M0,' + f1(farEdge(0));
+  for (let x = 0; x <= W; x += 10) s += `L${x},${f1(farEdge(x))}`;
+  el('path', { d: s, fill: 'none', stroke: ink(.72), 'stroke-width': 2.6, filter: 'url(#fBleed)' }, M);
+  // 远树与苔点
+  const trees = el('g', {}, M);
+  for (let x = 40; x < W; x += R(50, 150)) {
+    if (nearScene(x, 300)) continue;
+    const y = farTop(x) + R(4, 20), h = R(10, 24);
+    el('line', { x1: f1(x), y1: f1(y), x2: f1(x + R(-2, 2)), y2: f1(y - h), stroke: ink(.5), 'stroke-width': 1.2 }, trees);
+    for (let k = 0; k < 3; k++) el('ellipse', { cx: f1(x + R(-7, 7)), cy: f1(y - h - R(0, 8)), rx: f1(R(5, 10)), ry: f1(R(4, 7)), fill: ink(R(.22, .45)) }, trees);
+  }
+  const moss = el('g', { fill: ink(.7) }, M);
+  for (let i = 0; i < 160; i++) {
+    const x = R(0, W);
+    if (nearScene(x, 230)) continue;
+    el('ellipse', { cx: f1(x), cy: f1(farTop(x) + R(-2, 8)), rx: f1(R(1.5, 3.4)), ry: f1(R(1, 2.4)) }, moss);
+  }
+}
+{ // 水
+  el('rect', { x: 0, y: FAR, width: W, height: NEAR - FAR + 30, fill: 'url(#gWater)' }, M);
+  const waves = el('g', { fill: 'none', 'stroke-linecap': 'round' }, M);
+  for (let i = 0; i < 360; i++) {
+    const t = Math.pow(rnd(), 1.6), y = FAR + 10 + (rnd() < .5 ? t : 1 - t) * (NEAR - FAR - 20);
+    const x = R(0, W), l = R(12, 40);
+    el('path', { d: `M${f1(x)},${f1(y)} q${f1(l / 4)},-3 ${f1(l / 2)},0 t${f1(l / 2)},0`, stroke: ink(f1(R(.07, .24))), 'stroke-width': f1(R(.8, 1.5)) }, waves);
+  }
+  for (let i = 0; i < 26; i++) {
+    const x = R(0, W), y = FAR + R(6, 22);
+    el('line', { x1: f1(x), y1: f1(y), x2: f1(x + R(80, 260)), y2: f1(y), stroke: ink(.09), 'stroke-width': 1 }, waves);
+  }
+  const clip = el('clipPath', { id: 'cWater' }, mdefs);
+  el('rect', { x: 0, y: FAR, width: W, height: NEAR - FAR + 20 }, clip);
+}
+
+/* ---------- 景物绘制 ---------- */
+function willow(g, x, y, h, lean = 0) {
+  const tw = h * .05, tx = x + lean * h * .18, ty = y - h * .52;
+  el('path', { d: `M${f1(x - tw)},${y} Q${f1(x - tw * .5 + lean * h * .05)},${f1(y - h * .28)} ${f1(tx - tw * .35)},${f1(ty)} L${f1(tx + tw * .35)},${f1(ty)} Q${f1(x + tw * .7 + lean * h * .08)},${f1(y - h * .25)} ${f1(x + tw * 1.1)},${y} Z`, fill: ink(.88) }, g);
+  const cx = tx, cy = ty - h * .1, rx = h * .42, ry = h * .3;
+  for (let i = 0; i < 6; i++) {
+    const ex = cx + R(-rx * .8, rx * .8), ey = cy - R(ry * .2, ry * .9);
+    el('path', { d: `M${f1(tx)},${f1(ty)} Q${f1((tx + ex) / 2 + R(-10, 10))},${f1((ty + ey) / 2 - R(5, 18))} ${f1(ex)},${f1(ey)}`, stroke: ink(.8), 'stroke-width': f1(R(1.6, 3)), fill: 'none', 'stroke-linecap': 'round' }, g);
+  }
+  const strands = el('g', { fill: 'none', 'stroke-linecap': 'round' }, g);
+  for (let i = 0; i < 75; i++) {
+    const u = R(-1, 1), sx = cx + u * rx, sy = cy - ry * Math.sqrt(Math.max(0, 1 - u * u)) * R(.45, 1);
+    const dir = u >= 0 ? 1 : -1, len = h * R(.3, .72) * (1 - Math.abs(u) * .3);
+    const ex = sx + dir * R(4, 16) + lean * 10, ey = Math.min(sy + len, y - h * .07);
+    el('path', { d: `M${f1(sx)},${f1(sy)} C${f1(sx + dir * R(10, 24))},${f1(sy - R(6, 18))} ${f1(ex)},${f1(sy + (ey - sy) * .2)} ${f1(ex)},${f1(ey)}`, stroke: ink(f1(R(.3, .78))), 'stroke-width': f1(R(.7, 1.5)) }, strands);
+  }
+}
+function bridge(g, x, y, s = 1) {
+  const a = 34 * s, w = 96 * s, rise = 54 * s;
+  el('path', { d: `M${x - w},${y} C${x - w * .6},${y - rise} ${x + w * .6},${y - rise} ${x + w},${y} Z M${x - a},${y} A${a} ${a} 0 0 1 ${x + a},${y} Z`,
+    fill: ink(.5), 'fill-rule': 'evenodd', filter: 'url(#fBleed)' }, g);
+  el('path', { d: `M${x - w * .92},${y - 8 * s} C${x - w * .55},${y - rise - 8 * s} ${x + w * .55},${y - rise - 8 * s} ${x + w * .92},${y - 8 * s}`, fill: 'none', stroke: ink(.75), 'stroke-width': 1.8 }, g);
+  for (let i = -5; i <= 5; i++) {
+    const px = x + i * w * .16, t = (px - (x - w)) / (2 * w), py = y - 8 * s - rise * .75 * Math.sin(Math.PI * t) - 1;
+    el('line', { x1: f1(px), y1: f1(py), x2: f1(px), y2: f1(py + 9 * s), stroke: ink(.6), 'stroke-width': 1.2 }, g);
+  }
+  el('path', { d: `M${x - a},${y} A${a} ${a} 0 0 0 ${x + a},${y}`, fill: 'none', stroke: ink(.3), 'stroke-width': 2, filter: 'url(#fRipple)' }, g);
+}
+function gableHouse(g, x, y, w, h) {
+  const s1 = 16, s2 = 30, top = y - h;
+  const P = [[x, y], [x, top], [x + w * .18, top], [x + w * .18, top - s1], [x + w * .36, top - s1], [x + w * .36, top - s2],
+    [x + w * .64, top - s2], [x + w * .64, top - s1], [x + w * .82, top - s1], [x + w * .82, top], [x + w, top], [x + w, y]];
+  el('path', { d: 'M' + P.map(p => `${f1(p[0])},${f1(p[1])}`).join('L') + 'Z', fill: WALL, stroke: ink(.55), 'stroke-width': 1.3 }, g);
+  for (const [a, b, yy] of [[0, .18, top], [.18, .36, top - s1], [.36, .64, top - s2], [.64, .82, top - s1], [.82, 1, top]]) {
+    const xa = x + w * a, xb = x + w * b;
+    el('path', { d: `M${f1(xa - 5)},${f1(yy + 1)} L${f1(xb + 5)},${f1(yy + 1)} L${f1(xb + 2)},${f1(yy - 6)} L${f1(xa - 2)},${f1(yy - 6)} Z`, fill: ink(.9) }, g);
+  }
+  el('rect', { x: f1(x + w * .42), y: f1(y - h * .45), width: f1(w * .16), height: f1(h * .45), fill: ink(.85) }, g);
+  el('path', { d: `M${f1(x + w * .36)},${f1(y - h * .5)} L${f1(x + w * .64)},${f1(y - h * .5)}`, stroke: ink(.85), 'stroke-width': 3 }, g);
+  for (const wx of [.14, .72]) {
+    const rx = x + w * wx, ry = y - h * .78, ws = w * .14;
+    el('rect', { x: f1(rx), y: f1(ry), width: f1(ws), height: f1(ws), fill: 'none', stroke: ink(.7), 'stroke-width': 1.2 }, g);
+    el('path', { d: `M${f1(rx + ws / 2)},${f1(ry)}V${f1(ry + ws)}M${f1(rx)},${f1(ry + ws / 2)}H${f1(rx + ws)}`, stroke: ink(.5), 'stroke-width': 1 }, g);
+  }
+}
+function longHouse(g, x, y, w, h) {
+  const top = y - h;
+  el('rect', { x, y: top, width: w, height: h, fill: WALL, stroke: ink(.55), 'stroke-width': 1.3 }, g);
+  el('path', { d: `M${x - 10},${top + 4} L${x + w + 10},${top + 4} L${x + w - 8},${top - 17} L${x + 8},${top - 17} Z`, fill: ink(.85) }, g);
+  el('line', { x1: x - 10, y1: top + 4, x2: x + w + 10, y2: top + 4, stroke: ink(.95), 'stroke-width': 2.6 }, g);
+  for (let tx = x + 6; tx < x + w; tx += 7) el('line', { x1: tx, y1: top + 1, x2: tx, y2: top - 14, stroke: paper(.16), 'stroke-width': 1 }, g);
+  for (let i = 0; i < 3; i++) {
+    const wx = x + w * (.12 + i * .3), ws = w * .16;
+    el('rect', { x: f1(wx), y: f1(top + h * .25), width: f1(ws), height: f1(h * .38), fill: 'none', stroke: ink(.65), 'stroke-width': 1.1 }, g);
+    for (let k = 1; k < 4; k++) el('line', { x1: f1(wx + ws * k / 4), y1: f1(top + h * .25), x2: f1(wx + ws * k / 4), y2: f1(top + h * .63), stroke: ink(.4), 'stroke-width': .9 }, g);
+  }
+}
+function pine(g, x, y, h) {
+  const pts = [[x, y], [x - h * .07, y - h * .3], [x + h * .05, y - h * .55], [x - h * .05, y - h * .8], [x - h * .01, y - h]];
+  el('path', { d: smooth(pts), fill: 'none', stroke: ink(.85), 'stroke-width': 12, 'stroke-linecap': 'round' }, g);
+  el('path', { d: smooth(pts.slice(2)), fill: 'none', stroke: ink(.9), 'stroke-width': 7, 'stroke-linecap': 'round' }, g);
+  for (let i = 0; i < 14; i++) {
+    const yy = y - R(.05, .75) * h, xx = x + R(-6, 6);
+    el('path', { d: `M${f1(xx - 4)},${f1(yy)} q4,-4 8,0`, fill: 'none', stroke: paper(.45), 'stroke-width': 1.2 }, g);
+  }
+  const cluster = (cx, cy, s) => {
+    el('ellipse', { cx: f1(cx), cy: f1(cy + 2), rx: f1(s * .95), ry: f1(s * .2), fill: ink(.65) }, g);
+    for (let k = 0; k <= 16; k++) {
+      const a = -Math.PI + k / 16 * Math.PI + R(-.06, .06), l = s * R(.85, 1.05);
+      el('line', { x1: f1(cx), y1: f1(cy), x2: f1(cx + Math.cos(a) * l), y2: f1(cy + Math.sin(a) * l * .55), stroke: ink(.82), 'stroke-width': 1.1 }, g);
+    }
+  };
+  [[.42, -1], [.58, 1], [.74, -1], [.9, 1]].forEach(([t, side]) => {
+    const by = y - h * t, bx = x + (t > .7 ? -h * .03 : 0), len = h * R(.28, .42);
+    const ex = bx + side * len, ey = by - R(4, 18);
+    el('path', { d: `M${f1(bx)},${f1(by)} Q${f1(bx + side * len * .5)},${f1(by - 18)} ${f1(ex)},${f1(ey)}`, fill: 'none', stroke: ink(.85), 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+    cluster(ex, ey - 4, h * .14);
+    cluster(bx + side * len * .5, by - 14, h * .11);
+  });
+  cluster(x - h * .01, y - h - 4, h * .13);
+}
+function pavilion(g, px, by) {
+  const pt = by - 26, ey = pt - 150;
+  el('path', { d: `M${px - 162},${by} L${px - 150},${pt} L${px + 150},${pt} L${px + 162},${by} Z`, fill: STONE, stroke: ink(.7), 'stroke-width': 1.6 }, g);
+  for (let i = 0; i < 9; i++) { const sx = px - 136 + i * 34; el('line', { x1: sx, y1: pt + 4, x2: f1(sx + R(-4, 4)), y2: by - 3, stroke: ink(.25), 'stroke-width': 1 }, g); }
+  for (let i = 0; i < 4; i++) { const sw = 84 - i * 8; el('rect', { x: px - sw / 2, y: by + i * 7 - 1, width: sw, height: 7, fill: STONE, stroke: ink(.5), 'stroke-width': 1 }, g); }
+  const cols = [-118, -42, 42, 118];
+  for (const c of cols) el('rect', { x: px + c - 4, y: ey, width: 8, height: pt - ey, fill: ink(.86) }, g);
+  for (const [a, b] of [[-118, -42], [42, 118]]) {
+    el('line', { x1: px + a, y1: pt - 36, x2: px + b, y2: pt - 36, stroke: ink(.85), 'stroke-width': 3 }, g);
+    for (let bx = px + a + 9; bx < px + b; bx += 9) el('line', { x1: bx, y1: pt - 36, x2: bx, y2: pt, stroke: ink(.55), 'stroke-width': 1.3 }, g);
+  }
+  for (let i = 0; i < 3; i++) {
+    const a = px + cols[i] + 4, b = px + cols[i + 1] - 4;
+    el('rect', { x: a, y: ey + 4, width: b - a, height: 12, fill: 'none', stroke: ink(.7), 'stroke-width': 1.2 }, g);
+    for (let fx = a + 6; fx < b; fx += 7) el('line', { x1: fx, y1: ey + 4, x2: fx, y2: ey + 16, stroke: ink(.45), 'stroke-width': 1 }, g);
+  }
+  el('rect', { x: px - 36, y: ey + 22, width: 72, height: 24, fill: ink(.9) }, g);
+  el('text', { x: px, y: ey + 40, 'text-anchor': 'middle', 'font-family': '"Ma Shan Zheng","STKaiti","KaiTi",serif', 'font-size': 17, fill: PAPER, 'letter-spacing': 2, text: '舣舟亭' }, g);
+  const roof = `M${px - 205},${ey - 40} Q${px - 160},${ey + 2} ${px - 110},${ey} L${px + 110},${ey} Q${px + 160},${ey + 2} ${px + 205},${ey - 40} Q${px + 70},${ey - 38} ${px},${ey - 128} Q${px - 70},${ey - 38} ${px - 205},${ey - 40} Z`;
+  el('path', { d: roof, fill: ink(.88) }, g);
+  for (let k = -7; k <= 7; k++) {
+    if (!k) continue;
+    el('line', { x1: px + k * 3, y1: ey - 120, x2: px + k * 26, y2: ey - 6 - Math.abs(k) * 2.5, stroke: paper(.16), 'stroke-width': 1.1 }, g);
+  }
+  el('path', { d: `M${px - 198},${ey - 38} Q${px - 158},${ey - 6} ${px - 110},${ey - 7} L${px + 110},${ey - 7} Q${px + 158},${ey - 6} ${px + 198},${ey - 38}`, fill: 'none', stroke: paper(.38), 'stroke-width': 1.5 }, g);
+  el('path', { d: `M${px + 205},${ey - 40} Q${px + 70},${ey - 38} ${px},${ey - 128} Q${px - 70},${ey - 38} ${px - 205},${ey - 40}`, fill: 'none', stroke: ink(1), 'stroke-width': 3, 'stroke-linecap': 'round' }, g);
+  el('line', { x1: px, y1: ey - 128, x2: px, y2: ey - 166, stroke: ink(.9), 'stroke-width': 2.5 }, g);
+  el('circle', { cx: px, cy: ey - 140, r: 8, fill: ink(.9) }, g);
+  el('ellipse', { cx: px, cy: ey - 155, rx: 5, ry: 6.5, fill: ink(.9) }, g);
+}
+
+/* ---------- 三处可唤醒的景 ---------- */
+const arts = [];
+{ // 一：柳岸与石桥
+  const g = el('g', { id: 'art0' }, mdefs);
+  willow(g, 1120, FAR - 6, 230, .1);
+  willow(g, 1290, FAR - 4, 190, -.25);
+  bridge(g, 1500, FAR, 1.05);
+  willow(g, 1650, FAR - 6, 160, .2);
+  arts.push(g);
+}
+{ // 二：江南人家与码头
+  const g = el('g', { id: 'art1' }, mdefs);
+  willow(g, 2250, FAR - 8, 210, -.15);
+  longHouse(g, 2395, FAR - 8, 160, 58);
+  gableHouse(g, 2310, FAR - 8, 112, 72);
+  gableHouse(g, 2540, FAR - 8, 132, 88);
+  for (let i = 0; i < 4; i++) el('rect', { x: 2440 - i * 5, y: FAR - 8 + i * 6, width: 70 + i * 10, height: 6, fill: STONE, stroke: ink(.5), 'stroke-width': 1 }, g);
+  willow(g, 2730, FAR - 6, 200, .25);
+  arts.push(g);
+}
+{ // 三：舣舟亭
+  const g = el('g', { id: 'art2' }, mdefs);
+  willow(g, 3420, FAR - 6, 220, -.2);
+  pine(g, 3960, FAR - 8, 300);
+  pavilion(g, 3720, FAR - 6);
+  const t = el('g', { 'font-family': '"Ma Shan Zheng","STKaiti","KaiTi",serif', fill: ink(.85), 'text-anchor': 'middle' }, g);
+  el('text', { x: 4160, y: 200, 'font-size': 76, text: '舣' }, t);
+  el('text', { x: 4160, y: 282, 'font-size': 76, text: '舟' }, t);
+  el('text', { x: 4100, y: 190, 'font-size': 20, fill: ink(.6), text: '後' }, t);
+  el('text', { x: 4100, y: 214, 'font-size': 20, fill: ink(.6), text: '人' }, t);
+  el('text', { x: 4100, y: 238, 'font-size': 20, fill: ink(.6), text: '築' }, t);
+  el('text', { x: 4100, y: 262, 'font-size': 20, fill: ink(.6), text: '亭' }, t);
+  el('rect', { x: 4140, y: 306, width: 40, height: 40, fill: '#b03a2e', rx: 2 }, g);
+  el('text', { x: 4160, y: 333, 'text-anchor': 'middle', 'font-family': '"Ma Shan Zheng","STKaiti","KaiTi",serif', 'font-size': 24, fill: '#f7f1e4', text: '常' }, g);
+  arts.push(g);
+}
+
+const NODES = [
+  { cx: 1330, trig: 1150, seal: '壹', title: '运河来路',
+    text: '北宋文人苏轼一生多次往来常州。江南运河，是他来去的水路，也把他和这座城连在了一起。', note: '' },
+  { cx: 2460, trig: 2300, seal: '贰', title: '择居常州',
+    text: '苏轼并非常州人。他曾上表朝廷，请求在常州居住，元丰八年（1085 年）获准。建中靖国元年（1101 年），他在常州病逝。', note: '' },
+  { cx: 3720, trig: 3470, seal: '叁', title: '后人筑亭',
+    text: '“舣”，意为使船靠岸。后人为纪念苏轼来常泊舟，修建了舣舟亭，今在常州东坡公园内。', note: '注：亭为后世纪念建筑，并非苏轼当年所见。' },
+];
+
+NODES.forEach((n, i) => {
+  const reg = { x: n.cx - 950, y: -150, width: 1900, height: 1200 };
+  const f = el('filter', { id: 'fBloom' + i, filterUnits: 'userSpaceOnUse', ...reg }, mdefs);
+  el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.016', numOctaves: 3, seed: 11 + i, result: 'n' }, f);
+  el('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: 150, xChannelSelector: 'R', yChannelSelector: 'G', result: 'd' }, f);
+  el('feGaussianBlur', { in: 'd', stdDeviation: 7 }, f);
+  const mask = el('mask', { id: 'mInk' + i, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: W, height: H }, mdefs);
+  const mg = el('g', { filter: `url(#fBloom${i})` }, mask);
+  n.circles = [
+    { c: el('circle', { cx: n.cx, cy: 470, r: 0, fill: '#fff' }, mg), max: 700, delay: 0 },
+    { c: el('circle', { cx: n.cx + R(-260, -140), cy: R(380, 520), r: 0, fill: '#fff' }, mg), max: R(170, 260), delay: -250 },
+    { c: el('circle', { cx: n.cx + R(140, 260), cy: R(380, 520), r: 0, fill: '#fff' }, mg), max: R(170, 260), delay: -120 },
+    { c: el('circle', { cx: n.cx + R(-60, 60), cy: R(640, 720), r: 0, fill: '#fff' }, mg), max: R(140, 220), delay: -60 },
+  ];
+  n.ghost = el('use', { href: '#art' + i, opacity: .075, filter: 'url(#fGhost)' }, M);
+  n.live = el('g', { mask: `url(#mInk${i})` }, M);
+  const refl = el('g', { 'clip-path': 'url(#cWater)' }, n.live);
+  el('use', { href: '#art' + i, transform: `translate(0,${2 * FAR}) scale(1,-1)`, opacity: .16, filter: 'url(#fRipple)' }, refl);
+  el('use', { href: '#art' + i }, n.live);
+});
+
+{ // 南岸（近景）
+  let d = `M0,${H + 10}L0,${f1(nearTop(0))}`;
+  for (let x = 0; x <= W; x += 10) d += `L${x},${f1(nearTop(x))}`;
+  d += `L${W},${H + 10}Z`;
+  el('path', { d, fill: PAPER }, M);
+  el('path', { d, fill: 'url(#gNear)' }, M);
+  let s = 'M0,' + f1(nearTop(0));
+  for (let x = 0; x <= W; x += 10) s += `L${x},${f1(nearTop(x))}`;
+  el('path', { d: s, fill: 'none', stroke: ink(.85), 'stroke-width': 3.4, filter: 'url(#fBleed)' }, M);
+  const dry = el('g', { fill: 'none', stroke: ink(.28), 'stroke-linecap': 'round' }, M);
+  for (let x = 0; x < W; x += R(60, 180)) {
+    const l = R(40, 140);
+    let p = `M${f1(x)},${f1(nearTop(x) + 6)}`;
+    for (let k = 10; k <= l; k += 10) p += `L${f1(x + k)},${f1(nearTop(x + k) + 6 + R(-1, 1))}`;
+    el('path', { d: p, 'stroke-width': f1(R(3, 6)) }, dry);
+  }
+  const moss = el('g', { fill: ink(.78) }, M);
+  for (let i = 0; i < 260; i++) {
+    const x = R(0, W);
+    el('ellipse', { cx: f1(x), cy: f1(nearTop(x) + R(-3, 22)), rx: f1(R(1.6, 4)), ry: f1(R(1.1, 2.8)) }, moss);
+  }
+  const tufts = el('g', { fill: 'none', stroke: ink(.7), 'stroke-linecap': 'round' }, M);
+  for (let x = 20; x < W; x += R(70, 200)) {
+    const y = nearTop(x) + 2;
+    for (let k = 0; k < 5; k++) {
+      const a = -Math.PI / 2 + R(-.7, .7), l = R(10, 26);
+      el('path', { d: `M${f1(x + k * 3)},${f1(y)} q${f1(Math.cos(a) * l * .3)},${f1(-l * .6)} ${f1(Math.cos(a) * l)},${f1(Math.sin(a) * l)}`, 'stroke-width': 1.2 }, tufts);
+    }
+  }
+}
+
+/* ---------- 特效层：提示墨点、涟漪 ---------- */
+const FX = LAYERS.fx.svg;
+NODES.forEach(n => {
+  n.marker = el('g', { class: 'marker', transform: `translate(${n.cx},360)` }, FX);
+  el('circle', { class: 'ring', cx: 0, cy: 0, r: 12, fill: 'none', stroke: '#b03a2e', 'stroke-width': 2 }, n.marker);
+  el('circle', { class: 'ring r2', cx: 0, cy: 0, r: 12, fill: 'none', stroke: '#b03a2e', 'stroke-width': 2 }, n.marker);
+  el('path', { class: 'dot', d: 'M0,-14 C6,-5 9,0 9,5 A9,9 0 1 1 -9,5 C-9,0 -6,-5 0,-14 Z', fill: ink(.9) }, n.marker);
+});
+const rippleG = el('g', { fill: 'none' }, FX);
+const ripples = [];
+
+/* ---------- 前景芦苇 ---------- */
+{
+  const g = LAYERS.front.svg, w = LAYERS.front.w;
+  for (let x = R(700, 900); x < w; x += R(520, 980)) {
+    const cl = el('g', { filter: 'url(#fBleed)' }, g);
+    const n = Math.round(R(7, 13));
+    for (let k = 0; k < n; k++) {
+      const bx = x + R(-40, 40), h = R(110, 250), lean = R(-.45, .45), bw = R(3.5, 6);
+      const tx = bx + lean * h, ty = H - h;
+      const c1x = bx + lean * h * .25, c1y = H - h * .55;
+      el('path', { d: `M${f1(bx - bw)},${H + 6} Q${f1(c1x - bw * .6)},${f1(c1y)} ${f1(tx)},${f1(ty)} Q${f1(c1x + bw * .6)},${f1(c1y)} ${f1(bx + bw)},${H + 6} Z`, fill: ink(f1(R(.7, .92))) }, cl);
+      if (rnd() < .35) {
+        for (let j = 0; j < 7; j++) {
+          const a = -Math.PI / 2 + lean + R(-.6, .6), l = R(10, 24);
+          el('line', { x1: f1(tx), y1: f1(ty), x2: f1(tx + Math.cos(a) * l), y2: f1(ty + Math.sin(a) * l), stroke: ink(.35), 'stroke-width': 1 }, cl);
+        }
+      }
+    }
+  }
+}
+
+/* ---------- 小舟 ---------- */
+const boatDiv = document.getElementById('boat');
+const BW = 260, BH = 175, BWL = 96;
+const boatSvg = el('svg', { viewBox: `0 0 ${BW} ${BH}` }, boatDiv);
+{
+  const art = el('g', { id: 'boatArt' }, el('defs', {}, boatSvg));
+  el('line', { x1: 62, y1: 28, x2: 4, y2: 140, stroke: ink(.8), 'stroke-width': 2.2, 'stroke-linecap': 'round' }, art);
+  el('path', { d: 'M6,80 Q130,93 254,73 Q228,106 130,106 Q38,106 6,80 Z', fill: ink(.9) }, art);
+  el('path', { d: 'M12,82 Q130,93 248,76', fill: 'none', stroke: paper(.35), 'stroke-width': 1.2 }, art);
+  el('path', { d: 'M80,90 C82,50 156,50 160,89 Z', fill: ink(.8) }, art);
+  for (const x of [96, 112, 128, 144]) el('path', { d: `M${x},90 Q${x + 1},62 ${x + 2},58`, stroke: paper(.2), 'stroke-width': 1, fill: 'none' }, art);
+  // 撑船人
+  el('path', { d: 'M34,86 L39,52 L49,52 L52,86 Z', fill: ink(.72) }, art);
+  el('circle', { cx: 44, cy: 46, r: 5, fill: ink(.85) }, art);
+  el('path', { d: 'M31,45 L44,35 L57,45 Z', fill: ink(.88) }, art);
+  el('line', { x1: 47, y1: 58, x2: 58, y2: 40, stroke: ink(.75), 'stroke-width': 2.4, 'stroke-linecap': 'round' }, art);
+  // 坐于船头的文人（白描）
+  el('path', { d: 'M180,90 Q184,64 197,57 Q210,63 215,90 Z', fill: WALL, stroke: ink(.85), 'stroke-width': 1.5 }, art);
+  el('path', { d: 'M186,72 Q197,70 206,78', fill: 'none', stroke: ink(.6), 'stroke-width': 1.2 }, art);
+  el('circle', { cx: 197, cy: 49, r: 6.5, fill: WALL, stroke: ink(.85), 'stroke-width': 1.4 }, art);
+  el('path', { d: 'M190.5,46 L191.5,31 L203,31 L204,46 Z', fill: ink(.9) }, art);
+  el('path', { d: 'M196,55 Q195,61 193,64', fill: 'none', stroke: ink(.7), 'stroke-width': 1.2 }, art);
+  el('use', { href: '#boatArt', transform: `translate(0,${BWL * 2}) scale(1,-1)`, opacity: .15, filter: 'url(#fRipple)' }, boatSvg);
+  el('use', { href: '#boatArt' }, boatSvg);
+}
+
+/* ---------- 纸纹 ---------- */
+{
+  const c = document.createElement('canvas'); c.width = c.height = 240;
+  const x = c.getContext('2d'), img = x.createImageData(240, 240);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 150 + Math.random() * 105;
+    img.data[i] = v; img.data[i + 1] = v * .97; img.data[i + 2] = v * .9; img.data[i + 3] = 70;
+  }
+  x.putImageData(img, 0, 0);
+  x.strokeStyle = 'rgba(120,95,60,.12)'; x.lineWidth = .6;
+  for (let i = 0; i < 70; i++) {
+    const sx = Math.random() * 240, sy = Math.random() * 240;
+    x.beginPath(); x.moveTo(sx, sy); x.quadraticCurveTo(sx + Math.random() * 20 - 10, sy + Math.random() * 20 - 10, sx + Math.random() * 30 - 15, sy + Math.random() * 30 - 15); x.stroke();
+  }
+  document.getElementById('grain').style.backgroundImage = `url(${c.toDataURL()})`;
+}
+
+/* ---------- 尺寸 ---------- */
+let s = 1, VW = 1600;
+function resize() {
+  // 隐藏的面板里视口尺寸可能为 0，避免得到 0 / NaN
+  s = Math.max(innerHeight, 1) / H; VW = Math.max(innerWidth, 1) / s;
+  for (const L of Object.values(LAYERS)) { L.svg.setAttribute('width', L.w * s); L.svg.setAttribute('height', H * s); }
+  boatSvg.setAttribute('width', BW * s); boatSvg.setAttribute('height', BH * s);
+}
+addEventListener('resize', resize); resize();
+
+/* ---------- 交互 ---------- */
+const stageEl = document.getElementById('stage');
+const hint = document.getElementById('hint');
+const card = document.getElementById('card');
+const progressLis = [...document.querySelectorAll('#progress li')];
+const MINX = 300, MAXX = 3690, MAXV = 5.2;
+let state = 'intro', boatX = MINX, boatV = 0, camX = 0, dragging = false, pX = 0, wheelImp = 0, lastRipX = MINX, next = 0, keyDir = 0;
+
+stageEl.addEventListener('pointerdown', e => { if (state !== 'play') return; dragging = true; pX = e.clientX; stageEl.classList.add('dragging'); stageEl.setPointerCapture(e.pointerId); });
+stageEl.addEventListener('pointermove', e => { pX = e.clientX; });
+const up = () => { dragging = false; stageEl.classList.remove('dragging'); };
+stageEl.addEventListener('pointerup', up); stageEl.addEventListener('pointercancel', up);
+addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'd') keyDir = 1; if (e.key === 'ArrowLeft' || e.key === 'a') keyDir = -1; });
+addEventListener('keyup', e => { if (['ArrowRight', 'ArrowLeft', 'a', 'd'].includes(e.key)) keyDir = 0; });
+addEventListener('wheel', e => { if (state === 'play') wheelImp = clamp(wheelImp + (e.deltaY + e.deltaX) * .03, -MAXV, MAXV); }, { passive: true });
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  document.getElementById('intro').classList.add('open');
+  setTimeout(() => { state = 'play'; hint.classList.remove('hide'); }, 900);
+  setTimeout(() => document.getElementById('intro').style.display = 'none', 1700);
+});
+document.getElementById('againBtn').addEventListener('click', () => location.reload());
+
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+// rAF 在后台 / 隐藏的 iframe 中可能暂停，用 setTimeout 兜底
+function tick(cb) {
+  let fired = false;
+  const id = requestAnimationFrame(t => { fired = true; cb(t); });
+  setTimeout(() => { if (!fired) { cancelAnimationFrame(id); cb(performance.now()); } }, 120);
+}
+function reveal(i) {
+  const n = NODES[i];
+  n.marker.style.transition = 'opacity .6s'; n.marker.style.opacity = 0;
+  const t0 = performance.now(), dur = 2100;
+  (function step(t) {
+    const k = clamp((t - t0) / dur, 0, 1);
+    for (const c of n.circles) c.c.setAttribute('r', f1(c.max * easeOut(clamp((t - t0 - c.delay) / dur, 0, 1))));
+    n.ghost.setAttribute('opacity', f1(.075 * (1 - k)));
+    if (k < 1) tick(step);
+    else { n.live.removeAttribute('mask'); n.ghost.remove(); }
+  })(t0);
+  // 故事卡
+  card.classList.remove('show');
+  setTimeout(() => {
+    document.getElementById('cardSeal').textContent = n.seal;
+    document.getElementById('cardTitle').textContent = n.title;
+    document.getElementById('cardText').textContent = n.text;
+    document.getElementById('cardNote').textContent = n.note;
+    card.classList.add('show');
+  }, i === 0 ? 300 : 700);
+  // 墨点飞入进度
+  const d = document.createElement('div'); d.className = 'drop';
+  d.style.left = ((n.cx - camX) * s) + 'px'; d.style.top = (360 * s) + 'px';
+  document.body.appendChild(d);
+  const r = progressLis[i].querySelector('i').getBoundingClientRect();
+  setTimeout(() => {
+    d.style.left = (r.left + r.width / 2) + 'px'; d.style.top = (r.top + r.height / 2) + 'px';
+    d.style.transform = 'scale(.6)'; d.style.opacity = 0;
+  }, 40);
+  setTimeout(() => { progressLis[i].classList.add('done'); d.remove(); }, 1000);
+  if (i === NODES.length - 1) {
+    state = 'moor';
+    setTimeout(() => { card.classList.remove('show'); document.getElementById('ending').classList.add('show'); state = 'end'; }, 5200);
+  }
+}
+
+let last = performance.now();
+function frame(t) {
+  const dt = Math.min(50, t - last) / 16.667; last = t;
+  let want = 0;
+  if (state === 'play') {
+    if (dragging) want = clamp(((camX + pX / s) - boatX) * .05, -MAXV, MAXV);
+    if (keyDir) want = keyDir * MAXV;
+    want = clamp(want + wheelImp, -MAXV, MAXV);
+  } else if (state === 'moor') {
+    want = clamp((MAXX - boatX) * .03, -2, 2);
+  }
+  wheelImp *= Math.pow(.9, dt);
+  boatV += (want - boatV) * .07 * dt;
+  boatX = clamp(boatX + boatV * dt, MINX, MAXX);
+  if (boatX === MAXX || boatX === MINX) boatV *= .8;
+
+  if (state === 'play' && next < NODES.length && boatX >= NODES[next].trig) reveal(next++);
+  if (boatX > MINX + 160) hint.classList.add('hide');
+
+  const camT = clamp(boatX - VW * .36, 0, Math.max(0, W - VW));
+  camX = Number.isFinite(camX) ? camX + (camT - camX) * .06 * dt : camT;
+
+  for (const L of Object.values(LAYERS)) L.div.style.transform = `translate3d(${-camX * L.f * s}px,0,0)`;
+  const bob = Math.sin(t * .0021) * 2.6;
+  const tilt = clamp(boatV * .5, -2.5, 2.5) + Math.sin(t * .0016) * .8;
+  boatDiv.style.transform = `translate3d(${(boatX - camX - BW / 2) * s}px,${(WATER + bob - BWL) * s}px,0) rotate(${tilt}deg)`;
+
+  // 涟漪
+  if (Math.abs(boatX - lastRipX) > 28 && Math.abs(boatV) > .4) {
+    lastRipX = boatX;
+    const dir = Math.sign(boatV);
+    ripples.push({ x: boatX - dir * 105, e: el('ellipse', { cx: 0, cy: WATER + 8, rx: 10, ry: 2.5, stroke: ink(.4), 'stroke-width': 1.2 }, rippleG), rx: 10, ry: 2.5, o: .45 });
+  }
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const r = ripples[i];
+    r.rx += 1.1 * dt; r.ry += .22 * dt; r.o -= .007 * dt;
+    if (r.o <= 0) { r.e.remove(); ripples.splice(i, 1); continue; }
+    r.e.setAttribute('cx', f1(r.x)); r.e.setAttribute('rx', f1(r.rx)); r.e.setAttribute('ry', f1(r.ry)); r.e.setAttribute('stroke', ink(f1(r.o)));
+  }
+  tick(frame);
+}
+tick(frame);
+})();
+</script>
+</body>
+</html>

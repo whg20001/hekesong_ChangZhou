@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>纸上常州 · 终章</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#efe7d6; --paper-hi:#f7f1e4; --ink:#1c1b19; --ink-2:#3a3833; --ink-soft:rgba(28,27,25,.55);
+  --seal:#b03a2e; --gold:#e0a526; --teal:#2f8f83; --navy:#22314f; --bar:#1c1b19;
+  --brush:"Ma Shan Zheng","STKaiti","KaiTi",serif; --wood:"ZCOOL QingKe HuangYou",sans-serif; --pop:"ZCOOL XiaoWei",serif;
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--serif)}
+button{font:inherit;color:inherit}
+#stage{position:fixed;inset:0;overflow:hidden;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#stage.dragging{cursor:grabbing}
+.layer{position:absolute;left:0;top:0;will-change:transform}
+.layer svg{display:block;overflow:visible}
+#grain{position:fixed;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.5;z-index:25}
+.stamp .glow{transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.8);opacity:.8}100%{transform:scale(1.6);opacity:0}}
+
+#hud{position:fixed;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:16px 22px;pointer-events:none;z-index:5}
+.chapter{display:flex;gap:12px;align-items:center}
+.seal-sm{width:36px;height:36px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:22px;border-radius:3px}
+.chapter b{display:block;font-family:var(--brush);font-weight:400;font-size:28px;letter-spacing:.14em;line-height:1}
+.chapter small{display:block;margin-top:5px;font-size:12px;letter-spacing:.18em;color:var(--ink-soft)}
+#res{display:flex;gap:16px;font-size:12px;letter-spacing:.12em;color:var(--ink-soft);text-align:center}
+#res b{display:block;font-family:var(--brush);font-weight:400;font-size:24px;color:var(--ink)}
+#res .stamps b{color:var(--seal)}
+#hint{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:6;font-size:15px;letter-spacing:.18em;color:var(--ink-2);background:rgba(247,241,228,.9);
+  padding:8px 18px;border:1px solid rgba(28,27,25,.25);pointer-events:none;transition:opacity .8s;text-align:center}
+#hint small{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+#hint.hide{opacity:0}
+#goBuild{position:fixed;right:24px;bottom:26px;z-index:7;padding:12px 22px;background:var(--seal);color:var(--paper-hi);border:none;font-family:var(--brush);font-size:24px;
+  letter-spacing:.2em;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2);display:none;animation:nudge 1.6s ease-in-out infinite}
+#goBuild.on{display:block}
+@keyframes nudge{50%{transform:translateY(-4px)}}
+#banner{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:8;background:rgba(247,241,228,.96);border:1px solid rgba(28,27,25,.3);padding:8px 20px;font-size:14px;
+  letter-spacing:.12em;opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap}
+#banner.show{opacity:1}
+
+/* 人物故事卡 */
+#pcard{position:fixed;inset:0;z-index:30;background:rgba(28,27,25,.5);display:none;place-items:center}
+#pcard.on{display:grid}
+#pcard .panel{position:relative;width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow-x:hidden;overflow-y:auto;background:var(--paper-hi);padding:28px 30px 24px;
+  border:1px solid rgba(28,27,25,.3);box-shadow:0 24px 60px rgba(0,0,0,.25)}
+#pcard .seal{position:absolute;right:20px;top:16px;width:56px;height:56px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);
+  font-size:20px;writing-mode:vertical-rl;letter-spacing:.05em;transform:rotate(-4deg);animation:stampIn .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes stampIn{from{transform:scale(2.2) rotate(-14deg);opacity:0}}
+#pcard .era{font-size:12px;letter-spacing:.3em;color:var(--ink-soft)}
+#pcard h2{font-family:var(--brush);font-weight:400;font-size:40px;letter-spacing:.12em;margin:4px 0 2px}
+#pcard .yrs{font-size:14px;color:var(--ink-soft);margin-bottom:12px}
+#pcard p{font-size:15px;line-height:1.95;color:var(--ink-2);text-align:justify}
+#pcard .bld{margin-top:12px;padding:10px 12px;background:rgba(28,27,25,.05);font-size:14px;line-height:1.8}
+#pcard .bld b{color:var(--seal);font-weight:600}
+#pcard .play{margin-top:12px;display:flex;align-items:center;gap:12px;font-size:14px;flex-wrap:wrap}
+#pcard .play .g{width:38px;height:38px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:22px}
+#pcard .play .g.none{background:transparent;border:1px dashed var(--ink-soft);color:var(--ink-soft);font-size:13px}
+#pcard .play a{color:var(--paper-hi);background:var(--ink);padding:6px 14px;text-decoration:none;letter-spacing:.1em}
+#pcard .close{margin-top:16px;display:flex;justify-content:flex-end}
+#pcard .close button{padding:8px 20px;border:1px solid var(--ink);background:none;cursor:pointer;letter-spacing:.2em}
+#pcard .note{margin-top:8px;font-size:12px;color:var(--ink-soft)}
+/* 拼音小游戏 */
+.py{margin-top:14px;padding:12px;border:1px dashed rgba(28,27,25,.35)}
+.py h4{font-family:var(--pop);font-weight:400;font-size:20px;color:var(--teal);margin-bottom:6px}
+.py .syl{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}
+.py .syl span{font-family:var(--brush);font-size:24px;width:34px}
+.py .syl button{min-width:44px;padding:5px 8px;border:1px solid rgba(28,27,25,.35);background:var(--paper);cursor:pointer;font-size:15px}
+.py .syl button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.py .out{font-size:26px;letter-spacing:.08em;margin-top:6px;color:var(--navy);min-height:1.3em}
+.py .out.ok{color:var(--seal)}
+
+/* 拼合文化广场 */
+#build{position:fixed;inset:0;z-index:20;background:var(--paper);display:none}
+#build.on{display:block}
+#bSvg{position:absolute;inset:0;width:100%;height:100%}
+#build .bar{position:absolute;left:0;right:0;height:8vh;min-height:44px;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:rgba(247,241,228,.85);z-index:2}
+#build .bar.top{top:0} #build .bar.bot{bottom:0;justify-content:center;font-size:14px;letter-spacing:.15em}
+#build .bar.top span{font-family:var(--brush);font-size:24px;letter-spacing:.25em}
+#bTip{position:absolute;left:50%;top:calc(max(8vh,44px) + 12px);transform:translateX(-50%);z-index:3;background:var(--paper-hi);border:1px solid rgba(28,27,25,.3);padding:8px 18px;font-size:15px;max-width:80vw;text-align:center}
+#bTip.bad{color:var(--seal)}
+#tray{position:absolute;left:16px;top:calc(max(8vh,44px) + 64px);display:grid;grid-template-columns:repeat(2,76px);gap:8px;z-index:3}
+.piece{width:76px;height:58px;border:2px solid var(--ink);cursor:grab;display:grid;place-items:center;font-size:12px;letter-spacing:.1em;touch-action:none;user-select:none;position:relative;background:var(--paper-hi)}
+.piece svg{position:absolute;inset:0;width:100%;height:100%}
+.piece span{position:relative;background:rgba(247,241,228,.9);padding:0 4px}
+.piece.used{opacity:.2;pointer-events:none}
+.piece.ghost{position:fixed;z-index:26;pointer-events:none;transform:translate(-50%,-50%) rotate(-4deg);box-shadow:0 10px 24px rgba(0,0,0,.2)}
+.piece.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* 开场 / 结尾 / CG */
+#intro{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:var(--paper);clip-path:inset(0 0 0 0);transition:clip-path 1.6s cubic-bezier(.7,0,.2,1)}
+#intro.open{clip-path:inset(0 50% 0 50%)}
+#intro .inner{display:flex;gap:40px;align-items:center}
+#intro h1{writing-mode:vertical-rl;font-family:var(--brush);font-weight:400;font-size:clamp(64px,11vh,110px);letter-spacing:.18em;line-height:1}
+#intro .meta{writing-mode:vertical-rl;font-size:15px;letter-spacing:.4em;color:var(--ink-soft);line-height:2.2}
+#intro .meta em{font-style:normal;color:var(--seal)}
+#startBtn{width:88px;height:88px;border:none;border-radius:4px;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:30px;cursor:pointer;transform:rotate(-3deg)}
+#final{position:fixed;inset:0;z-index:28;display:none;place-items:center;background:rgba(28,27,25,.35)}
+#final.on{display:grid}
+#final .panel{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto;background:var(--paper-hi);padding:30px 32px 24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+#final h2{font-family:var(--brush);font-weight:400;font-size:44px;letter-spacing:.2em}
+#final .rows{margin:16px 0;text-align:left}
+#final .row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed rgba(28,27,25,.2);font-size:14px}
+#final .row .nm{width:88px;font-family:var(--brush);font-size:22px}
+#final .row .gs{display:flex;gap:6px}
+#final .row .gs b{width:30px;height:30px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-weight:400;font-size:18px}
+#final .row .gs b.none{background:transparent;border:1px dashed var(--ink-soft);color:var(--ink-soft)}
+#final .row .rs{margin-left:auto;color:var(--ink-soft);white-space:nowrap}
+#final p{font-size:15px;line-height:2;color:var(--ink-2)}
+#final .btns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+#final button{padding:10px 18px;border:1px solid var(--ink);background:none;cursor:pointer;letter-spacing:.15em}
+#final button.primary{background:var(--ink);color:var(--paper-hi)}
+#cg{position:fixed;inset:0;z-index:24;display:none;background:var(--paper);transition:opacity .8s}
+#cg.on{display:block}
+#cgStage{position:absolute;inset:0;overflow:hidden;background:var(--paper)}
+#cg .shot{position:absolute;inset:0;overflow:hidden}
+#cg .lyr{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transform-origin:50% 50%;will-change:transform}
+#cg .iris{position:absolute;left:50%;top:50%;width:1000px;height:1000px;pointer-events:none;will-change:transform}
+#cg .iris svg{width:100%;height:100%;display:block}
+#cg .bar{position:absolute;left:0;right:0;height:9vh;min-height:46px;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:rgba(247,241,228,.75);z-index:3}
+#cg .bar.top{top:0} #cg .bar.bot{bottom:0;justify-content:center}
+#cg .bar.top span{font-family:var(--brush);font-size:22px;letter-spacing:.3em}
+#cgSkip{background:transparent;border:1px solid rgba(247,241,228,.35);color:rgba(247,241,228,.8);padding:4px 14px;font-size:13px;letter-spacing:.2em;cursor:pointer}
+#cgSub{font-size:clamp(15px,2vw,20px);letter-spacing:.2em;color:#f3ecdc}
+#cgFlash{position:absolute;inset:0;background:#fffdf6;opacity:0;pointer-events:none;z-index:2}
+#cgTitle{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;text-align:center;opacity:0;transition:opacity 1.4s;pointer-events:none;white-space:nowrap}
+#cgTitle.on{opacity:1}
+#cgTitle b{display:block;font-family:var(--brush);font-weight:400;font-size:clamp(48px,9vw,110px);letter-spacing:.25em;color:var(--ink)}
+#cgTitle span{display:block;margin-top:10px;font-size:clamp(13px,1.6vw,17px);letter-spacing:.3em;color:var(--ink-soft)}
+@media (max-width:640px){ .chapter small{display:none} #res{gap:8px} #res b{font-size:18px} }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs id="gdefs">
+    <filter id="fWash" x="-10%" y="-20%" width="120%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01 0.035" numOctaves="3" seed="8" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="28" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="3"/>
+    </filter>
+    <filter id="fBleed" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="5" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="fPaper" x="-10%" y="-10%" width="125%" height="125%"><feDropShadow dx="4" dy="5" stdDeviation="0" flood-color="#22314f" flood-opacity=".28"/></filter>
+    <filter id="fSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+    <pattern id="pThread" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+      <rect width="18" height="18" fill="#f5efe0"/><rect width="18" height="7" fill="#b5321f"/><rect y="12" width="18" height="2" fill="#16140f"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div id="stage">
+  <div class="layer" id="L-far"></div>
+  <div class="layer" id="L-main"></div>
+</div>
+<div id="grain"></div>
+
+<header id="hud">
+  <div class="chapter">
+    <span class="seal-sm">终</span>
+    <div><b>纸上常州</b><small>终章 · 一条可以玩出来的常州时间长卷</small></div>
+  </div>
+  <div id="res">
+    <div><b id="rInk">—</b>墨韵</div>
+    <div><b id="rYarn">—</b>纱线</div>
+    <div><b id="rIdea">—</b>灵感</div>
+    <div class="stamps"><b id="rSeal">0/6</b>印章</div>
+  </div>
+</header>
+<div id="banner"></div>
+<div id="hint" class="hide">拖动画卷浏览 · 点击人物印章，读一读他们与常州的故事<small>集齐 6 枚印章后，去拼出“纸上常州”</small></div>
+<button id="goBuild">拼合纸上常州 →</button>
+
+<section id="pcard"><div class="panel" id="pPanel"></div></section>
+
+<section id="build">
+  <svg id="bSvg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"></svg>
+  <div class="bar top"><span>纸上常州 · 拼合</span><span style="font-family:var(--serif);font-size:13px;letter-spacing:.15em">墨迹铺地 · 纱线成拱 · 几何为楼</span></div>
+  <div id="bTip">把下方的材料拖到同类的虚线框里（空格可自动放置）</div>
+  <div id="tray"></div>
+  <div class="bar bot">墨迹来自「行舟入墨」，纱线来自「经纬织城」，几何来自「巧排任务」</div>
+</section>
+
+<section id="cg" aria-live="polite">
+  <div id="cgStage"></div>
+  <div id="cgFlash"></div>
+  <div id="cgTitle"><b>纸上常州</b><span>全 篇 完 · 感 谢 游 玩</span></div>
+  <div class="bar top"><span>终章 · 纸上常州</span><button id="cgSkip">跳过 ››</button></div>
+  <div class="bar bot"><div id="cgSub"></div></div>
+</section>
+
+<section id="final">
+  <div class="panel">
+    <h2>纸上常州</h2>
+    <div class="rows" id="fRows"></div>
+    <p>运河、书卷、织机、算式——<br>常州的故事，写在纸上，也写在今天的城市里。</p>
+    <div class="btns">
+      <button id="fCg">重看尾声</button>
+      <button id="fBack">回到长卷</button>
+      <button class="primary" id="fRestart">从头再游一遍</button>
+    </div>
+  </div>
+</section>
+
+<section id="intro">
+  <div class="inner">
+    <div class="meta">终章 · <em>纸上常州</em><br>水墨 · 木刻 · 纸艺</div>
+    <h1>纸上常州</h1>
+    <button id="startBtn" aria-label="开始">展卷</button>
+  </div>
+</section>
+
+<script>
+(() => {
+/* ================= 配置 ================= */
+const FIRST_URL = 'scene-01-sushi.html';       // “从头再游”跳转地址，组合时可改
+const W = 4800, H = 900, NS = 'http://www.w3.org/2000/svg';
+const PAPER = '#efe7d6', PHI = '#f7f1e4', K = '#1c1b19', RED = '#b03a2e', WOODK = '#16140f', WPAPER = '#ebe3cf';
+const NAVY = '#22314f', TEAL = '#2f8f83', MUST = '#e0a526', CORAL = '#e2674a', SKY = '#9cc7d8', PINK = '#f0b3a2';
+const BRUSH = '"Ma Shan Zheng","STKaiti","KaiTi",serif', WOOD = '"ZCOOL QingKe HuangYou",sans-serif', POP = '"ZCOOL XiaoWei",serif';
+
+/* ================= 公共工具 ================= */
+let sd = 20171901;
+const rnd = () => (sd = (sd * 16807) % 2147483647, (sd - 1) / 2147483646);
+const R = (a, b) => a + (b - a) * rnd();
+const pick = a => a[Math.floor(rnd() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeIO = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+const f1 = n => (+n).toFixed(1);
+const ink = a => `rgba(28,27,25,${a})`;
+const $ = id => document.getElementById(id);
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) k === 'text' ? (e.textContent = attrs[k]) : e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const ellD = (cx, cy, rx, ry) => `M${f1(cx - rx)},${f1(cy)}a${f1(rx)},${f1(ry)} 0 1,0 ${f1(2 * rx)},0a${f1(rx)},${f1(ry)} 0 1,0 ${f1(-2 * rx)},0`;
+function tick(cb) {
+  let fired = false;
+  const id = requestAnimationFrame(t => { fired = true; cb(t); });
+  setTimeout(() => { if (!fired) { cancelAnimationFrame(id); cb(performance.now()); } }, 120);
+}
+function ridge(x0, x1, base, hmin, hmax, wmin, wmax, gap) {
+  const peaks = [];
+  for (let c = x0 - 150; c < x1 + 250; c += R(gap * .55, gap * 1.4)) peaks.push({ c, w: R(wmin, wmax), h: R(hmin, hmax) });
+  const pts = [];
+  for (let x = x0; x <= x1; x += 6) { let m = 0; for (const p of peaks) m = Math.max(m, p.h * Math.exp(-Math.pow(Math.abs(x - p.c) / p.w, 1.35))); pts.push([x, base - m]); }
+  return `M${x0},${H} ` + pts.map(p => `L${p[0]},${f1(p[1])}`).join('') + `L${x1},${H}Z`;
+}
+function hatch(g, x0, y0, x1, y1, gap, col, w = 2, op = 1) {
+  let d = '';
+  for (let y = y0; y < y1; y += gap) for (let x = x0; x < x1;) { const l = R(40, 220); d += `M${f1(x)},${f1(y)}h${f1(Math.min(l, x1 - x))}`; x += l + R(8, 50); }
+  return el('path', { d, stroke: col, 'stroke-width': w, opacity: op, fill: 'none' }, g);
+}
+const SAVE_KEY = 'cz-scroll-v1';
+function loadSave() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || { chapters: {} }; } catch (e) { return { chapters: {} }; } }
+const gradeOf = sc => sc == null ? '—' : sc >= .85 ? '甲' : sc >= .6 ? '乙' : '丙';
+const bannerQ = []; let bannerBusy = false;
+function banner(text, ms = 2800) { bannerQ.push([text, ms]); if (!bannerBusy) nextBanner(); }
+function nextBanner() {
+  const b = bannerQ.shift(); if (!b) { bannerBusy = false; return; }
+  bannerBusy = true; $('banner').textContent = b[0]; $('banner').classList.add('show');
+  setTimeout(() => { $('banner').classList.remove('show'); setTimeout(nextBanner, 400); }, b[1]);
+}
+
+/* ================= 存档：读取前三篇成绩 ================= */
+const save = loadSave(), CH = save.chapters || {};
+const resOf = id => CH[id] ? CH[id].res : null;
+$('rInk').textContent = resOf('sushi') ?? '—';
+$('rYarn').textContent = resOf('liu') ?? '—';
+$('rIdea').textContent = resOf('hua') ?? '—';
+
+/* ================= 人物 ================= */
+const PEOPLE = [
+  { id: 'sushi', x: 560, band: 0, name: '苏轼', era: '北宋', yrs: '1037—1101', seal: '东坡',
+    text: '北宋文学家。他并非常州人，却多次往来常州，曾上表请求在常州居住；1101 年北归途中抵达常州，同年在常州病逝。',
+    bld: '<b>舣舟亭</b>（东坡公园内）：后人为纪念苏轼来常泊舟而建。', play: 'scene-01-sushi.html', chap: '行舟入墨' },
+  { id: 'tang', x: 1200, band: 0, name: '唐顺之', era: '明', yrs: '1507—1560', seal: '荆川',
+    text: '号荆川，明代常州武进人。以文章知名，也通兵法，曾参与东南沿海的抗倭事务——常州的文人，并不只在书斋里。',
+    bld: '<b>青果巷 · 唐荆川故居（贞和堂）</b>、唐荆川纪念馆。' },
+  { id: 'qu', x: 2050, band: 1, name: '瞿秋白', era: '近代', yrs: '1899—1935', seal: '秋白',
+    text: '常州人，中国共产党早期主要领导人之一，也是文学家、翻译家。他从常州的求学生活出发，走向思想探索与文化实践。',
+    bld: '<b>瞿秋白故居、瞿秋白纪念馆</b>（常州）。' },
+  { id: 'liu', x: 2750, band: 1, name: '刘国钧', era: '近代', yrs: '1887—1978', seal: '国钧',
+    text: '生于靖江，在常州创业发展的实业家。1930 年接办大纶纱厂，改组为大成纺织染公司，是讲述常州近代工业的代表人物。',
+    bld: '<b>大成一厂旧址</b>及办公楼。', play: 'scene-02-liu.html', chap: '经纬织城' },
+  { id: 'hua', x: 3600, band: 2, name: '华罗庚', era: '现代', yrs: '1910—1985', seal: '罗庚',
+    text: '生于金坛（今常州金坛区）的数学家。早年自学成才，后来走进工厂与田间推广统筹法、优选法，把数学用到生产实践中。',
+    bld: '<b>金坛华罗庚纪念馆</b>。', play: 'scene-03-hua.html', chap: '巧排任务' },
+  { id: 'zhou', x: 4250, band: 2, name: '周有光', era: '现代', yrs: '1906—2017', seal: '有光',
+    text: '出生于常州青果巷礼和堂，并在此度过童年。语言文字学家，汉语拼音方案的主要制订者之一。',
+    bld: '<b>青果巷 · 礼和堂</b>、周有光图书馆。', pinyin: true },
+];
+const opened = new Set();
+
+/* ================= 长卷：三段风格 ================= */
+const LAYERS = { far: { f: .55 }, main: { f: 1 } };
+for (const [k, L] of Object.entries(LAYERS)) {
+  L.w = L.f >= 1 ? W : Math.round(W * L.f + 2400);
+  L.div = $('L-' + k); L.svg = el('svg', { viewBox: `0 0 ${L.w} ${H}` }, L.div);
+}
+const B1 = 1600, B2 = 3200;
+{ // 远景：水墨远山
+  const g = LAYERS.far.svg, b1 = B1 * .55 + 300;
+  el('path', { d: ridge(0, b1, 560, 120, 300, 90, 200, 280), fill: ink(.16), filter: 'url(#fWash)' }, g);
+  // 木刻、纸艺两段的主层背景不透明，远景只需水墨远山
+}
+const M = LAYERS.main.svg;
+{
+  // 水墨段
+  el('rect', { x: 0, y: 0, width: B1 + 40, height: H, fill: PAPER, opacity: 0 }, M);
+  el('circle', { cx: 420, cy: 190, r: 60, fill: 'rgba(176,58,46,.3)', filter: 'url(#fSoft)' }, M);
+  el('path', { d: ridge(0, B1, 620, 60, 200, 70, 160, 240), fill: ink(.4), filter: 'url(#fWash)' }, M);
+  el('rect', { x: 0, y: 620, width: B1, height: 120, fill: ink(.05) }, M);
+  let wv = ''; for (let i = 0; i < 80; i++) { const x = R(0, B1), y = R(640, 730); wv += `M${f1(x)},${f1(y)} q8,-3 16,0 t16,0`; }
+  el('path', { d: wv, stroke: ink(.2), fill: 'none' }, M);
+  el('use', { href: '#boatW', x: 0, y: 0 }, M);
+  // 木刻段
+  el('rect', { x: B1, y: 0, width: B2 - B1, height: H, fill: WPAPER }, M);
+  hatch(M, B1, 40, B2, 560, 15, WOODK, 2, .3);
+  el('circle', { cx: B1 + 760, cy: 200, r: 64, fill: '#b5321f' }, M);
+  for (let x = B1 + 20; x < B2; x += R(150, 220)) { const h = R(150, 240), w2 = R(110, 170); el('rect', { x, y: 740 - h, width: w2, height: h, fill: WOODK }, M); for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) el('rect', { x: x + 12 + c * w2 / 3.2, y: 740 - h + 24 + r * 54, width: w2 / 5, height: 28, fill: WPAPER, opacity: .9 }, M); }
+  el('rect', { x: B1 + 1240, y: 340, width: 34, height: 400, fill: WOODK }, M);
+  // 纸艺段
+  el('rect', { x: B2, y: 0, width: W - B2, height: H, fill: '#f7e9cc' }, M);
+  el('circle', { cx: B2 + 900, cy: 210, r: 80, fill: MUST, filter: 'url(#fPaper)' }, M);
+  for (let x = B2 + 20; x < W; x += R(120, 180)) { const h = R(150, 300), w2 = R(90, 140), col = pick([TEAL, MUST, CORAL, NAVY, SKY, PINK]); const b = el('g', { filter: 'url(#fPaper)' }, M); el('rect', { x, y: 740 - h, width: w2, height: h, fill: col }, b); for (let r = 0; r < Math.floor(h / 50); r++) for (let c = 0; c < 2; c++) el('rect', { x: x + 12 + c * w2 / 2.1, y: 740 - h + 16 + r * 50, width: w2 / 3, height: 24, fill: col === NAVY || col === TEAL ? MUST : '#fffaf0' }, b); }
+  // 地面与时间轴
+  el('rect', { x: 0, y: 740, width: B1, height: 200, fill: ink(.12) }, M);
+  el('rect', { x: B1, y: 740, width: B2 - B1, height: 200, fill: WOODK }, M);
+  el('rect', { x: B2, y: 740, width: W - B2, height: 200, fill: NAVY }, M);
+  // 撕纸接缝
+  for (const bx of [B1, B2]) {
+    let d = `M${bx - 20},0`;
+    for (let y = 0; y <= H; y += 24) d += ` L${f1(bx + (y / 24 % 2 ? 14 : -14) + R(-6, 6))},${y}`;
+    el('path', { d: d + ` L${bx + 40},${H} L${bx + 40},0 Z`, fill: '#fffdf6', opacity: .9, filter: 'url(#fPaper)' }, M);
+  }
+  el('line', { x1: 0, y1: 800, x2: W, y2: 800, stroke: '#c9b98f', 'stroke-width': 4 }, M);
+  [['北宋', 300], ['明', 1000], ['清末民初', 1900], ['民国', 2600], ['新中国', 3500], ['今天', 4500]].forEach(([t, x]) => {
+    el('circle', { cx: x, cy: 800, r: 7, fill: '#c9b98f' }, M);
+    el('text', { x, y: 836, 'text-anchor': 'middle', 'font-size': 20, fill: x < B1 ? K : '#f5efe0', 'letter-spacing': 4, text: t }, M);
+  });
+  ['水墨 · 古代篇', '木刻 · 近代篇', '纸艺 · 现代篇'].forEach((t, i) => el('text', { x: [80, B1 + 80, B2 + 80][i], y: 130, 'font-size': 26, 'font-family': [BRUSH, WOOD, POP][i], fill: i === 1 ? WOODK : i === 2 ? NAVY : K, 'letter-spacing': 6, text: t }, M));
+}
+// 水墨段的小舟（简笔）
+{
+  const g = el('g', { id: 'boatW' }, el('defs', {}, M));
+  el('path', { d: 'M800,690 Q930,702 1060,684 Q1036,716 930,716 Q840,716 800,690 Z', fill: ink(.85) }, g);
+  el('path', { d: 'M880,696 C882,668 940,668 944,694 Z', fill: ink(.75) }, g);
+  el('line', { x1: 1000, y1: 690, x2: 1000, y2: 656, stroke: ink(.85), 'stroke-width': 4 }, g);
+}
+// 人物印章
+const stampsG = el('g', {}, M);
+PEOPLE.forEach((p, i) => {
+  const g = el('g', { class: 'stamp', transform: `translate(${p.x},560)`, cursor: 'pointer' }, stampsG);
+  const font = [BRUSH, WOOD, POP][p.band];
+  el('rect', { class: 'glow', x: -64, y: -86, width: 128, height: 172, fill: 'none', stroke: RED, 'stroke-width': 3 }, g);
+  el('rect', { x: -58, y: -80, width: 116, height: 160, fill: PHI, stroke: p.band === 1 ? WOODK : ink(.4), 'stroke-width': 2, filter: p.band === 2 ? 'url(#fPaper)' : null }, g);
+  el('text', { x: 0, y: -56, 'text-anchor': 'middle', 'font-size': 14, fill: ink(.55), 'letter-spacing': 4, text: p.era }, g);
+  [...p.name].forEach((ch, k) => el('text', { x: 0, y: (p.name.length > 2 ? -14 : 2) + k * 34, 'text-anchor': 'middle', 'font-family': font, 'font-size': 32, fill: K, text: ch }, g));
+  el('line', { x1: 0, y1: 80, x2: 0, y2: 232, stroke: '#c9b98f', 'stroke-width': 3, 'stroke-dasharray': '6 6' }, g);
+  p.mark = el('g', { opacity: 0, transform: 'translate(38,62) rotate(-8)' }, g);
+  el('rect', { x: -26, y: -26, width: 52, height: 52, fill: RED }, p.mark);
+  [...p.seal].forEach((ch, k) => el('text', { x: 0, y: -4 + k * 22, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 20, fill: PHI, text: ch }, p.mark));
+  p.g = g;
+  g.addEventListener('pointerdown', e => { e.stopPropagation(); openCard(p); });
+});
+
+/* ================= 人物故事卡 ================= */
+function openCard(p) {
+  const rec = CH[p.id];
+  let play = '';
+  if (p.play) {
+    const gs = rec ? rec.grades.map(g => { const gr = gradeOf(g); return `<span class="g ${gr === '—' ? 'none' : ''}">${gr === '—' ? '未评' : gr}</span>`; }).join('') : '<span class="g none">未玩</span>';
+    play = `<div class="play">本章「${p.chap}」：${gs}<a href="${p.play}">${rec ? '再玩一次' : '去玩这一章'} →</a></div>`;
+  }
+  const py = p.pinyin ? `<div class="py"><h4>拼一拼：常州</h4>
+      <div class="syl" data-s="0"><span>常</span></div><div class="syl" data-s="1"><span>州</span></div>
+      <div class="out" id="pyOut">_ _</div></div>` : '';
+  $('pPanel').innerHTML = `<div class="seal">${p.seal}</div><div class="era">${p.era}</div><h2>${p.name}</h2><div class="yrs">${p.yrs}</div>
+    <p>${p.text}</p><div class="bld">关联建筑：${p.bld}</div>${play}${py}
+    <div class="note">${p.play ? '' : '本人物目前以故事卡呈现，可在后续版本扩展为完整关卡。'}</div>
+    <div class="close"><button id="pClose">盖印收下</button></div>`;
+  $('pcard').classList.add('on');
+  if (p.pinyin) pinyinGame();
+  $('pClose').onclick = () => {
+    $('pcard').classList.remove('on');
+    if (!opened.has(p.id)) {
+      opened.add(p.id); p.mark.setAttribute('opacity', 1);
+      p.g.querySelector('.glow').remove();
+      $('rSeal').textContent = `${opened.size}/6`;
+      if (opened.size === PEOPLE.length) { banner('六枚印章集齐——去拼出“纸上常州”！'); $('goBuild').classList.add('on'); }
+    }
+  };
+}
+// 周有光：选声母、韵母、声调，拼出 Cháng zhōu
+function pinyinGame() {
+  const SYL = [{ sm: ['ch', 'c', 'zh'], ym: ['ang', 'an', 'eng'], sd: [1, 2, 3, 4], ans: ['ch', 'ang', 2] },
+               { sm: ['zh', 'j', 'z'], ym: ['ou', 'iu', 'ao'], sd: [1, 2, 3, 4], ans: ['zh', 'ou', 1] }];
+  const pickd = [[null, null, null], [null, null, null]];
+  const TONE = { a: 'āáǎà', o: 'ōóǒò', e: 'ēéěè', u: 'ūúǔù', i: 'īíǐì' };
+  const mark = (ym, t) => { if (!t) return ym; const v = ym.includes('a') ? 'a' : ym.includes('o') ? 'o' : ym.includes('e') ? 'e' : ym.includes('u') ? 'u' : 'i'; return ym.replace(v, TONE[v][t - 1]); };
+  document.querySelectorAll('.py .syl').forEach(row => {
+    const s = +row.dataset.s, cfg = SYL[s];
+    [cfg.sm, cfg.ym, cfg.sd].forEach((opts, k) => opts.forEach(o => {
+      const b = document.createElement('button'); b.textContent = k === 2 ? ['ˉ', 'ˊ', 'ˇ', 'ˋ'][o - 1] + ` ${o}声` : o;
+      b.onclick = () => { pickd[s][k] = o; row.querySelectorAll('button').forEach(x => { if (x.dataset.k == k) x.classList.remove('on'); }); b.classList.add('on'); out(); };
+      b.dataset.k = k; row.appendChild(b);
+    }));
+  });
+  const out = () => {
+    const txt = pickd.map(p => (p[0] || '_') + mark(p[1] || '_', p[2])).join(' ');
+    const ok = pickd.every((p, i) => p[0] === SYL[i].ans[0] && p[1] === SYL[i].ans[1] && p[2] === SYL[i].ans[2]);
+    $('pyOut').textContent = ok ? 'Chángzhōu ✓' : txt; $('pyOut').classList.toggle('ok', ok);
+    if (ok) banner('拼对了：Chángzhōu');
+  };
+}
+
+/* ================= 长卷浏览 ================= */
+let s = 1, VW = 1600, camX = 0, camV = 0, state = 'intro', drag = null, keyDir = 0;
+function resize() {
+  s = Math.max(innerHeight, 1) / H; VW = Math.max(innerWidth, 1) / s;
+  for (const L of Object.values(LAYERS)) { L.svg.setAttribute('width', L.w * s); L.svg.setAttribute('height', H * s); }
+}
+addEventListener('resize', resize); resize();
+const stageEl = $('stage');
+stageEl.addEventListener('pointerdown', e => { if (state !== 'scroll') return; drag = { x: e.clientX, c: camX }; stageEl.classList.add('dragging'); stageEl.setPointerCapture(e.pointerId); });
+stageEl.addEventListener('pointermove', e => { if (drag) { camX = clamp(drag.c - (e.clientX - drag.x) / s, 0, Math.max(0, W - VW)); $('hint').classList.add('hide'); } });
+const endDrag = () => { drag = null; stageEl.classList.remove('dragging'); };
+stageEl.addEventListener('pointerup', endDrag); stageEl.addEventListener('pointercancel', endDrag);
+addEventListener('keydown', e => { if (e.key === 'ArrowRight') keyDir = 1; if (e.key === 'ArrowLeft') keyDir = -1; });
+addEventListener('keyup', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') keyDir = 0; });
+addEventListener('wheel', e => { if (state === 'scroll') camV += (e.deltaY + e.deltaX) * .04; }, { passive: true });
+let last = performance.now();
+function frame(t) {
+  const dt = Math.min(50, t - last) / 16.667; last = t;
+  if (state === 'scroll') {
+    if (keyDir) camV = keyDir * 9;
+    camX = clamp(camX + camV * dt, 0, Math.max(0, W - VW)); camV *= Math.pow(.9, dt);
+  }
+  for (const L of Object.values(LAYERS)) L.div.style.transform = `translate3d(${-camX * L.f * s}px,0,0)`;
+  tick(frame);
+}
+tick(frame);
+
+/* ================= 拼合文化广场 ================= */
+// 文化广场为风格化剪影：长条楼体 + 横跨的拱形屋顶 + 前方广场（非建筑复原）
+const SLOTS = [
+  { mat: 'ink', d: 'M140,780 L560,760 L560,830 L120,850 Z' }, { mat: 'ink', d: 'M560,760 L1040,760 L1040,830 L560,830 Z' }, { mat: 'ink', d: 'M1040,760 L1460,780 L1480,850 L1040,830 Z' },
+  { mat: 'yarn', d: 'M200,740 Q260,520 520,430 L560,480 Q330,560 280,740 Z' }, { mat: 'yarn', d: 'M520,430 Q800,350 1080,430 L1040,480 Q800,410 560,480 Z' }, { mat: 'yarn', d: 'M1080,430 Q1340,520 1400,740 L1320,740 Q1270,560 1040,480 Z' },
+  { mat: 'geo', d: 'M330,740 L330,590 L620,590 L620,740 Z' }, { mat: 'geo', d: 'M640,740 L640,540 L960,540 L960,740 Z' }, { mat: 'geo', d: 'M980,740 L980,590 L1270,590 L1270,740 Z' },
+];
+const MATS = { ink: { name: '墨迹', fill: '#2b2a27' }, yarn: { name: '纱线', fill: 'url(#pThread)' }, geo: { name: '几何', fill: null } };
+function startBuild() {
+  return new Promise(res => {
+    state = 'build'; $('goBuild').classList.remove('on');
+    const svg = $('bSvg'); svg.innerHTML = '';
+    el('rect', { x: -100, y: -100, width: 1800, height: 1100, fill: '#f3ead6' }, svg);
+    el('rect', { x: -100, y: 0, width: 600, height: 1000, fill: ink(.04) }, svg);
+    el('rect', { x: 1100, y: 0, width: 600, height: 1000, fill: 'rgba(34,49,79,.05)' }, svg);
+    el('circle', { cx: 1300, cy: 220, r: 70, fill: 'rgba(176,58,46,.35)', filter: 'url(#fSoft)' }, svg);
+    const root = el('g', { transform: 'translate(250,40) scale(.82)' }, svg);   // 给左侧材料托盘让出位置
+    const slotEls = SLOTS.map((sl, i) => {
+      const g = el('g', {}, root);
+      const fillEl = el('path', { d: sl.d, fill: 'none' }, g);
+      el('path', { d: sl.d, fill: 'rgba(255,255,255,.35)', stroke: ink(.45), 'stroke-width': 2.5, 'stroke-dasharray': '10 8' }, g);
+      const bb = { x: 0, y: 0 }; const nums = sl.d.match(/-?\d+/g).map(Number); for (let k = 0; k < nums.length; k += 2) { bb.x += nums[k]; bb.y += nums[k + 1]; }
+      const cx = bb.x / (nums.length / 2), cy = bb.y / (nums.length / 2);
+      const lab = el('text', { x: f1(cx), y: f1(cy + 8), 'text-anchor': 'middle', 'font-size': 22, fill: ink(.45), 'letter-spacing': 3, text: MATS[sl.mat].name }, g);
+      return { ...sl, g, fillEl, lab, filled: false, i };
+    });
+    const tray = $('tray'); tray.innerHTML = '';
+    const pieces = [];
+    const order = ['ink', 'yarn', 'geo', 'ink', 'yarn', 'geo', 'ink', 'yarn', 'geo'].sort(() => rnd() - .5);
+    const GEOC = [TEAL, MUST, CORAL];
+    order.forEach((mat, i) => {
+      const p = document.createElement('div'); p.className = 'piece';
+      const v = document.createElementNS(NS, 'svg'); v.setAttribute('viewBox', '0 0 86 70'); v.setAttribute('preserveAspectRatio', 'none');
+      if (mat === 'ink') { el('path', { d: ellD(43, 35, 30, 20) + ellD(24, 28, 14, 10) + ellD(62, 44, 12, 9), fill: '#2b2a27', filter: 'url(#fBleed)' }, v); }
+      if (mat === 'yarn') { el('rect', { width: 86, height: 70, fill: 'url(#pThread)' }, v); }
+      if (mat === 'geo') { const c = GEOC[i % 3]; el('rect', { x: 8, y: 10, width: 34, height: 34, fill: c }, v); el('circle', { cx: 60, cy: 30, r: 16, fill: GEOC[(i + 1) % 3] }, v); el('path', { d: 'M40,64 L56,38 L72,64 Z', fill: NAVY }, v); }
+      p.appendChild(v); const sp = document.createElement('span'); sp.textContent = MATS[mat].name; p.appendChild(sp);
+      tray.appendChild(p);
+      const pc = { el: p, mat, used: false, col: GEOC[i % 3] }; pieces.push(pc);
+      p.addEventListener('pointerdown', e => {
+        e.preventDefault(); if (pc.used) return;
+        const gh = p.cloneNode(true); gh.classList.add('ghost'); gh.style.left = e.clientX + 'px'; gh.style.top = e.clientY + 'px';
+        document.body.appendChild(gh); dragP = { pc, gh };
+      });
+    });
+    let dragP = null, errors = 0, done = 0, finished = false;
+    const tipEl = $('bTip');
+    const fill = (pc, slot) => {
+      pc.used = true; pc.el.classList.add('used'); slot.filled = true; done++;
+      slot.fillEl.setAttribute('fill', pc.mat === 'geo' ? pc.col : MATS[pc.mat].fill);
+      if (pc.mat === 'ink') slot.fillEl.setAttribute('filter', 'url(#fBleed)');
+      if (pc.mat === 'geo') { slot.fillEl.setAttribute('filter', 'url(#fPaper)'); }
+      slot.lab.remove();
+      slot.g.animate?.([{ transform: 'scale(1.04)' }, { transform: 'scale(1)' }], { duration: 300 });
+      tipEl.classList.remove('bad');
+      tipEl.textContent = { ink: '墨迹铺成了广场的地面', yarn: '纱线织成了横跨的拱顶', geo: '几何块搭起了楼体' }[pc.mat] + `（${done} / 9）`;
+      if (done === SLOTS.length) finish();
+    };
+    const tryDrop = (pc, x, y) => {
+      const hit = slotEls.find(sl => !sl.filled && (() => { const r = sl.g.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; })());
+      if (!hit) return;
+      if (hit.mat !== pc.mat) {
+        errors++; pc.el.classList.remove('shake'); void pc.el.offsetWidth; pc.el.classList.add('shake');
+        tipEl.classList.add('bad'); tipEl.textContent = `这里需要「${MATS[hit.mat].name}」`; return;
+      }
+      fill(pc, hit);
+    };
+    const onMove = e => { if (dragP) { dragP.gh.style.left = e.clientX + 'px'; dragP.gh.style.top = e.clientY + 'px'; } };
+    const onUp = e => { if (!dragP) return; const { pc, gh } = dragP; dragP = null; gh.remove(); tryDrop(pc, e.clientX, e.clientY); };
+    const onKey = e => {
+      if (e.key !== ' ' || finished) return; e.preventDefault();
+      const slot = slotEls.find(sl => !sl.filled); if (!slot) return;
+      const pc = pieces.find(p => !p.used && p.mat === slot.mat); if (pc) fill(pc, slot);
+    };
+    addEventListener('pointermove', onMove); addEventListener('pointerup', onUp); addEventListener('keydown', onKey);
+    $('build').classList.add('on');
+    function finish() {
+      finished = true;
+      removeEventListener('pointermove', onMove); removeEventListener('pointerup', onUp); removeEventListener('keydown', onKey);
+      tipEl.textContent = '纸上常州，拼成了。';
+      for (let i = 0; i < 18; i++) el('rect', { x: 360 + (i % 9) * 100, y: 610 + Math.floor(i / 9) * 50, width: 40, height: 26, fill: '#ffe7a3', opacity: .95 }, root);
+      setTimeout(() => { $('build').classList.remove('on'); res({ errors }); }, 2200);
+    }
+  });
+}
+
+/* ================= 终章 CG ================= */
+const cgEl = $('cg'), cgStage = $('cgStage'), cgSub = $('cgSub'), cgFlash = $('cgFlash'), cgTitle = $('cgTitle');
+const lyr = parent => { const v = el('svg', { viewBox: '0 0 1600 900', preserveAspectRatio: 'xMidYMid slice', class: 'lyr' }); parent.appendChild(v); return v; };
+const cam = (L, sc = 1, x = 0, y = 0, r = 0) => { L.style.transform = `translate(${f1(x)}px,${f1(y)}px) scale(${sc.toFixed(4)}) rotate(${f1(r)}deg)`; };
+const CG_SUBS = [
+  [0.5, 2.6, '运河、书卷、织机、算式——'], [3.3, 2.6, '一张纸上，叠着一千年的常州。'],
+  [6.6, 2.6, '一座城，记住了这些名字。'],
+  [12.2, 2.6, '千年文脉，流到今天，'], [15.0, 2.8, '化作城市里的灯火与广场。'],
+  [18.8, 3.4, '常州的故事，写在纸上，也写在今天的城市里。'],
+];
+const SHOTS = [
+  // ① 三色长卷：水墨、木刻、纸艺三段画卷依次滑过
+  { start: 0, dur: 6.2, enter: 'fade', build(c) {
+    const L0 = lyr(c);
+    const g = el('g', {}, L0);
+    el('rect', { x: 0, y: 0, width: 1600, height: 900, fill: PAPER }, g);
+    el('path', { d: ridge(0, 1600, 640, 80, 300, 90, 200, 260), fill: ink(.35), filter: 'url(#fWash)' }, g);
+    el('rect', { x: 0, y: 640, width: 1600, height: 260, fill: ink(.06) }, g);
+    el('use', { href: '#boatW', transform: 'translate(-300,-20) scale(1.2)' }, g);
+    el('rect', { x: 1600, y: 0, width: 1600, height: 900, fill: WPAPER }, g);
+    hatch(g, 1600, 40, 3200, 600, 15, WOODK, 2, .32);
+    el('circle', { cx: 2300, cy: 220, r: 80, fill: '#b5321f' }, g);
+    let roof = 'M1700,900 L1700,560'; for (let x = 1700; x < 3100; x += 120) roof += ` L${x + 90},470 L${x + 120},470 L${x + 120},560`; roof += ' L3100,900 Z';
+    el('path', { d: roof, fill: WOODK }, g); el('rect', { x: 3000, y: 200, width: 44, height: 400, fill: WOODK }, g);
+    el('rect', { x: 3200, y: 0, width: 1600, height: 900, fill: '#f7e9cc' }, g);
+    for (let x = 3220; x < 4800; x += 130) { const h = R(220, 520), col = pick([TEAL, MUST, CORAL, NAVY, SKY, PINK]); el('rect', { x, y: 900 - h, width: 110, height: h, fill: col, filter: 'url(#fPaper)' }, g); }
+    for (const bx of [1600, 3200]) { let d = `M${bx - 20},0`; for (let y = 0; y <= 900; y += 24) d += ` L${f1(bx + (y / 24 % 2 ? 14 : -14))},${y}`; el('path', { d: d + ` L${bx + 30},900 L${bx + 30},0 Z`, fill: '#fffdf6', filter: 'url(#fPaper)' }, g); }
+    return { g };
+  }, update(c, t) { c.g.setAttribute('transform', `translate(${f1(-easeIO(seg(t, .3, 6)) * 3200)},0)`); } },
+  // ② 六枚印章依次盖下
+  { start: 6.2, dur: 5.6, enter: 'flash', build(c) {
+    const L0 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: PHI }, L0);
+    const st = PEOPLE.map((p, i) => {
+      const g = el('g', { opacity: 0 }, L0), x = 230 + i * 228, y = 450;
+      el('rect', { x: -80, y: -110, width: 160, height: 220, fill: RED }, g);
+      el('rect', { x: -70, y: -100, width: 140, height: 200, fill: 'none', stroke: PHI, 'stroke-width': 3 }, g);
+      [...p.name].forEach((ch, k) => el('text', { x: 0, y: -20 + k * 56 - (p.name.length - 2) * 28, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 54, fill: PHI, text: ch }, g));
+      el('text', { x: 0, y: 160, 'text-anchor': 'middle', 'font-size': 20, fill: ink(.6), 'letter-spacing': 4, text: p.yrs }, L0).setAttribute('transform', `translate(${x},${y})`);
+      return { g, x, y, d: .3 + i * .6, r: R(-6, 6) };
+    });
+    return { st };
+  }, update(c, t) {
+    for (const p of c.st) {
+      const q = seg(t, p.d, p.d + .35), sc = 2.2 - 1.2 * easeOut(q);
+      p.g.setAttribute('opacity', f1(q > 0 ? 1 : 0));
+      p.g.setAttribute('transform', `translate(${p.x},${p.y}) scale(${sc.toFixed(3)}) rotate(${f1(p.r)})`);
+    }
+  } },
+  // ③ 夜色中的“纸上常州”：拼好的广场亮起灯火，纸屑与墨点飞扬
+  { start: 11.8, dur: 6.8, enter: 'iris', build(c) {
+    const L0 = lyr(c), L1 = lyr(c), L2 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: NAVY }, L0);
+    for (let i = 0; i < 60; i++) el('circle', { cx: R(0, 1600), cy: R(0, 500), r: R(1, 3), fill: '#fffaf0', opacity: R(.3, .9) }, L0);
+    el('circle', { cx: 1300, cy: 180, r: 70, fill: '#f7f2e6' }, L0);
+    SLOTS.forEach((sl, i) => el('path', { d: sl.d, fill: sl.mat === 'ink' ? '#2b2a27' : sl.mat === 'yarn' ? 'url(#pThread)' : [TEAL, MUST, CORAL][i % 3], filter: sl.mat === 'geo' ? 'url(#fPaper)' : null }, L1));
+    const wins = [];
+    for (let i = 0; i < 27; i++) wins.push(el('rect', { x: 350 + (i % 9) * 100, y: 600 + Math.floor(i / 9) * 44, width: 40, height: 24, fill: '#ffe7a3', opacity: 0 }, L1));
+    el('rect', { x: -400, y: 850, width: 2400, height: 400, fill: '#18233a' }, L1);
+    const conf = [];
+    for (let i = 0; i < 50; i++) {
+      const kind = i % 3, g2 = el('g', {}, L2);
+      if (kind === 0) el('path', { d: ellD(0, 0, R(5, 10), R(4, 8)), fill: ink(.85) }, g2);
+      if (kind === 1) el('rect', { x: -10, y: -3, width: 20, height: 6, fill: '#b5321f' }, g2);
+      if (kind === 2) el('rect', { x: -7, y: -7, width: 14, height: 14, fill: pick([TEAL, MUST, CORAL, SKY]) }, g2);
+      conf.push({ g: g2, x: R(0, 1600), y0: R(-200, 300), sp: R(60, 160), rot: R(-200, 200), sw: R(10, 40) });
+    }
+    return { L1, wins, conf };
+  }, update(c, t, k) {
+    cam(c.L1, 1 + .05 * k);
+    c.wins.forEach((w, i) => w.setAttribute('opacity', t > 1.2 + i * .08 ? .95 : 0));
+    for (const p of c.conf) p.g.setAttribute('transform', `translate(${f1(p.x + Math.sin(t * 2 + p.sp) * p.sw)},${f1(p.y0 + t * p.sp)}) rotate(${f1(t * p.rot)})`);
+  } },
+  // ④ 片尾：画卷合上，标题浮现
+  { start: 18.6, dur: 6.6, enter: 'fade', build(c) {
+    const L0 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: PAPER }, L0);
+    const left = el('rect', { x: -400, y: 0, width: 400, height: 900, fill: '#7a5230' }, L0), right = el('rect', { x: 1600, y: 0, width: 400, height: 900, fill: '#7a5230' }, L0);
+    for (let i = 0; i < 30; i++) el('path', { d: ellD(R(0, 1600), R(0, 900), R(4, 12), R(3, 8)), fill: ink(R(.1, .3)) }, L0);
+    return { left, right };
+  }, update(c, t) {
+    const q = easeIO(seg(t, 4.4, 6.4));
+    c.left.setAttribute('x', f1(-400 + q * 1200)); c.right.setAttribute('x', f1(1600 - q * 1200));
+    cgTitle.classList.toggle('on', t > .8 && t < 6);
+  } },
+];
+const CG_LEN = 25.2;
+function irisRing() {
+  const d = document.createElement('div'); d.className = 'iris';
+  const v = el('svg', { viewBox: '-130 -130 260 260' }); d.appendChild(v);
+  [[126, '#e9e0cc'], [116, '#b5321f'], [108, MUST]].forEach(([r, c]) => el('path', { d: `M0,${-r}A${r},${r} 0 1 1 0,${r}A${r},${r} 0 1 1 0,${-r}ZM0,${-r + 8}A${r - 8},${r - 8} 0 1 0 0,${r - 8}A${r - 8},${r - 8} 0 1 0 0,${-r + 8}Z`, fill: c, 'fill-rule': 'evenodd' }, v));
+  return d;
+}
+let cgRunning = false;
+function playCG() {
+  return new Promise(res => {
+    if (cgRunning) return res();
+    cgRunning = true; cgStage.innerHTML = ''; cgTitle.classList.remove('on'); cgSub.textContent = '';
+    cgEl.classList.add('on'); cgEl.style.opacity = 0; void cgEl.offsetWidth; cgEl.style.opacity = 1;
+    let t0 = performance.now(), cur = -1, ctx = null, box = null, prev = null, ring = null, done = false, hold = null;
+    if (location.hash === '#cg') window.__cgSeek = (sec, pause) => { t0 = performance.now() - sec * 1000; hold = pause ? sec : null; };
+    const finish = () => {
+      if (done) return; done = true; cgEl.style.opacity = 0;
+      setTimeout(() => { cgEl.classList.remove('on'); cgStage.innerHTML = ''; cgTitle.classList.remove('on'); cgRunning = false; res(); }, 800);
+    };
+    $('cgSkip').onclick = e => { e.stopPropagation(); finish(); };
+    const loop = () => {
+      if (done) return;
+      const t = hold != null ? hold : (performance.now() - t0) / 1000;
+      if (t >= CG_LEN) return finish();
+      let i = SHOTS.length - 1;
+      while (i > 0 && t < SHOTS[i].start) i--;
+      const sh = SHOTS[i];
+      if (i !== cur) {
+        if (prev) prev.remove();
+        prev = box; cur = i;
+        box = document.createElement('div'); box.className = 'shot'; cgStage.appendChild(box);
+        ctx = sh.build(box);
+        if (sh.enter === 'iris') { ring = irisRing(); box.appendChild(ring); }
+        if (sh.enter === 'flash') { cgFlash.style.transition = 'none'; cgFlash.style.opacity = 1; void cgFlash.offsetWidth; cgFlash.style.transition = 'opacity .7s'; cgFlash.style.opacity = 0; }
+        if ((sh.enter === 'cut' || sh.enter === 'flash') && prev) { prev.remove(); prev = null; }
+      }
+      const lt = t - sh.start, k = clamp(lt / sh.dur, 0, 1);
+      if (sh.enter === 'fade') { box.style.opacity = f1(clamp(lt / .8, 0, 1)); if (lt > .8 && prev) { prev.remove(); prev = null; } }
+      if (sh.enter === 'iris') {
+        const m = easeIO(clamp(lt / 1.6, 0, 1)), Rr = m * Math.hypot(innerWidth, innerHeight) / 2 * 1.1;
+        box.style.clipPath = lt < 1.6 ? `circle(${f1(Rr)}px at 50% 50%)` : 'none';
+        if (ring) {
+          ring.style.transform = `translate(-50%,-50%) scale(${(2.6 * Math.max(Rr, 1) / 1000).toFixed(4)}) rotate(${f1(lt * 40)}deg)`;
+          ring.style.opacity = f1(1 - seg(lt, 1.2, 1.6));
+          if (lt > 1.6) { ring.remove(); ring = null; if (prev) { prev.remove(); prev = null; } }
+        }
+      }
+      sh.update(ctx, lt, k);
+      const sub = CG_SUBS.find(([st, du]) => t >= st && t < st + du), txt = sub ? sub[2] : '';
+      if (cgSub.textContent !== txt) cgSub.textContent = txt;
+      tick(loop);
+    };
+    tick(loop);
+  });
+}
+
+/* ================= 总评 ================= */
+function showFinal() {
+  const rows = [['sushi', '苏轼', '行舟入墨', '墨韵'], ['liu', '刘国钧', '经纬织城', '纱线'], ['hua', '华罗庚', '巧排任务', '灵感']];
+  $('fRows').innerHTML = rows.map(([id, nm, chap, rn]) => {
+    const r = CH[id];
+    const gs = r ? r.grades.map(g => { const gr = gradeOf(g); return `<b class="${gr === '—' ? 'none' : ''}">${gr}</b>`; }).join('') : '<b class="none">—</b><b class="none">—</b><b class="none">—</b>';
+    return `<div class="row"><span class="nm">${nm}</span><span>${chap}</span><span class="gs">${gs}</span><span class="rs">${r ? `${rn} ${r.res} · 图鉴 ${r.cards.length}` : '未游玩'}</span></div>`;
+  }).join('');
+  $('final').classList.add('on'); state = 'final';
+}
+$('fCg').onclick = () => { $('final').classList.remove('on'); playCG().then(showFinal); };
+$('fBack').onclick = () => { $('final').classList.remove('on'); state = 'scroll'; };
+$('fRestart').onclick = () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} location.href = FIRST_URL; };
+$('goBuild').onclick = async () => { await startBuild(); await playCG(); showFinal(); };
+
+$('startBtn').addEventListener('click', () => {
+  $('intro').classList.add('open');
+  setTimeout(() => $('intro').style.display = 'none', 1700);
+  if (location.hash === '#cg') { setTimeout(() => playCG().then(showFinal), 1200); return; }
+  if (location.hash === '#build') { setTimeout(() => $('goBuild').onclick(), 1200); return; }
+  setTimeout(() => { state = 'scroll'; $('hint').classList.remove('hide'); }, 900);
+  if (!Object.keys(CH).length) setTimeout(() => banner('还没有前三章的存档——成绩一栏会显示“未游玩”', 3600), 1800);
+});
+})();
+</script>
+</body>
+</html>

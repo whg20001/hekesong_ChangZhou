@@ -1,0 +1,1635 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>经纬织城 · 刘国钧 × 大成纺织</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ebe3cf; --paper-hi:#f5efe0; --ink:#16140f; --ink-2:#2f2b25; --ink-soft:rgba(22,20,15,.55);
+  --seal:#b5321f; --gold:#e8b44a; --bar:#16140f;
+  --brush:"ZCOOL QingKe HuangYou","STXingkai","KaiTi",sans-serif;
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--serif)}
+button{font:inherit;color:inherit}
+
+/* ---------- 场景层 ---------- */
+#stage{position:fixed;inset:0;overflow:hidden;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;background:var(--paper)}
+#stage.dragging{cursor:grabbing}
+.layer{position:absolute;left:0;top:0;will-change:transform}
+.layer svg{display:block;overflow:visible}
+#player{position:absolute;left:0;top:0;will-change:transform;transform-origin:50% 100%}
+#player svg{display:block;overflow:visible;filter:drop-shadow(0 0 1.5px #f5efe0) drop-shadow(0 0 1.5px #f5efe0) drop-shadow(0 0 1px #f5efe0)}
+#grain{position:fixed;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.55;z-index:25}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(22,20,15,.22) 100%)}
+.marker .dot{transform-box:fill-box;transform-origin:center;animation:bob 2.4s ease-in-out infinite}
+.marker .ring{transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:16px 22px;pointer-events:none;z-index:5;transition:opacity .6s}
+.chapter{display:flex;gap:12px;align-items:center}
+.seal-sm{width:36px;height:36px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:22px}
+.chapter b{display:block;font-family:var(--brush);font-weight:400;font-size:28px;letter-spacing:.12em;line-height:1}
+.chapter small{display:block;margin-top:5px;font-size:12px;letter-spacing:.18em;color:var(--ink-soft)}
+.hud-r{display:flex;gap:20px;align-items:flex-start}
+#inkMeter{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;letter-spacing:.2em;color:var(--ink-soft)}
+#inkMeter .v{display:flex;align-items:center;gap:6px;font-family:var(--brush);font-size:26px;color:var(--ink);line-height:1}
+#inkMeter svg{width:16px;height:22px}
+#inkMeter.bump .v{animation:bump .4s}
+@keyframes bump{40%{transform:scale(1.25)}}
+#progress{list-style:none;display:flex;gap:18px;margin-top:4px}
+#progress li{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;letter-spacing:.2em;color:var(--ink-soft)}
+#progress i{width:18px;height:18px;border:2px solid var(--ink-soft);transform:rotate(45deg) scale(.8);transition:background .6s,border-color .6s}
+#progress li.done i{background:var(--seal);border-color:var(--ink)}
+#progress li.done{color:var(--ink)}
+#bookBtn{pointer-events:auto;border:2px solid var(--ink);background:var(--paper-hi);padding:5px 10px;font-size:12px;letter-spacing:.18em;cursor:pointer;margin-top:2px}
+
+#card{position:fixed;left:24px;top:92px;width:min(380px,calc(100vw - 32px));z-index:6;background:var(--paper-hi);border:3px solid var(--ink);
+  box-shadow:6px 6px 0 var(--ink);padding:22px 24px 20px;opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;pointer-events:none}
+#card.show{opacity:1;transform:none}
+#card .seal{position:absolute;right:16px;top:-16px;width:42px;height:42px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:26px;border:2px solid var(--ink)}
+#card h2{font-family:var(--brush);font-weight:400;font-size:32px;letter-spacing:.12em;margin-bottom:8px}
+#card p{font-size:15px;line-height:1.9;color:var(--ink-2);text-align:justify}
+#card small{display:block;margin-top:10px;font-size:12px;color:var(--ink-soft)}
+#card small:empty{display:none}
+#hint{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:6;text-align:center;font-size:15px;letter-spacing:.2em;color:var(--paper-hi);
+  background:var(--ink);padding:8px 18px;pointer-events:none;transition:opacity .8s}
+#hint small{display:block;margin-top:2px;font-size:12px;opacity:.75;letter-spacing:.12em}
+#hint.hide{opacity:0}
+#jumpBtn{position:fixed;right:22px;bottom:26px;z-index:6;width:64px;height:64px;border-radius:50%;border:3px solid var(--ink);background:var(--seal);
+  color:var(--paper-hi);font-family:var(--brush);font-size:26px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);display:none;touch-action:none}
+#jumpBtn.on{display:block}
+#foot{position:fixed;right:96px;bottom:12px;font-size:11px;letter-spacing:.12em;color:var(--ink-soft);z-index:5;pointer-events:none}
+.toast{position:fixed;z-index:8;pointer-events:none;font-family:var(--brush);font-size:22px;color:var(--ink);white-space:nowrap;
+  text-shadow:0 0 4px var(--paper-hi),0 0 8px var(--paper-hi);transform:translate(-50%,-50%);animation:rise 1.3s ease-out forwards}
+.toast.bad{color:var(--seal)}
+@keyframes rise{to{transform:translate(-50%,-160%);opacity:0}}
+#banner{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:8;background:var(--paper-hi);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+  padding:8px 20px;font-size:14px;letter-spacing:.12em;opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
+#banner.show{opacity:1}
+.drop{position:fixed;width:20px;height:20px;margin:-10px 0 0 -10px;background:var(--seal);border:2px solid var(--ink);transform:rotate(45deg);z-index:7;pointer-events:none;
+  transition:left .95s cubic-bezier(.6,.05,.3,1),top .95s cubic-bezier(.6,.05,.3,1),opacity .3s .9s}
+
+#book{position:fixed;inset:0;z-index:35;background:rgba(22,20,15,.6);display:none;place-items:center}
+#book.on{display:grid}
+#book .panel{width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;background:var(--paper-hi);border:3px solid var(--ink);padding:24px 26px;box-shadow:8px 8px 0 var(--ink)}
+#book h3{font-family:var(--brush);font-weight:400;font-size:30px;letter-spacing:.15em;display:flex;justify-content:space-between;align-items:center}
+#book h3 button{font-family:var(--serif);font-size:13px;letter-spacing:.15em;border:2px solid var(--ink);background:none;padding:4px 12px;cursor:pointer}
+#book .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:16px}
+#book .c{border:2px solid var(--ink);padding:14px 14px 12px;background:var(--paper);min-height:132px;position:relative}
+#book .c i{position:absolute;right:10px;top:10px;width:28px;height:28px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-style:normal;font-family:var(--brush);font-size:18px}
+#book .c b{display:block;font-family:var(--brush);font-weight:400;font-size:22px;margin-bottom:6px;padding-right:34px}
+#book .c p{font-size:13px;line-height:1.8;color:var(--ink-2)}
+#book .c.lock{background:repeating-linear-gradient(0deg,rgba(22,20,15,.06) 0 2px,transparent 2px 7px)}
+#book .c.lock i{background:var(--ink-soft)}
+#book .c.lock p,#book .c.lock b{color:var(--ink-soft)}
+
+/* ---------- 剧情演出 ---------- */
+#cut{position:fixed;inset:0;z-index:20;display:none;background:var(--paper);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+#cut.on{display:block}
+#cutSvg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#cut .bar{position:absolute;left:0;right:0;height:8vh;min-height:44px;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:rgba(245,239,224,.8);z-index:2}
+#cut .bar.top{top:0}
+#cut .bar.bot{bottom:0;justify-content:center}
+#cutTitle{font-family:var(--brush);font-size:24px;letter-spacing:.25em}
+#cutTitle em{font-style:normal;color:var(--seal);background:var(--paper-hi);padding:0 6px;margin-right:10px}
+#skipBtn{background:transparent;border:1px solid rgba(245,239,224,.4);color:rgba(245,239,224,.85);padding:4px 14px;font-size:13px;letter-spacing:.2em;cursor:pointer}
+#gPrompt{display:flex;gap:10px;align-items:center;font-size:14px;letter-spacing:.18em;color:#f5efe0;opacity:0;transition:opacity .3s}
+#gPrompt.on{opacity:1}
+.mouse{width:14px;height:21px;border:1.5px solid currentColor;border-radius:7px;position:relative;flex:none}
+.mouse::after{content:'';position:absolute;left:50%;top:3px;width:2px;height:5px;margin-left:-1px;background:var(--gold)}
+#gest{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+#gest .chev{animation:chev 1.3s ease-in-out infinite}
+@keyframes chev{0%,100%{opacity:.25}50%{opacity:1}}
+#gest .start{transform-box:fill-box;transform-origin:center;animation:pulse 1.8s ease-out infinite}
+#dlg{position:absolute;left:50%;bottom:calc(max(8vh,44px) + 14px);transform:translateX(-50%);width:min(900px,calc(100vw - 32px));text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;z-index:4}
+#dlg.show{opacity:1}
+#dlg .who{display:inline-block;font-family:var(--brush);font-size:26px;color:var(--paper-hi);background:var(--seal);padding:2px 14px;letter-spacing:.2em}
+#dlg.narr .who{display:none}
+#dlg .line{display:block;margin:6px auto 0;width:fit-content;max-width:100%;padding:10px 26px;font-size:19px;line-height:1.8;color:var(--ink);background:var(--paper-hi);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
+#dlg.narr .line{color:var(--ink-2);font-size:17px}
+#dlg .note{font-size:13px;color:var(--ink-soft);margin-top:6px;min-height:1em}
+#dlg .more{font-size:12px;color:var(--ink-soft);opacity:0;height:14px}
+#dlg.ready .more{opacity:1;animation:blink 1.1s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-out infinite}
+#choice{position:absolute;left:50%;bottom:calc(max(8vh,44px) + 130px);transform:translateX(-50%);display:none;gap:16px;z-index:5}
+#choice.on{display:flex}
+#choice button{min-width:200px;padding:14px 22px;background:var(--paper-hi);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);cursor:pointer;font-size:16px;letter-spacing:.12em}
+#choice button:hover{background:var(--ink);color:var(--paper-hi)}
+#result{position:absolute;inset:0;display:none;place-items:center;z-index:6;background:rgba(235,227,207,.55)}
+#result.on{display:grid}
+#result .panel{width:min(420px,calc(100vw - 32px));background:var(--paper-hi);border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:28px 30px 24px;text-align:center}
+#result .g{width:96px;height:96px;margin:0 auto 14px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:58px;border:3px solid var(--ink);transform:rotate(-5deg);animation:stamp .5s cubic-bezier(.3,1.6,.5,1)}
+#result .g.none{background:transparent;color:var(--ink-soft);border:2px dashed var(--ink-soft);font-size:30px}
+@keyframes stamp{from{transform:scale(2.2) rotate(-14deg);opacity:0}}
+#result h3{font-family:var(--brush);font-weight:400;font-size:26px;letter-spacing:.15em}
+#result ul{list-style:none;margin:10px 0 18px;font-size:14px;line-height:2;color:var(--ink-2)}
+#result button{padding:9px 26px;border:2px solid var(--ink);background:var(--ink);color:var(--paper-hi);cursor:pointer;letter-spacing:.2em}
+#tip{position:absolute;left:50%;top:calc(max(8vh,44px) + 14px);transform:translateX(-50%);z-index:5;display:none;background:var(--paper-hi);border:2px solid var(--ink);
+  padding:8px 18px;font-size:15px;letter-spacing:.06em;max-width:min(640px,80vw);text-align:center}
+#tip.on{display:block}
+#tip.bad{color:var(--seal)}
+/* 织机 */
+#loomUI{position:absolute;right:24px;top:50%;transform:translateY(-50%);z-index:5;display:none;background:var(--paper-hi);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:12px 16px 14px;text-align:center;width:min(300px,40vw)}
+#loomUI .steps{flex-wrap:wrap}
+@media (max-width:760px){#loomUI{right:auto;left:50%;top:auto;bottom:calc(max(8vh,44px) + 10px);transform:translateX(-50%);width:min(420px,92vw)}}
+#loomUI.on{display:block}
+#loomUI .steps{display:flex;justify-content:center;gap:8px;margin-bottom:6px}
+#loomUI .steps span{padding:3px 12px;border:2px solid var(--ink);font-size:14px;letter-spacing:.2em;color:var(--ink-soft)}
+#loomUI .steps span.cur{background:var(--ink);color:var(--paper-hi)}
+#loomUI .key{font-family:var(--brush);font-size:30px;letter-spacing:.1em}
+#loomUI .key.bad{color:var(--seal);animation:shake .35s}
+#loomUI .tbar{height:6px;background:rgba(22,20,15,.15);margin-top:6px}
+#loomUI .tbar i{display:block;height:100%;background:var(--seal);width:100%}
+#loomUI .cnt{font-size:12px;letter-spacing:.2em;color:var(--ink-soft);margin-top:4px}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+/* 流水线 */
+#lineUI{position:absolute;left:50%;bottom:calc(max(8vh,44px) + 14px);transform:translateX(-50%);z-index:5;display:none;gap:10px}
+#lineUI.on{display:flex}
+#lineUI button{width:110px;padding:10px 0;background:var(--paper-hi);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-family:var(--brush);font-size:24px;cursor:pointer}
+#lineUI button small{display:block;font-family:var(--serif);font-size:11px;letter-spacing:.1em;color:var(--ink-soft)}
+#lineUI button:active,#lineUI button.hit{background:var(--seal);color:var(--paper-hi);transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+#runBtn{position:absolute;left:50%;bottom:calc(max(8vh,44px) + 18px);transform:translateX(-50%);z-index:5;display:none;padding:12px 34px;background:var(--seal);color:var(--paper-hi);
+  border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);font-family:var(--brush);font-size:26px;letter-spacing:.3em;cursor:pointer}
+#runBtn.on{display:block}
+#runBtn:disabled{opacity:.5;cursor:wait}
+
+#ink{position:fixed;left:0;top:0;width:600px;height:600px;margin:-300px 0 0 -300px;pointer-events:none;z-index:30;transform:scale(0);will-change:transform,opacity}
+#ink svg{display:block;width:600px;height:600px;overflow:visible}
+
+/* ---------- 开场 / 结尾 ---------- */
+#intro{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:var(--paper);clip-path:inset(0 0 0 0);transition:clip-path 1.4s cubic-bezier(.7,0,.2,1)}
+#intro.open{clip-path:inset(50% 0 50% 0)}
+#intro .inner{display:flex;gap:40px;align-items:center}
+#intro .blk{background:var(--ink);color:var(--paper-hi);padding:30px 24px;box-shadow:10px 10px 0 var(--seal)}
+#intro h1{writing-mode:vertical-rl;font-family:var(--brush);font-weight:400;font-size:clamp(60px,11vh,104px);letter-spacing:.15em;line-height:1}
+#intro .meta{writing-mode:vertical-rl;font-size:15px;letter-spacing:.4em;color:var(--ink-soft);line-height:2.2}
+#intro .meta em{font-style:normal;color:var(--seal)}
+#startBtn{width:90px;height:90px;border:3px solid var(--ink);background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:30px;cursor:pointer;box-shadow:6px 6px 0 var(--ink)}
+#startBtn:hover{transform:translate(2px,2px);box-shadow:4px 4px 0 var(--ink)}
+#ending{position:fixed;left:24px;top:92px;z-index:9;pointer-events:none;opacity:0;transition:opacity 1s}
+#ending.show{opacity:1;pointer-events:auto}
+#ending .panel{width:min(400px,calc(100vw - 32px));background:var(--paper-hi);border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:30px 30px 24px;text-align:center}
+#ending .stamp{width:96px;height:96px;margin:0 auto 16px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-size:40px;writing-mode:vertical-rl;border:3px solid var(--ink)}
+#ending p{font-size:16px;line-height:2;color:var(--ink-2)}
+#ending .grades{display:flex;justify-content:center;gap:14px;margin:14px 0 4px}
+#ending .grades div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;letter-spacing:.15em;color:var(--ink-soft)}
+#ending .grades b{width:40px;height:40px;display:grid;place-items:center;background:var(--seal);color:var(--paper-hi);font-family:var(--brush);font-weight:400;font-size:24px;border:2px solid var(--ink)}
+#ending .grades b.none{background:transparent;color:var(--ink-soft);border:2px dashed var(--ink-soft)}
+#ending .got{margin-top:10px;font-size:13px;color:var(--ink-soft);letter-spacing:.1em}
+#ending .got b{color:var(--ink)}
+#ending .btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+#ending button{padding:9px 16px;border:2px solid var(--ink);background:transparent;cursor:pointer;letter-spacing:.12em;font-size:14px}
+#ending button.primary{background:var(--ink);color:var(--paper-hi)}
+
+/* ---------- 尾声 CG ---------- */
+#cg{position:fixed;inset:0;z-index:24;display:none;background:var(--paper);transition:opacity .8s}
+#cg.on{display:block}
+#cgStage{position:absolute;inset:0;overflow:hidden;background:var(--paper)}
+#cg .shot{position:absolute;inset:0;overflow:hidden}
+#cg .lyr{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transform-origin:50% 50%;will-change:transform}
+#cg .iris{position:absolute;left:50%;top:50%;width:1000px;height:1000px;pointer-events:none;will-change:transform}
+#cg .iris svg{width:100%;height:100%;display:block}
+#cg .bar{position:absolute;left:0;right:0;height:9vh;min-height:46px;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:rgba(245,239,224,.75);z-index:3}
+#cg .bar.top{top:0}
+#cg .bar.bot{bottom:0;justify-content:center}
+#cg .bar.top span{font-family:var(--brush);font-size:22px;letter-spacing:.3em}
+#cgSkip{background:transparent;border:1px solid rgba(245,239,224,.4);color:rgba(245,239,224,.85);padding:4px 14px;font-size:13px;letter-spacing:.2em;cursor:pointer}
+#cgSub{font-size:clamp(15px,2vw,20px);letter-spacing:.2em;color:#f5efe0}
+#cgFlash{position:absolute;inset:0;background:#fffaf0;opacity:0;pointer-events:none;z-index:2}
+#cgTitle{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;text-align:center;opacity:0;transition:opacity 1.2s;pointer-events:none;white-space:nowrap;
+  background:var(--paper-hi);border:3px solid #1d1d1b;box-shadow:8px 8px 0 #1d1d1b;padding:22px 40px}
+#cgTitle.on{opacity:1}
+#cgTitle b{display:block;font-family:var(--brush);font-weight:400;font-size:clamp(36px,6vw,72px);letter-spacing:.15em;color:#1d1d1b}
+#cgTitle span{display:block;margin-top:8px;font-size:clamp(12px,1.6vw,16px);letter-spacing:.2em;color:#2f8f83}
+
+@media (max-width:640px){
+  #hud{padding:12px 14px}
+  .chapter b{font-size:20px}
+  .chapter small{display:none}
+  #progress{gap:10px}
+  #card,#ending{left:16px;top:auto;bottom:100px}
+  #foot{display:none}
+  #dlg .line{font-size:15px;padding:8px 14px}
+  #lineUI button{width:76px;font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs id="gdefs">
+    <filter id="fCarve" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="fOutline" x="-15%" y="-15%" width="130%" height="130%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="d"/>
+      <feFlood flood-color="#f5efe0"/><feComposite in2="d" operator="in" result="o"/>
+      <feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="fSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="fGhost" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    <filter id="fJag" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="stage">
+  <div class="layer" id="L-far"></div>
+  <div class="layer" id="L-mid"></div>
+  <div class="layer" id="L-main"></div>
+  <div class="layer" id="L-fx"></div>
+  <div id="player"></div>
+  <div class="layer" id="L-front"></div>
+  <div id="vignette"></div>
+</div>
+<div id="grain"></div>
+
+<header id="hud">
+  <div class="chapter">
+    <span class="seal-sm">近</span>
+    <div><b>经纬织城</b><small>近代篇 · 刻痕成像 · 刘国钧 × 大成纺织</small></div>
+  </div>
+  <div class="hud-r">
+    <div id="inkMeter" title="纱线：沿街收集，剧情中消耗">
+      <div class="v"><svg viewBox="-16 -26 32 52"><ellipse cx="0" cy="-20" rx="14" ry="5" fill="#16140f"/><rect x="-10" y="-20" width="20" height="40" fill="#b5321f" stroke="#16140f" stroke-width="3"/><ellipse cx="0" cy="20" rx="14" ry="5" fill="#16140f"/></svg><span id="inkNum">0</span></div>
+      <span>纱线</span>
+    </div>
+    <ol id="progress">
+      <li><i></i><span>学徒</span></li>
+      <li><i></i><span>东渡</span></li>
+      <li><i></i><span>大成</span></li>
+    </ol>
+    <button id="bookBtn">图鉴 <span id="bookNum">0</span>/6</button>
+  </div>
+</header>
+<div id="banner"></div>
+
+<aside id="card" aria-live="polite">
+  <div class="seal" id="cardSeal">壹</div>
+  <h2 id="cardTitle"></h2>
+  <p id="cardText"></p>
+  <small id="cardNote"></small>
+</aside>
+
+<div id="hint" class="hide">按住画面拖动行走 · 向上滑动 / ↑ / 空格 跳跃<small>捡起纱锭（空中的要跳起来够）· 小心迎面的黄包车</small></div>
+<button id="jumpBtn" aria-label="跳跃">跃</button>
+<div id="foot">画面与演出为艺术化表现，非历史场景复原</div>
+
+<section id="book">
+  <div class="panel">
+    <h3>图鉴 · 经纬织城 <button id="bookClose">合上</button></h3>
+    <div class="grid" id="bookGrid"></div>
+  </div>
+</section>
+
+<section id="cut" aria-live="polite">
+  <svg id="cutSvg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"></svg>
+  <div class="bar top"><span id="cutTitle"></span><button id="skipBtn">跳过 ››</button></div>
+  <div class="bar bot"><div id="gPrompt"><span class="mouse"></span><span id="gText"></span></div></div>
+  <svg id="gest"></svg>
+  <div id="dlg"><div class="who" id="dWho"></div><div class="line" id="dText"></div><div class="note" id="dNote"></div><div class="more">▼</div></div>
+  <div id="choice"></div>
+  <div id="tip"></div>
+  <div id="loomUI"><div class="steps"><span>提综</span><span>投梭</span><span>打纬</span></div><div class="key" id="lKey"></div><div class="tbar"><i id="lBar"></i></div><div class="cnt" id="lCnt"></div></div>
+  <div id="lineUI">
+    <button data-k="1">纺<small>1 · 棉→纱</small></button>
+    <button data-k="2">织<small>2 · 纱→布</small></button>
+    <button data-k="3">染<small>3 · 白布→色布</small></button>
+  </div>
+  <button id="runBtn">开 车</button>
+  <div id="result"><div class="panel"><div class="g" id="rGrade">甲</div><h3 id="rTitle"></h3><ul id="rLines"></ul><button id="rBtn">继续 ›</button></div></div>
+</section>
+
+<section id="cg" aria-live="polite">
+  <div id="cgStage"></div>
+  <div id="cgFlash"></div>
+  <div id="cgTitle"><b>下一章 · 巧排任务</b><span>现代篇 · 华罗庚 × 统筹与优选</span></div>
+  <div class="bar top"><span>尾声 · 经纬</span><button id="cgSkip">跳过 ››</button></div>
+  <div class="bar bot"><div id="cgSub"></div></div>
+</section>
+
+<div id="ink"><svg viewBox="0 0 600 600"><g filter="url(#fJag)">
+  <rect x="80" y="80" width="440" height="440" fill="#16140f" transform="rotate(12 300 300)"/>
+  <rect x="150" y="150" width="300" height="300" fill="#b5321f" transform="rotate(-20 300 300)" opacity=".9"/>
+  <rect x="120" y="120" width="360" height="360" fill="#16140f" transform="rotate(40 300 300)"/>
+</g></svg></div>
+
+<section id="intro">
+  <div class="inner">
+    <div class="meta">近代篇 · <em>刻痕成像</em><br>刘国钧 × 大成纺织</div>
+    <div class="blk"><h1>经纬织城</h1></div>
+    <button id="startBtn" aria-label="开始">开工</button>
+  </div>
+</section>
+
+<section id="ending">
+  <div class="panel">
+    <div class="stamp">大成</div>
+    <p>一梭一线织成的布，<br>织进了一座工业城市。</p>
+    <div class="grades" id="endGrades"></div>
+    <div class="got" id="endGot"></div>
+    <div class="btns">
+      <button id="againBtn">再走一遍</button>
+      <button id="endBook">查看图鉴</button>
+      <button id="endCg">重看尾声</button>
+      <button class="primary" id="nextBtn">下一章 · 巧排任务 →</button>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+/* ================= 场景配置 ================= */
+const CHAPTER_ID = 'liu';                      // 存档中的篇章编号
+const NEXT_URL = 'scene-03-hua.html';          // “下一章”跳转地址，组合时可改
+const RES_NAME = '纱线';
+const W = 4300, H = 900, G = 742, NS = 'http://www.w3.org/2000/svg';
+const PAPER = '#ebe3cf', PHI = '#f5efe0', K = '#16140f', RED = '#b5321f', GREY = '#5c574d', GREY2 = '#8a8273', WARM = '#f1d9a0';
+const BRUSH = '"ZCOOL QingKe HuangYou","STXingkai","KaiTi",sans-serif';
+
+/* ================= 公共工具（各场景相同） ================= */
+let sd = 19301930;
+const rnd = () => (sd = (sd * 16807) % 2147483647, (sd - 1) / 2147483646);
+const R = (a, b) => a + (b - a) * rnd();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeIO = x => x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+const f1 = n => (+n).toFixed(1);
+const ink = a => `rgba(22,20,15,${a})`;
+const $ = id => document.getElementById(id);
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) k === 'text' ? (e.textContent = attrs[k]) : e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function bez(p0, c1, c2, p3, n) {
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, u = 1 - t;
+    pts.push([u * u * u * p0[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t * t * t * p3[0],
+              u * u * u * p0[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * p3[1]]);
+  }
+  return pts;
+}
+function taper(pts, w0, w1, wob = 0) {
+  const n = pts.length, Lp = [], Rp = [], ph = R(0, 6);
+  for (let i = 0; i < n; i++) {
+    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)];
+    let dx = b[0] - a[0], dy = b[1] - a[1];
+    const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l;
+    const w = (w0 + (w1 - w0) * i / (n - 1)) / 2 * (1 + wob * Math.sin(i * 1.9 + ph));
+    Lp.push([pts[i][0] - dy * w, pts[i][1] + dx * w]); Rp.push([pts[i][0] + dy * w, pts[i][1] - dx * w]);
+  }
+  return 'M' + Lp.concat(Rp.reverse()).map(p => `${f1(p[0])},${f1(p[1])}`).join('L') + 'Z';
+}
+const ellD = (cx, cy, rx, ry) => `M${f1(cx - rx)},${f1(cy)}a${f1(rx)},${f1(ry)} 0 1,0 ${f1(2 * rx)},0a${f1(rx)},${f1(ry)} 0 1,0 ${f1(-2 * rx)},0`;
+// rAF 在后台 / 隐藏的 iframe 中可能暂停，用 setTimeout 兜底
+function tick(cb) {
+  let fired = false;
+  const id = requestAnimationFrame(t => { fired = true; cb(t); });
+  setTimeout(() => { if (!fired) { cancelAnimationFrame(id); cb(performance.now()); } }, 120);
+}
+// 跨篇章存档：各篇写入同一个 localStorage 键，终章读取汇总
+const SAVE_KEY = 'cz-scroll-v1';
+function loadSave() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || { chapters: {} }; } catch (e) { return { chapters: {} }; } }
+function saveChapter(id, rec) {
+  try { const s = loadSave(); s.chapters[id] = Object.assign({ at: Date.now() }, rec); localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+
+/* ================= 木刻绘制工具 ================= */
+// 木刻刀痕：一组带断口的平行线
+function hatch(g, x0, y0, x1, y1, gap, col, w = 2, op = 1, breakLen = [40, 220]) {
+  let d = '';
+  for (let y = y0; y < y1; y += gap) for (let x = x0; x < x1;) { const l = R(breakLen[0], breakLen[1]); d += `M${f1(x)},${f1(y + R(-1, 1))}h${f1(Math.min(l, x1 - x))}`; x += l + R(8, 50); }
+  return el('path', { d, stroke: col, 'stroke-width': w, opacity: op, fill: 'none' }, g);
+}
+function shophouse(g, x, w, h, col = K) {
+  const top = G - h;
+  el('path', { d: `M${x},${G} L${x},${top + 16} L${x + w * .1},${top} L${x + w * .9},${top} L${x + w},${top + 16} L${x + w},${G} Z`, fill: col }, g);
+  el('rect', { x: x - 6, y: top + 12, width: w + 12, height: 8, fill: col }, g);
+  const rows = Math.max(1, Math.floor((h - 90) / 60));
+  for (let r = 0; r < rows; r++) for (let i = 0; i < 3; i++) {
+    const wx = x + w * (.14 + i * .28), wy = top + 34 + r * 60;
+    el('path', { d: `M${f1(wx)},${f1(wy + 34)} L${f1(wx)},${f1(wy + 10)} Q${f1(wx + w * .09)},${f1(wy - 4)} ${f1(wx + w * .18)},${f1(wy + 10)} L${f1(wx + w * .18)},${f1(wy + 34)} Z`, fill: PHI, opacity: .9 }, g);
+    el('line', { x1: f1(wx + w * .09), y1: f1(wy + 4), x2: f1(wx + w * .09), y2: f1(wy + 34), stroke: col, 'stroke-width': 2 }, g);
+  }
+  el('rect', { x: x + w * .36, y: G - 64, width: w * .28, height: 64, fill: PHI, opacity: .85 }, g);
+  for (let k = 1; k < 4; k++) el('line', { x1: x + w * .36 + w * .07 * k, y1: G - 64, x2: x + w * .36 + w * .07 * k, y2: G, stroke: col, 'stroke-width': 2 }, g);
+  hatch(g, x + 4, top + 22, x + w - 4, top + 30, 6, PHI, 1.2, .5, [10, 40]);
+}
+function factory(g, x, w, h, teeth, col = K, lit = 0) {
+  const top = G - h, tw = w / teeth;
+  let d = `M${x},${G} L${x},${top + 50}`;
+  for (let i = 0; i < teeth; i++) d += ` L${f1(x + i * tw + tw * .72)},${top} L${f1(x + (i + 1) * tw)},${top} L${f1(x + (i + 1) * tw)},${top + 50}`;
+  d += ` L${x + w},${G} Z`;
+  el('path', { d, fill: col }, g);
+  for (let i = 0; i < teeth; i++) el('path', { d: `M${f1(x + i * tw + tw * .76)},${top + 8} L${f1(x + (i + 1) * tw - 4)},${top + 8} L${f1(x + (i + 1) * tw - 4)},${top + 44} L${f1(x + i * tw + tw * .76)},${top + 44} Z`, fill: PHI, opacity: .85 }, g);
+  const wins = [];
+  for (let r = 0; r < 2; r++) for (let xx = x + 18; xx < x + w - 30; xx += 44) {
+    wins.push(el('rect', { x: f1(xx), y: top + 78 + r * 50, width: 26, height: 30, fill: lit && rnd() < lit ? WARM : PHI, opacity: .9 }, g));
+  }
+  return wins;
+}
+function chimney(g, x, h, w = 34, col = K) {
+  el('path', { d: `M${x - w / 2},${G} L${x - w / 2 + 4},${G - h} L${x + w / 2 - 4},${G - h} L${x + w / 2},${G} Z`, fill: col }, g);
+  for (let y = G - h + 30; y < G - 40; y += 70) el('rect', { x: x - w / 2 + 2, y, width: w - 4, height: 6, fill: PHI, opacity: .6 }, g);
+  let s = '';
+  for (let i = 0; i < 6; i++) s += ellD(x - 20 - i * 38, G - h - 30 - i * 20, 26 + i * 9, 13 + i * 3);
+  el('path', { d: s, fill: col, opacity: .55 }, g);
+}
+function pole(g, x, y0 = 400) {
+  el('rect', { x: x - 4, y: y0, width: 8, height: G - y0, fill: K }, g);
+  el('rect', { x: x - 30, y: y0 + 16, width: 60, height: 6, fill: K }, g);
+  el('rect', { x: x - 22, y: y0 + 40, width: 44, height: 5, fill: K }, g);
+}
+function spool(g, red) {
+  el('ellipse', { cx: 0, cy: 3, rx: 22, ry: 5, fill: ink(.12) }, g);
+  el('rect', { x: -11, y: -24, width: 22, height: 44, fill: red ? RED : PHI, stroke: K, 'stroke-width': 2.4 }, g);
+  let d = '';
+  for (let y = -18; y <= 14; y += 5) d += `M-11,${y}L11,${y + 2}`;
+  el('path', { d, stroke: K, 'stroke-width': 1.3, opacity: .7 }, g);
+  el('ellipse', { cx: 0, cy: -24, rx: 15, ry: 5, fill: K }, g);
+  el('ellipse', { cx: 0, cy: 20, rx: 15, ry: 5, fill: K }, g);
+  el('path', { d: 'M11,-6 q14,6 6,18 t10,14', stroke: red ? RED : K, 'stroke-width': 1.6, fill: 'none' }, g);
+}
+
+/* ================= 人物：刘国钧（木刻，面向右） ================= */
+// 民国实业家装束：礼帽、马褂（对襟盘扣）、长衫，臂弯夹一卷布
+// parts：{ bl 后腿, ba 后臂, body 躯干与头, fl 前腿, fa 前臂 }，静态符号可全部传同一组；返回下摆分组供走路时摆动
+function drawLiu(p) {
+  const leg = (g, front) => {
+    el('path', { d: 'M78,236 L76,290 L91,290 L93,236 Z', fill: front ? K : '#26231e' }, g);
+    if (front) el('path', { d: 'M88,250 L87,286', stroke: PHI, 'stroke-width': 1.3 }, g);
+    el('path', { d: 'M69,287 L96,287 Q105,289 105,295 L69,295 Z', fill: K }, g);
+    el('path', { d: 'M69,295 L105,295 L104,300 L70,300 Z', fill: PHI, stroke: K, 'stroke-width': 1.2 }, g);
+  };
+  // 后臂：自然摆动，大半被身体挡住
+  const ba = p.ba;
+  el('path', { d: 'M66,100 Q57,132 61,168 L77,171 Q80,132 79,104 Z', fill: '#26231e' }, ba);
+  el('path', { d: 'M61,166 L77,169 L77,177 L61,175 Z', fill: PHI, stroke: K, 'stroke-width': 1.2 }, ba);
+  el('circle', { cx: 69, cy: 183, r: 6, fill: PAPER, stroke: K, 'stroke-width': 2 }, ba);
+  leg(p.bl, false);
+  leg(p.fl, true);          // 两条腿都在长衫之下，只露出下摆以下的部分
+  const b = p.body;
+  // 长衫下摆（单独分组，走路时轻摆）
+  const hem = el('g', {}, b);
+  el('path', { d: 'M56,166 L118,166 L127,284 Q88,293 45,284 Z', fill: '#2b2823' }, hem);
+  let hz = ''; for (let x = 52; x < 124; x += 5) hz += `M${x},${172 + (x % 3)}L${f1(x + (x - 86) * .1)},${282 - (x % 4)}`;
+  el('path', { d: hz, stroke: PHI, 'stroke-width': .9, opacity: .32 }, hem);
+  el('path', { d: 'M70,176 L63,282 M99,176 L106,284', stroke: K, 'stroke-width': 3 }, hem);
+  el('path', { d: 'M117,214 L125,283', stroke: PHI, 'stroke-width': 1.6 }, hem);
+  el('path', { d: 'M46,283 Q88,292 126,283', stroke: PHI, 'stroke-width': 2, fill: 'none' }, hem);
+  // 马褂
+  el('path', { d: 'M58,96 Q84,87 110,96 L117,171 Q85,180 51,171 Z', fill: K }, b);
+  for (const d of ['M64,112 Q59,142 57,166', 'M71,122 Q68,148 66,169', 'M107,113 Q111,142 112,167'])
+    el('path', { d, stroke: PHI, 'stroke-width': 1.4, fill: 'none', opacity: .75 }, b);
+  el('path', { d: 'M89,96 L91,174', stroke: PHI, 'stroke-width': 2 }, b);
+  // 木刻刀痕：肩部受光、胸前衣纹
+  el('path', { d: 'M61,101 Q72,94 84,93', stroke: PHI, 'stroke-width': 2.4, fill: 'none', 'stroke-linecap': 'round', opacity: .85 }, b);
+  for (const d of ['M60,104 L58,112', 'M65,100 L63,109', 'M70,98 L69,106', 'M99,104 Q104,116 105,130', 'M96,140 Q100,152 101,164'])
+    el('path', { d, stroke: PHI, 'stroke-width': 1.2, fill: 'none', opacity: .7 }, b);
+  for (let y = 106; y <= 160; y += 13) {
+    el('path', { d: `M84,${y} h12`, stroke: PHI, 'stroke-width': 2.6, 'stroke-linecap': 'round' }, b);
+    el('circle', { cx: 96, cy: y, r: 2.2, fill: PHI }, b);
+  }
+  el('path', { d: 'M51,171 Q85,180 117,171', stroke: PHI, 'stroke-width': 2, fill: 'none' }, b);
+  // 颈与立领
+  el('path', { d: 'M80,76 L80,90 L95,90 L95,78 Z', fill: PAPER, stroke: K, 'stroke-width': 2 }, b);
+  el('path', { d: 'M77,86 L97,86 L98,96 L76,96 Z', fill: K }, b);
+  el('path', { d: 'M78,87 L96,87', stroke: PHI, 'stroke-width': 1.4 }, b);
+  // 脸：木刻的明暗两面
+  el('path', { d: 'M70,42 C66,54 67,68 75,77 Q84,85 95,82 Q101,79 101,73 L99,70 L104,64 Q103,58 101,52 L100,42 Z', fill: PAPER, stroke: K, 'stroke-width': 2.6, 'stroke-linejoin': 'round' }, b);
+  el('path', { d: 'M70,42 C66,54 67,68 75,77 L81,71 C77,63 76,52 79,42 Z', fill: K }, b);
+  el('path', { d: 'M72,51 L77,50 M71,58 L76,57 M72,65 L77,64 M74,71 L78,69', stroke: PHI, 'stroke-width': 1.2 }, b);
+  el('path', { d: 'M80,55 Q75,58 76,65 Q80,67 83,62', fill: PAPER, stroke: K, 'stroke-width': 2 }, b);
+  el('path', { d: 'M89,50 Q94,46.5 99.5,49', stroke: K, 'stroke-width': 3.2, fill: 'none', 'stroke-linecap': 'round' }, b);
+  el('path', { d: 'M90.5,55.5 Q94,53 97.5,55.5', stroke: K, 'stroke-width': 2.2, fill: 'none' }, b);
+  el('circle', { cx: 95, cy: 56.6, r: 1.6, fill: K }, b);
+  el('path', { d: 'M91,64 Q93,68 96,69', stroke: K, 'stroke-width': 1.3, fill: 'none' }, b);
+  el('path', { d: 'M95,75.5 L100,74.5', stroke: K, 'stroke-width': 2, 'stroke-linecap': 'round' }, b);
+  // 礼帽
+  el('path', { d: 'M68,42 Q66,22 74,14 Q86,8 98,14 Q104,22 102,42 Z', fill: K }, b);
+  el('path', { d: 'M80,14 Q84,24 86,36 M93,13 Q95,20 95,28', stroke: PHI, 'stroke-width': 1.4, fill: 'none' }, b);
+  el('path', { d: 'M67,36 Q85,32 103,36 L103,42 Q85,38 67,42 Z', fill: RED }, b);
+  el('path', { d: 'M57,45 Q85,34 113,42 Q111,49 104,47 Q85,42 64,49 Q56,49 57,45 Z', fill: K }, b);
+  // 前臂：弯肘夹着一卷布
+  const fa = p.fa;
+  el('path', { d: 'M64,149 L129,155 L128,176 L63,170 Z', fill: RED, stroke: K, 'stroke-width': 2.4 }, fa);
+  el('path', { d: 'M76,151 L75,171 M90,152 L89,172 M104,154 L103,174 M118,155 L117,175', stroke: PHI, 'stroke-width': 3 }, fa);
+  el('ellipse', { cx: 128.5, cy: 165.5, rx: 4.5, ry: 10.5, fill: K }, fa);
+  el('path', { d: 'M84,98 Q99,95 105,110 L105,142 L88,147 Q84,124 84,98 Z', fill: K }, fa);
+  el('path', { d: 'M100,106 Q104,124 102,138 M93,110 Q96,122 95,134 M94,140 L110,146', stroke: PHI, 'stroke-width': 1.3, fill: 'none', opacity: .8 }, fa);
+  el('path', { d: 'M89,134 L118,143 L114,158 L87,150 Z', fill: K }, fa);
+  el('path', { d: 'M114,142 L122,145 L119,159 L111,157 Z', fill: PHI, stroke: K, 'stroke-width': 1.5 }, fa);
+  el('circle', { cx: 124, cy: 152, r: 6, fill: PAPER, stroke: K, 'stroke-width': 2 }, fa);
+  return hem;
+}
+const gdefs = $('gdefs');
+{
+  const sym = el('symbol', { id: 'sym-liu', viewBox: '0 0 160 320', overflow: 'visible' }, gdefs);
+  drawLiu({ bl: sym, ba: sym, body: sym, fl: sym, fa: sym });
+}
+// 车夫跑步步态：髋 (-98,-84)，大腿 38、小腿 42；前摆时屈膝抬脚，后蹬时伸直
+function runLegs(legs, ph) {
+  const HX = -98, HY = -84, L1 = 38, L2 = 42;
+  for (const [lg, off] of [[legs.A, 0], [legs.B, Math.PI]]) {
+    const f = ph + off, a = .55 * Math.sin(f), k = .2 + .95 * Math.max(0, Math.sin(f + .7));
+    const kx = HX - Math.sin(a) * L1, ky = HY + Math.cos(a) * L1, b = a - k;
+    const fx = kx - Math.sin(b) * L2, fy = Math.min(-3, ky + Math.cos(b) * L2);
+    lg.leg.setAttribute('d', `M${HX},${HY} L${f1(kx)},${f1(ky)} L${f1(fx)},${f1(fy)}`);
+    const tip = b + Math.PI / 2;
+    lg.shoe.setAttribute('d', `M${f1(fx + 3)},${f1(fy)} L${f1(fx - Math.sin(tip) * 15)},${f1(fy + Math.cos(tip) * 15 * .2)}`);
+  }
+}
+// 黄包车（朝左行驶）
+function rickshaw(g) {
+  const wheel = el('g', {}, g);
+  el('circle', { cx: 0, cy: 0, r: 46, fill: 'none', stroke: K, 'stroke-width': 7 }, wheel);
+  let sp = '';
+  for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; sp += `M0,0L${f1(Math.cos(a) * 44)},${f1(Math.sin(a) * 44)}`; }
+  el('path', { d: sp, stroke: K, 'stroke-width': 2.4 }, wheel);
+  el('circle', { r: 7, fill: K }, wheel);
+  wheel.setAttribute('transform', 'translate(30,-48)');
+  el('path', { d: 'M-24,-56 A54,54 0 0 1 84,-56', stroke: K, 'stroke-width': 6, fill: 'none' }, g);
+  el('path', { d: 'M-34,-66 L12,-66 L8,-56 L-38,-56 Z', fill: K }, g);
+  el('path', { d: 'M4,-68 L68,-68 L72,-104 L18,-104 Z', fill: K }, g);
+  el('path', { d: 'M14,-78 Q40,-86 64,-78', stroke: PHI, 'stroke-width': 1.6, fill: 'none' }, g);
+  el('path', { d: 'M18,-104 L72,-104', stroke: RED, 'stroke-width': 6 }, g);
+  el('path', { d: 'M64,-104 L74,-156 L86,-154 L76,-102 Z', fill: K }, g);
+  el('path', { d: 'M72,-156 Q62,-204 18,-208 L16,-196 Q56,-190 64,-152 Z', fill: K }, g);
+  el('path', { d: 'M68,-166 Q52,-194 24,-200 M70,-180 Q60,-196 44,-202', stroke: PHI, 'stroke-width': 1.4, fill: 'none' }, g);
+  el('path', { d: 'M-10,-62 L-112,-82', stroke: K, 'stroke-width': 5 }, g);
+  // 车夫：面朝行进方向（左）前倾奔跑，双手在身侧握车把；短褂、号坎、布帽、颈搭毛巾
+  // 两条腿：大腿 + 小腿两节，每帧按跑步相位计算膝、脚位置（见 runLegs）
+  const legs = el('g', {}, g);
+  const mkLeg = col => ({
+    leg: el('path', { stroke: col, 'stroke-width': 10, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, legs),
+    shoe: el('path', { stroke: K, 'stroke-width': 6, 'stroke-linecap': 'round', fill: 'none' }, legs),
+  });
+  legs.B = mkLeg('#26231e'); legs.A = mkLeg(K);
+  // 前倾的上身（髋在后、肩在前），整体再绕髋部前压
+  const up = el('g', { transform: 'rotate(-12,-98,-84)' }, g);
+  el('path', { d: 'M-108,-80 Q-117,-108 -126,-132 L-110,-141 Q-97,-112 -88,-84 Z', fill: K }, up);
+  el('path', { d: 'M-100,-88 Q-108,-112 -114,-132', stroke: PHI, 'stroke-width': 1.3, fill: 'none', opacity: .7 }, up);
+  el('circle', { cx: -104, cy: -110, r: 9, fill: PHI, stroke: K, 'stroke-width': 1.5 }, up);
+  el('text', { x: -104, y: -105, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: K, text: '七' }, up);
+  // 手臂垂在身侧，握住车把末端
+  el('path', { d: 'M-118,-134 L-115,-106 L-110,-84', stroke: '#26231e', 'stroke-width': 8, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, up);
+  el('circle', { cx: -110, cy: -82, r: 5, fill: PAPER, stroke: K, 'stroke-width': 1.5 }, up);
+  // 颈上的毛巾
+  el('path', { d: 'M-114,-142 Q-124,-136 -116,-128', stroke: PHI, 'stroke-width': 3.4, fill: 'none', 'stroke-linecap': 'round' }, up);
+  // 头：脸朝左，后脑一侧刻黑；布帽帽檐朝前
+  el('path', { d: 'M-116,-158 C-118,-166 -132,-168 -136,-156 L-138,-149 Q-135,-141 -127,-140 Q-118,-142 -116,-150 Z', fill: PAPER, stroke: K, 'stroke-width': 2.4 }, up);
+  el('path', { d: 'M-116,-158 Q-120,-150 -117,-146 Q-119,-142 -124,-141 L-122,-152 Z', fill: K }, up);
+  el('path', { d: 'M-140,-154 Q-128,-172 -114,-158 L-112,-154 L-145,-151 Z', fill: K }, up);
+  el('circle', { cx: -133, cy: -150, r: 1.4, fill: K }, up);
+  el('path', { d: 'M-137,-145 L-133,-144', stroke: K, 'stroke-width': 1.4 }, up);
+  runLegs(legs, 0);
+  return { wheel, legs };
+}
+
+/* ================= 世界图层 ================= */
+const LAYERS = { far: { f: .2 }, mid: { f: .5 }, main: { f: 1 }, fx: { f: 1 }, front: { f: 1.3 } };
+for (const [k, L] of Object.entries(LAYERS)) {
+  L.w = L.f >= 1 ? Math.round(W * L.f) : Math.round(W * L.f + 2400);
+  L.div = $('L-' + k);
+  L.svg = el('svg', { viewBox: `0 0 ${L.w} ${H}` }, L.div);
+}
+{ // 远景：刀痕天空、红日、远处烟囱
+  const g = LAYERS.far.svg, w = LAYERS.far.w;
+  hatch(g, 0, 40, w, 560, 15, K, 2, .3);
+  el('circle', { cx: 960, cy: 230, r: 74, fill: RED }, g);
+  for (let x = 120; x < w; x += R(260, 520)) chimney(g, x, R(160, 300), R(18, 28), GREY2);
+  for (let x = 0; x < w; x += R(80, 160)) el('rect', { x, y: G - R(120, 220), width: R(60, 150), height: 300, fill: GREY2 }, g);
+}
+{ // 中景：灰色街屋与电线杆
+  const g = LAYERS.mid.svg, w = LAYERS.mid.w;
+  for (let x = 0; x < w; x += R(150, 230)) { const ww = R(120, 190); shophouse(g, x, ww, R(170, 260), GREY); }
+  let wires = '', last = null;
+  for (let x = 140; x < w; x += 420) {
+    pole(g, x, 360);
+    if (last != null) for (const yy of [378, 402]) wires += `M${last},${yy} Q${(last + x) / 2},${yy + 40} ${x},${yy}`;
+    last = x;
+  }
+  el('path', { d: wires, stroke: K, 'stroke-width': 1.6, fill: 'none' }, g);
+}
+const M = LAYERS.main.svg;
+const mdefs = el('defs', {}, M);
+const NODE_X = [1300, 2460, 3700];
+{ // 主景：街面与沿街房屋
+  for (let x = 0; x < W; x += R(170, 240)) {
+    if (NODE_X.some(c => Math.abs(x + 90 - c) < 340)) continue;
+    shophouse(M, x, R(140, 200), R(150, 230), K);
+  }
+  for (let x = 160; x < W; x += 520) {
+    if (NODE_X.some(c => Math.abs(x - c) < 300)) continue;
+    el('rect', { x: x - 3, y: G - 190, width: 6, height: 190, fill: K }, M);
+    el('path', { d: `M${x - 18},${G - 190} L${x + 18},${G - 190} L${x + 10},${G - 214} L${x - 10},${G - 214} Z`, fill: K }, M);
+    el('rect', { x: x - 8, y: G - 208, width: 16, height: 14, fill: WARM }, M);
+  }
+  el('rect', { x: 0, y: G, width: W, height: H - G + 10, fill: K }, M);
+  el('rect', { x: 0, y: G, width: W, height: 5, fill: PHI }, M);
+  let cut = '';
+  for (let y = G + 20; y < H; y += 16) for (let x = (y / 16 % 2) * 30; x < W; x += 60) cut += `M${x},${y}h${f1(R(26, 44))}`;
+  el('path', { d: cut, stroke: PHI, 'stroke-width': 2, opacity: .45 }, M);
+}
+
+/* 三处可“刻出”的景 */
+{ // 一：奔牛小店
+  const g = el('g', { id: 'art0' }, mdefs), x = 1170;
+  el('path', { d: `M${x},${G} L${x},${G - 230} L${x + 130},${G - 280} L${x + 260},${G - 230} L${x + 260},${G} Z`, fill: K }, g);
+  hatch(g, x + 20, G - 250, x + 240, G - 236, 5, PHI, 1.4, .7, [10, 50]);
+  for (let i = 0; i < 8; i++) {
+    const bx = x + 24 + i * 27, col = [PHI, RED, PHI, K, RED, PHI, RED, PHI][i];
+    el('rect', { x: bx, y: G - 180, width: 22, height: 120 + (i % 3) * 14, fill: col, stroke: PHI, 'stroke-width': 1.5 }, g);
+    if (col === K) hatch(g, bx + 2, G - 176, bx + 20, G - 66, 6, PHI, 1, .6, [6, 14]);
+  }
+  el('rect', { x: x + 14, y: G - 54, width: 232, height: 54, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+  el('rect', { x: x + 280, y: G - 330, width: 6, height: 330, fill: K }, g);
+  el('path', { d: `M${x + 286},${G - 320} L${x + 350},${G - 320} L${x + 340},${G - 230} L${x + 286},${G - 230} Z`, fill: RED, stroke: K, 'stroke-width': 3 }, g);
+  el('text', { x: x + 316, y: G - 260, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 44, fill: PHI, text: '布' }, g);
+}
+{ // 二：码头与轮船
+  const g = el('g', { id: 'art1' }, mdefs), x = 2260;
+  el('path', { d: `M${x},${G - 150} L${x + 420},${G - 150} L${x + 380},${G - 70} L${x + 30},${G - 70} Z`, fill: K }, g);
+  for (let i = 0; i < 6; i++) el('circle', { cx: x + 70 + i * 54, cy: G - 116, r: 9, fill: PHI }, g);
+  el('rect', { x: x + 80, y: G - 214, width: 240, height: 64, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+  for (let i = 0; i < 6; i++) el('rect', { x: x + 96 + i * 36, y: G - 200, width: 22, height: 22, fill: PHI }, g);
+  el('rect', { x: x + 200, y: G - 330, width: 46, height: 116, fill: K }, g);
+  el('rect', { x: x + 200, y: G - 300, width: 46, height: 16, fill: RED }, g);
+  let sm = '';
+  for (let i = 0; i < 6; i++) sm += ellD(x + 190 - i * 40, G - 360 - i * 22, 30 + i * 9, 15 + i * 3);
+  el('path', { d: sm, fill: K, opacity: .55 }, g);
+  el('rect', { x: x - 20, y: G - 70, width: 470, height: 70, fill: K }, g);
+  hatch(g, x - 16, G - 64, x + 446, G - 6, 9, PHI, 1.6, .55, [30, 120]);
+  for (let i = 0; i < 3; i++) for (let j = 0; j <= i % 2; j++) {
+    const cx = x + 470 + i * 52, cy = G - 46 - j * 46;
+    el('rect', { x: cx, y: cy, width: 46, height: 46, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+    el('path', { d: `M${cx + 6},${cy + 6} L${cx + 40},${cy + 40} M${cx + 40},${cy + 6} L${cx + 6},${cy + 40}`, stroke: PHI, 'stroke-width': 2 }, g);
+  }
+}
+{ // 三：大成纺织染厂
+  const g = el('g', { id: 'art2' }, mdefs);
+  factory(g, 3440, 520, 230, 6, K, .5);
+  chimney(g, 4010, 420, 40, K);
+  for (const px of [3560, 3840]) {
+    el('rect', { x: px - 18, y: G - 170, width: 36, height: 170, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+    el('circle', { cx: px, cy: G - 182, r: 12, fill: WARM, stroke: K, 'stroke-width': 3 }, g);
+  }
+  el('rect', { x: 3580, y: G - 170, width: 240, height: 12, fill: K }, g);
+  let bars = '';
+  for (let bx = 3590; bx < 3820; bx += 16) bars += `M${bx},${G - 158}V${G}`;
+  el('path', { d: bars, stroke: K, 'stroke-width': 4 }, g);
+  el('rect', { x: 3620, y: G - 236, width: 160, height: 60, fill: RED, stroke: K, 'stroke-width': 4 }, g);
+  el('text', { x: 3700, y: G - 192, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 46, fill: PHI, 'letter-spacing': 8, text: '大成' }, g);
+}
+
+const NODES = [
+  { cx: 1300, trig: 1150, seal: '壹', title: '学徒织布', text: '少年刘国钧从靖江来到常州奔牛镇当学徒，后来在奔牛开起自己的小店。布，是人人都要穿的东西。', note: '' },
+  { cx: 2460, trig: 2290, seal: '贰', title: '东渡取经', text: '为了织出更好的布，刘国钧曾赴日本考察纺织业，回来后改良设备、整顿管理。', note: '' },
+  { cx: 3700, trig: 3460, seal: '叁', title: '大成', text: '1930 年，刘国钧接办常州大纶纱厂，改组为大成纺织染公司，纺纱、织布、印染连成一体。', note: '注：画面为艺术化表现，厂房细节非历史复原。' },
+];
+NODES.forEach((n, i) => {
+  const mask = el('mask', { id: 'mCarve' + i, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: W, height: H }, mdefs);
+  n.mp = el('path', { d: '', fill: '#fff' }, mask);
+  n.ghost = el('use', { href: '#art' + i, opacity: .1 }, M);
+  n.live = el('g', { mask: `url(#mCarve${i})` }, M);
+  el('use', { href: '#art' + i, filter: 'url(#fCarve)' }, n.live);
+});
+// 前景：栏杆与货箱
+{
+  const g = LAYERS.front.svg, w = LAYERS.front.w;
+  for (let x = R(600, 900); x < w; x += R(700, 1200)) {
+    if (rnd() < .5) {
+      for (let i = 0; i < 6; i++) el('rect', { x: x + i * 26, y: 820, width: 10, height: 100, fill: K }, g);
+      el('rect', { x: x - 6, y: 836, width: 150, height: 8, fill: K }, g);
+    } else {
+      el('rect', { x, y: 800, width: 90, height: 120, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+      el('path', { d: `M${x + 8},${808} L${x + 82},${912} M${x + 82},${808} L${x + 8},${912}`, stroke: PHI, 'stroke-width': 2 }, g);
+    }
+  }
+}
+
+/* 特效层：提示、纱锭、黄包车 */
+const FX = LAYERS.fx.svg;
+NODES.forEach(n => {
+  n.marker = el('g', { class: 'marker', transform: `translate(${n.cx},${G - 360})` }, FX);
+  el('rect', { class: 'ring', x: -12, y: -12, width: 24, height: 24, fill: 'none', stroke: RED, 'stroke-width': 3, transform: 'rotate(45)' }, n.marker);
+  const d = el('g', { class: 'dot' }, n.marker);
+  el('rect', { x: -10, y: -10, width: 20, height: 20, fill: RED, stroke: K, 'stroke-width': 3, transform: 'rotate(45)' }, d);
+});
+const itemsG = el('g', {}, FX), hazG = el('g', {}, FX), chipsG = el('g', {}, FX);
+const items = [], hazards = [], chips = [];
+for (let i = 0; i < 44; i++) {
+  const x = R(480, 3560);
+  if (NODES.some(n => Math.abs(x - n.trig) < 110)) continue;
+  const air = rnd() < .38, g = el('g', {}, itemsG);
+  spool(g, air);
+  items.push({ x, y: air ? G - 200 : G - 34, el: g, alive: true, ph: R(0, 6), air });
+}
+for (const x0 of [900, 1850, 2100, 2950, 3200]) {
+  const g = el('g', { filter: 'url(#fOutline)' }, hazG), parts = rickshaw(g);
+  hazards.push({ x0, x: x0, active: false, done: false, el: g, ...parts, sp: R(1.8, 2.6) });
+}
+
+/* 玩家 */
+const playerDiv = $('player');
+const PW = 160, PH = 320;
+const playerSvg = el('svg', { viewBox: `0 0 ${PW} ${PH}` }, playerDiv);
+const PL = { ba: el('g', {}, playerSvg), bl: el('g', {}, playerSvg), fl: el('g', {}, playerSvg), body: el('g', {}, playerSvg), fa: el('g', {}, playerSvg) };
+el('ellipse', { cx: 80, cy: 300, rx: 34, ry: 5, fill: ink(.25) }, playerSvg).parentNode.insertBefore(playerSvg.lastChild, PL.ba);
+PL.hem = drawLiu(PL);
+
+/* 纸纹 */
+{
+  const c = document.createElement('canvas'); c.width = c.height = 240;
+  const x = c.getContext('2d'), img = x.createImageData(240, 240);
+  for (let i = 0; i < img.data.length; i += 4) { const v = 140 + Math.random() * 115; img.data[i] = v; img.data[i + 1] = v * .97; img.data[i + 2] = v * .9; img.data[i + 3] = 70; }
+  x.putImageData(img, 0, 0);
+  $('grain').style.backgroundImage = `url(${c.toDataURL()})`;
+}
+
+let s = 1, VW = 1600;
+function resize() {
+  s = Math.max(innerHeight, 1) / H; VW = Math.max(innerWidth, 1) / s;
+  for (const L of Object.values(LAYERS)) { L.svg.setAttribute('width', L.w * s); L.svg.setAttribute('height', H * s); }
+  playerSvg.setAttribute('width', PW * s * .82); playerSvg.setAttribute('height', PH * s * .82);
+}
+addEventListener('resize', resize); resize();
+
+/* ================= 玩法数据：纱线、图鉴、评分 ================= */
+const game = { ink: 0, got: 0, cards: new Set(), grades: [null, null, null] };
+const CARDS = [
+  { id: 'dock', kind: '物', name: '运河码头', text: '运河边的码头，是近代常州货物进出的门户，棉花与布匹由此往来。', how: '沿街累计收集 10 卷纱线' },
+  { id: 'benniu', kind: '地', name: '奔牛镇', text: '常州武进的运河古镇。少年刘国钧在此当学徒，后来自己开店。', how: '进入剧情「学徒织布」' },
+  { id: 'loom', kind: '技', name: '经与纬', text: '经线纵、纬线横。提综开口、投梭引纬、打纬压紧，布便一寸寸织成。', how: '完成「经纬织布」' },
+  { id: 'belt', kind: '技', name: '天轴皮带', text: '近代工厂多由动力机带动天轴，再经皮带分给各台机器；交叉皮带使转向相反，主动轮越大转速越快。', how: '完成「天轴皮带」' },
+  { id: 'dongdu', kind: '事', name: '东渡考察', text: '刘国钧曾赴日本考察纺织业，回国后改良设备与管理。', how: '完成剧情「东渡取经」' },
+  { id: 'dacheng', kind: '业', name: '大成纺织染', text: '1930 年，刘国钧接办大纶纱厂并改组为大成纺织染公司，纺、织、染连为一体。', how: '完成剧情「大成」' },
+];
+const gradeOf = sc => sc == null ? '—' : sc >= .85 ? '甲' : sc >= .6 ? '乙' : '丙';
+const bannerQ = [];
+let bannerBusy = false;
+function banner(text, ms = 2800) { bannerQ.push([text, ms]); if (!bannerBusy) nextBanner(); }
+function nextBanner() {
+  const b = bannerQ.shift();
+  if (!b) { bannerBusy = false; return; }
+  bannerBusy = true; $('banner').textContent = b[0]; $('banner').classList.add('show');
+  setTimeout(() => { $('banner').classList.remove('show'); setTimeout(nextBanner, 400); }, b[1]);
+}
+function toast(text, x, y, bad = false) {
+  const t = document.createElement('div'); t.className = 'toast' + (bad ? ' bad' : ''); t.textContent = text;
+  t.style.left = x + 'px'; t.style.top = y + 'px'; document.body.appendChild(t); setTimeout(() => t.remove(), 1300);
+}
+function updHud() {
+  $('inkNum').textContent = game.ink; $('bookNum').textContent = game.cards.size;
+  const m = $('inkMeter'); m.classList.remove('bump'); void m.offsetWidth; m.classList.add('bump');
+}
+function unlockCard(id) {
+  if (game.cards.has(id)) return;
+  game.cards.add(id); updHud();
+  const c = CARDS.find(c => c.id === id); banner(`图鉴解锁 · 【${c.kind}】${c.name}`);
+}
+function spendInk() { const sp = Math.min(game.ink, 8); game.ink -= sp; updHud(); return { used: sp, f: sp / 8 }; }
+function renderBook() {
+  $('bookGrid').innerHTML = CARDS.map(c => game.cards.has(c.id)
+    ? `<div class="c"><i>${c.kind}</i><b>${c.name}</b><p>${c.text}</p></div>`
+    : `<div class="c lock"><i>${c.kind}</i><b>未解锁</b><p>获得方式：${c.how}</p></div>`).join('');
+}
+
+/* ================= 剧情演出系统（各场景相同） ================= */
+const cutEl = $('cut'), cutSvg = $('cutSvg'), gestSvg = $('gest');
+const dlg = $('dlg'), dWho = $('dWho'), dText = $('dText'), dNote = $('dNote'), gPrompt = $('gPrompt'), gText = $('gText');
+const inkEl = $('ink'), hud = $('hud'), tipEl = $('tip');
+const Cut = { skip: false, cancel: null, layer: null, first: false };
+const sleep = ms => new Promise(r => setTimeout(r, Cut.skip ? 0 : ms));
+const stop = e => e.stopPropagation();
+$('skipBtn').addEventListener('pointerdown', stop);
+$('skipBtn').addEventListener('click', e => { e.stopPropagation(); Cut.skip = true; Cut.cancel && Cut.cancel(); });
+function inkCover(x, y) {
+  return new Promise(r => {
+    inkEl.style.transition = 'none'; inkEl.style.left = x + 'px'; inkEl.style.top = y + 'px';
+    inkEl.style.opacity = 1; inkEl.style.transform = 'scale(.01) rotate(0deg)'; void inkEl.offsetWidth;
+    const k = Math.hypot(innerWidth, innerHeight) * 2.6 / 600;
+    inkEl.style.transition = 'transform .9s cubic-bezier(.55,0,.35,1)'; inkEl.style.transform = `scale(${k}) rotate(90deg)`;
+    setTimeout(r, 900);
+  });
+}
+function inkUncover() {
+  return new Promise(r => {
+    inkEl.style.transition = 'opacity .7s ease'; inkEl.style.opacity = 0;
+    setTimeout(() => { inkEl.style.transition = 'none'; inkEl.style.transform = 'scale(0)'; r(); }, 700);
+  });
+}
+async function shot(build) {
+  const old = Cut.layer;
+  if (old && !Cut.first) { old.style.transition = 'opacity .4s'; old.style.opacity = 0; await sleep(400); }
+  if (old) old.remove();
+  const g = el('g', {}, cutSvg); Cut.layer = g;
+  const ctx = build(g) || {};
+  if (Cut.first) { Cut.first = false; await inkUncover(); }
+  else { g.style.opacity = 0; void g.getBoundingClientRect(); g.style.transition = 'opacity .5s'; g.style.opacity = 1; await sleep(500); }
+  return ctx;
+}
+function say(who, text, note = '') {
+  return new Promise(res => {
+    const narr = who === '旁白';
+    dlg.classList.toggle('narr', narr); dWho.textContent = narr ? '' : who; dNote.textContent = note; dText.textContent = '';
+    dlg.classList.add('show'); dlg.classList.remove('ready');
+    let i = 0, typing = true, closed = false;
+    const tm = setInterval(() => { i++; dText.textContent = text.slice(0, i); if (i >= text.length) endType(); }, 40);
+    function endType() { clearInterval(tm); dText.textContent = text; typing = false; dlg.classList.add('ready'); }
+    function adv() { if (typing) { endType(); return; } finish(); }
+    function onKey(e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); adv(); } }
+    function finish() {
+      if (closed) return; closed = true;
+      cutEl.removeEventListener('pointerdown', adv); removeEventListener('keydown', onKey);
+      clearInterval(tm); dText.textContent = text; dlg.classList.remove('ready'); Cut.cancel = null; res();
+    }
+    cutEl.addEventListener('pointerdown', adv); addEventListener('keydown', onKey);
+    Cut.cancel = finish; if (Cut.skip) finish();
+  });
+}
+function toSvg(cx, cy) { const p = cutSvg.createSVGPoint(); p.x = cx; p.y = cy; const r = p.matrixTransform(cutSvg.getScreenCTM().inverse()); return [r.x, r.y]; }
+function tween(ms, fn) {
+  return new Promise(res => {
+    const t0 = performance.now();
+    (function st() { const k = Cut.skip ? 1 : clamp((performance.now() - t0) / ms, 0, 1); fn(k); k < 1 ? tick(st) : res(); })();
+  });
+}
+function result(title, score, lines) {
+  return new Promise(res => {
+    const box = $('result'), g = $('rGrade'), gr = gradeOf(score);
+    g.textContent = gr === '—' ? '未评' : gr; g.className = 'g' + (gr === '—' ? ' none' : '');
+    $('rTitle').textContent = title; $('rLines').innerHTML = lines.map(l => `<li>${l}</li>`).join('');
+    dlg.classList.remove('show'); box.classList.add('on');
+    const btn = $('rBtn');
+    const done = () => { box.classList.remove('on'); btn.removeEventListener('click', onClick); removeEventListener('keydown', onKey); Cut.cancel = null; res(); };
+    const onClick = e => { e.stopPropagation(); done(); };
+    const onKey = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); done(); } };
+    btn.addEventListener('pointerdown', stop); btn.addEventListener('click', onClick);
+    setTimeout(() => addEventListener('keydown', onKey), 400);
+    Cut.cancel = done; if (Cut.skip) done();
+  });
+}
+function tip(text, bad = false) { tipEl.textContent = text; tipEl.classList.toggle('bad', bad); tipEl.classList.toggle('on', !!text); }
+// 方向输入：键盘方向键 / 空格，或在画面上滑动、轻点
+function dirInput(handler) {
+  let st = null;
+  const map = { ArrowUp: 'U', ArrowDown: 'D', ArrowLeft: 'L', ArrowRight: 'R', ' ': 'B', w: 'U', s: 'D', a: 'L', d: 'R' };
+  const onKey = e => { const k = map[e.key]; if (k && !e.repeat) { e.preventDefault(); handler(k); } };
+  const onDown = e => { st = { x: e.clientX, y: e.clientY }; };
+  const onUp = e => {
+    if (!st) return;
+    const dx = e.clientX - st.x, dy = e.clientY - st.y; st = null;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 30) return handler('B');
+    handler(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'R' : 'L') : (dy > 0 ? 'D' : 'U'));
+  };
+  addEventListener('keydown', onKey); cutEl.addEventListener('pointerdown', onDown); cutEl.addEventListener('pointerup', onUp);
+  return () => { removeEventListener('keydown', onKey); cutEl.removeEventListener('pointerdown', onDown); cutEl.removeEventListener('pointerup', onUp); };
+}
+
+/* ================= 剧情小游戏 ================= */
+// —— 经纬织布：提综（↑/↓）→ 投梭（→/←）→ 打纬（空格 / 轻点），十行一匹 ——
+function loomGame(g, rows, inkF) {
+  return new Promise(res => {
+    const X0 = 520, X1 = 1110, FELL0 = 640, RH = 15, PATTERN = [2, 5, 8];
+    el('rect', { x: 470, y: 70, width: 30, height: 720, fill: K }, g);
+    el('rect', { x: 1130, y: 70, width: 30, height: 720, fill: K }, g);
+    el('rect', { x: 470, y: 70, width: 690, height: 34, fill: K }, g);
+    hatch(g, 474, 120, 496, 780, 7, PHI, 1.2, .5, [20, 80]);
+    hatch(g, 1134, 120, 1156, 780, 7, PHI, 1.2, .5, [20, 80]);
+    el('rect', { x: X0, y: 104, width: X1 - X0, height: FELL0 - 104, fill: K }, g);
+    let odd = '', even = '';
+    for (let i = 0, x = X0 + 12; x < X1; i++, x += 21) { if (i % 2) odd += `M${x},104V${FELL0}`; else even += `M${x},104V${FELL0}`; }
+    const wOdd = el('path', { d: odd, stroke: PHI, 'stroke-width': 2.4 }, g), wEven = el('path', { d: even, stroke: PHI, 'stroke-width': 2.4 }, g);
+    const h1 = el('rect', { x: 500, y: 236, width: 630, height: 14, fill: GREY, stroke: K, 'stroke-width': 2 }, g);
+    const h2 = el('rect', { x: 500, y: 266, width: 630, height: 14, fill: GREY, stroke: K, 'stroke-width': 2 }, g);
+    const cloth = el('g', {}, g);
+    el('rect', { x: 500, y: FELL0, width: 630, height: 44, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+    hatch(g, 504, FELL0 + 8, 1126, FELL0 + 40, 8, PHI, 1.4, .6, [30, 140]);
+    const reed = el('g', {}, g);
+    el('rect', { x: 505, y: 0, width: 620, height: 20, fill: GREY, stroke: K, 'stroke-width': 3 }, reed);
+    let teeth = ''; for (let x = 512; x < 1120; x += 8) teeth += `M${x},2V18`;
+    el('path', { d: teeth, stroke: K, 'stroke-width': 1.5 }, reed);
+    const weft = el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: PHI, 'stroke-width': 4 }, g);
+    const shuttle = el('path', { d: 'M-50,0 Q-30,-12 0,-12 Q30,-12 50,0 Q30,12 0,12 Q-30,12 -50,0 Z', fill: '#7a3b22', stroke: K, 'stroke-width': 3 }, g);
+    el('use', { href: '#sym-liu', x: 150, y: 210, width: 300, height: 600 }, g);
+    let r = 0, st = 0, t0 = performance.now(), ok = 0, bad = 0, flaw = false, busy = false, finished = false;
+    const ui = $('loomUI'), steps = [...ui.querySelectorAll('.steps span')];
+    ui.classList.add('on'); dlg.classList.remove('show');
+    const fell = () => FELL0 - r * RH;
+    const reedY = () => fell() - 120;
+    reed.setAttribute('transform', `translate(0,${reedY()})`);
+    shuttle.setAttribute('transform', `translate(${X0 - 60},${fell() - 70})`);
+    const exp = () => st === 0 ? (r % 2 ? 'D' : 'U') : st === 1 ? (r % 2 ? 'L' : 'R') : 'B';
+    const LABEL = { U: '↑ 提综（上片）', D: '↓ 提综（下片）', R: '→ 投梭', L: '← 投梭', B: '空格 / 轻点 · 打纬' };
+    const limit = () => 2000 - r * 60;
+    const show = () => {
+      steps.forEach((sp, i) => sp.classList.toggle('cur', i === st));
+      $('lKey').textContent = LABEL[exp()]; $('lKey').classList.remove('bad');
+      $('lCnt').textContent = `第 ${r + 1} / ${rows} 行`;
+      gText.textContent = '按提示的方向键，或在画面上滑动；打纬可轻点画面';
+      gPrompt.classList.add('on');
+    };
+    const doStep = k => {
+      busy = true;
+      if (k === 'U' || k === 'D') {
+        const up = k === 'U';
+        wOdd.setAttribute('stroke-width', up ? 4.6 : 1.6); wEven.setAttribute('stroke-width', up ? 1.6 : 4.6);
+        wOdd.setAttribute('stroke', up ? PHI : GREY2); wEven.setAttribute('stroke', up ? GREY2 : PHI);
+        h1.setAttribute('y', up ? 222 : 246); h2.setAttribute('y', up ? 280 : 256);
+        setTimeout(() => busy = false, 120);
+      } else if (k === 'R' || k === 'L') {
+        const a = k === 'R' ? X0 - 60 : X1 + 60, b = k === 'R' ? X1 + 60 : X0 - 60, y = fell() - 70;
+        const col = PATTERN.includes(r) ? RED : PHI;
+        weft.setAttribute('stroke', col); weft.setAttribute('x1', a); weft.setAttribute('y1', y); weft.setAttribute('y2', y);
+        tween(320, q => { const x = a + (b - a) * easeOut(q); shuttle.setAttribute('transform', `translate(${f1(x)},${y})`); weft.setAttribute('x2', f1(clamp(x, X0, X1))); })
+          .then(() => busy = false);
+      } else {
+        const y0 = reedY(), y1 = fell() - 22;
+        tween(260, q => reed.setAttribute('transform', `translate(0,${f1(y0 + (y1 - y0) * Math.sin(q * Math.PI))})`)).then(() => {
+          const y = fell() - RH, red = PATTERN.includes(r);
+          const row = el('g', {}, cloth);
+          el('rect', { x: X0, y, width: X1 - X0, height: RH, fill: red ? RED : PHI, opacity: .5 + .5 * inkF }, row);
+          let wv = ''; for (let x = X0 + (r % 2) * 10; x < X1; x += 20) wv += `M${x},${y + 3}h10`;
+          el('path', { d: wv, stroke: K, 'stroke-width': 2, opacity: .55 }, row);
+          if (flaw) el('path', { d: `M${X0 + 40 + R(0, 480)},${y}l14,${RH}m0,-${RH}l-14,${RH}`, stroke: RED === (red ? RED : '') ? K : RED, 'stroke-width': 4 }, row);
+          weft.setAttribute('x2', weft.getAttribute('x1'));
+          r++; flaw = false;
+          reed.setAttribute('transform', `translate(0,${reedY()})`);
+          shuttle.setAttribute('transform', `translate(${r % 2 ? X1 + 60 : X0 - 60},${fell() - 70})`);
+          busy = false;
+          if (r >= rows) finish(false);
+        });
+      }
+    };
+    const act = k => {
+      if (finished || busy) return;
+      const e = exp();
+      if (k === e) ok++; else { bad++; flaw = true; $('lKey').classList.add('bad'); }
+      doStep(e); st = (st + 1) % 3; t0 = performance.now();
+      if (!finished) setTimeout(() => !finished && show(), 140);
+    };
+    const off = dirInput(act);
+    const loop = () => {
+      if (finished) return;
+      const left = 1 - (performance.now() - t0) / limit();
+      $('lBar').style.width = f1(clamp(left, 0, 1) * 100) + '%';
+      if (left <= 0 && !busy) act('timeout');
+      tick(loop);
+    };
+    function finish(skipped) {
+      if (finished) return; finished = true; off();
+      ui.classList.remove('on'); gPrompt.classList.remove('on'); Cut.cancel = null;
+      res({ score: skipped ? null : ok / (rows * 3), bad });
+    }
+    show(); tick(loop);
+    Cut.cancel = () => finish(true); if (Cut.skip) finish(true);
+  });
+}
+
+// —— 天轴皮带：按牌子上的要求设置每台机器的主动轮大小与皮带直/交叉，再“开车”检验 ——
+function beltGame(g) {
+  return new Promise(res => {
+    const SY = 196, MY = 600, NAMES = ['梳棉机', '并条机', '细纱机', '织布机', '染色机'];
+    const NEEDS = [[1, 1], [-1, 0], [-1, 1], [1, 0], [-1, 0]];     // [方向 1=顺时针, 快=1]
+    hatch(g, 0, 80, 1600, 150, 10, K, 2, .35);
+    el('rect', { x: 140, y: SY - 10, width: 1380, height: 20, fill: K }, g);
+    for (let x = 300; x < 1500; x += 240) el('rect', { x: x - 6, y: 80, width: 12, height: SY - 80, fill: K }, g);
+    const fly = el('g', { transform: `translate(160,${SY + 250})` }, g);
+    el('circle', { r: 130, fill: 'none', stroke: K, 'stroke-width': 16 }, fly);
+    let sp = ''; for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; sp += `M0,0L${f1(Math.cos(a) * 124)},${f1(Math.sin(a) * 124)}`; }
+    el('path', { d: sp, stroke: K, 'stroke-width': 8 }, fly);
+    el('circle', { r: 20, fill: RED, stroke: K, 'stroke-width': 4 }, fly);
+    el('path', { d: `M160,${SY + 120} L160,${SY}`, stroke: K, 'stroke-width': 12 }, g);
+    el('text', { x: 160, y: SY + 420, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 30, fill: K, text: '动力机 ↻' }, g);
+    const xs = [420, 650, 880, 1110, 1340];
+    const ms = xs.map((x, i) => ({ x, name: NAMES[i], need: NEEDS[i], big: false, cross: false }));
+    const spoke = (gg, r) => { let d = ''; for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; d += `M0,0L${f1(Math.cos(a) * r)},${f1(Math.sin(a) * r)}`; } return el('path', { d, stroke: K, 'stroke-width': 3 }, gg); };
+    for (const m of ms) {
+      m.belt = el('g', { cursor: 'pointer' }, g);
+      m.drv = el('g', { transform: `translate(${m.x},${SY})`, cursor: 'pointer' }, g);
+      m.drvC = el('circle', { r: 24, fill: PHI, stroke: K, 'stroke-width': 4 }, m.drv); m.drvS = spoke(m.drv, 22);
+      m.pul = el('g', { transform: `translate(${m.x},${MY})` }, g);
+      el('circle', { r: 34, fill: PHI, stroke: K, 'stroke-width': 4 }, m.pul); spoke(m.pul, 32);
+      el('rect', { x: m.x - 76, y: MY + 44, width: 152, height: 110, fill: K }, g);
+      hatch(g, m.x - 70, MY + 54, m.x + 70, MY + 110, 8, PHI, 1.2, .5, [20, 60]);
+      el('text', { x: m.x, y: MY + 140, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 26, fill: PHI, text: m.name }, g);
+      const tag = el('g', { transform: `translate(${m.x},${MY - 92})` }, g);
+      el('rect', { x: -52, y: -24, width: 104, height: 40, fill: PHI, stroke: RED, 'stroke-width': 3 }, tag);
+      el('text', { y: 6, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 26, fill: RED, text: `${m.need[0] > 0 ? '↻' : '↺'} ${m.need[1] ? '快' : '慢'}` }, tag);
+      m.mark = el('text', { x: m.x + 58, y: MY - 30, 'font-family': BRUSH, 'font-size': 44, fill: RED, text: '' }, g);
+      m.drv.addEventListener('pointerdown', e => { e.stopPropagation(); if (!running) { m.big = !m.big; draw(m); } });
+      m.belt.addEventListener('pointerdown', e => { e.stopPropagation(); if (!running) { m.cross = !m.cross; draw(m); } });
+    }
+    function draw(m) {
+      const rd = m.big ? 46 : 24, rm = 34;
+      m.drvC.setAttribute('r', rd); m.drvS.setAttribute('transform', `scale(${rd / 22})`);
+      m.belt.innerHTML = '';
+      const a = m.cross ? [[m.x - rd, SY, m.x + rm, MY], [m.x + rd, SY, m.x - rm, MY]] : [[m.x - rd, SY, m.x - rm, MY], [m.x + rd, SY, m.x + rm, MY]];
+      el('path', { d: `M${a[0][0]},${a[0][1]}L${a[0][2]},${a[0][3]}M${a[1][0]},${a[1][1]}L${a[1][2]},${a[1][3]}`, stroke: 'transparent', 'stroke-width': 40 }, m.belt);
+      el('path', { d: `M${a[0][0]},${a[0][1]}L${a[0][2]},${a[0][3]}M${a[1][0]},${a[1][1]}L${a[1][2]},${a[1][3]}`, stroke: '#7a3b22', 'stroke-width': 7 }, m.belt);
+      m.mark.textContent = '';
+    }
+    ms.forEach(draw);
+    tip('点击天轴上的轮子切换大小，点击皮带切换直 / 交叉，然后按「开车」');
+    gText.textContent = '直皮带同向、交叉皮带反向；主动轮大则快、小则慢 · 空格可提示一台';
+    gPrompt.classList.add('on'); dlg.classList.remove('show');
+    const btn = $('runBtn'); btn.classList.add('on'); btn.disabled = false;
+    let running = false, runs = 0, wrongRuns = 0, hints = 0, finished = false;
+    const isOk = m => (m.cross ? -1 : 1) === m.need[0] && (m.big ? 1 : 0) === m.need[1];
+    const run = async () => {
+      if (running || finished) return;
+      running = true; btn.disabled = true; runs++;
+      await tween(2200, k => {
+        const a = k * 720;
+        fly.setAttribute('transform', `translate(160,${SY + 250}) rotate(${f1(a)})`);
+        for (const m of ms) {
+          m.drvS.setAttribute('transform', `rotate(${f1(a)}) scale(${(m.big ? 46 : 24) / 22})`);
+          const dir = m.cross ? -1 : 1, spd = (m.big ? 46 : 24) / 34;
+          const wob = isOk(m) ? 0 : Math.sin(k * 60) * 4;
+          m.pul.setAttribute('transform', `translate(${m.x + wob},${MY}) rotate(${f1(a * dir * spd)})`);
+        }
+      });
+      const bad = ms.filter(m => !isOk(m));
+      for (const m of ms) { m.mark.textContent = isOk(m) ? '✓' : '✗'; m.mark.setAttribute('fill', isOk(m) ? K : RED); }
+      running = false; btn.disabled = false;
+      if (!bad.length) { tip('全部机器转对了——开车成功！'); setTimeout(() => finish(false), 900); }
+      else {
+        wrongRuns++;
+        tip(wrongRuns === 1 ? '有机器转反了或转速不对：交叉皮带会让机器反转；主动轮越大，机器转得越快。' : `还有 ${bad.length} 台不对，再检查一下`, true);
+      }
+    };
+    const onClick = e => { e.stopPropagation(); run(); };
+    btn.addEventListener('pointerdown', stop); btn.addEventListener('click', onClick);
+    const onKey = e => {
+      if (e.key === 'Enter') { e.preventDefault(); run(); }
+      if (e.key === ' ' && !running) {
+        e.preventDefault();
+        const m = ms.find(m => !isOk(m));
+        if (m) { hints++; m.big = !!m.need[1]; m.cross = m.need[0] < 0; draw(m); tip(`提示：${m.name}需要${m.need[0] > 0 ? '顺转' : '反转'}、${m.need[1] ? '快' : '慢'}——${m.cross ? '交叉' : '直'}皮带配${m.big ? '大' : '小'}轮`); }
+      }
+    };
+    addEventListener('keydown', onKey);
+    function finish(skipped) {
+      if (finished) return; finished = true;
+      removeEventListener('keydown', onKey); btn.removeEventListener('click', onClick);
+      btn.classList.remove('on'); tip(''); gPrompt.classList.remove('on'); Cut.cancel = null;
+      res({ score: skipped ? null : clamp(1 - wrongRuns * .18 - hints * .1, 0, 1), runs, wrongRuns, hints });
+    }
+    Cut.cancel = () => finish(true); if (Cut.skip) finish(true);
+  });
+}
+
+// —— 纺织染流水线：在工位前选对工序，成品直接放行 ——
+function lineGame(g, n) {
+  return new Promise(res => {
+    const BY = 560, GATE = 1000;
+    hatch(g, 0, 70, 1600, 260, 12, K, 2, .3);
+    for (let i = 0; i < 6; i++) el('path', { d: `M${i * 280},260 L${i * 280 + 200},140 L${i * 280 + 280},140 L${i * 280 + 280},260 Z`, fill: K }, g);
+    for (let x = 100; x < 1600; x += 300) el('rect', { x: x - 10, y: 260, width: 20, height: 300, fill: GREY }, g);
+    el('rect', { x: 60, y: BY, width: 1480, height: 44, fill: K }, g);
+    const dash = el('path', { d: Array.from({ length: 60 }, (_, i) => `M${70 + i * 26},${BY + 22}h12`).join(''), stroke: PHI, 'stroke-width': 3 }, g);
+    for (let x = 80; x < 1540; x += 70) el('circle', { cx: x, cy: BY + 62, r: 16, fill: K, stroke: PHI, 'stroke-width': 2 }, g);
+    el('rect', { x: GATE - 100, y: BY - 230, width: 18, height: 236, fill: K }, g);
+    el('rect', { x: GATE + 82, y: BY - 230, width: 18, height: 236, fill: K }, g);
+    el('rect', { x: GATE - 110, y: BY - 250, width: 220, height: 40, fill: RED, stroke: K, 'stroke-width': 4 }, g);
+    el('text', { x: GATE, y: BY - 220, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 30, fill: PHI, text: '工 位' }, g);
+    const legend = el('g', { transform: 'translate(120,340)' }, g);
+    el('rect', { x: 0, y: 0, width: 330, height: 150, fill: PHI, stroke: K, 'stroke-width': 3 }, legend);
+    ['棉花 → 按 1 纺', '纱锭 → 按 2 织', '白布 → 按 3 染', '色布 → 不按，放行'].forEach((t, i) =>
+      el('text', { x: 20, y: 34 + i * 33, 'font-size': 20, fill: i === 3 ? RED : K, 'font-family': '"Noto Serif SC",serif', text: t }, legend));
+    const TYPES = ['cotton', 'yarn', 'cloth', 'dyed'], NEED = { cotton: 1, yarn: 2, cloth: 3, dyed: 0 }, NEXT = { cotton: 'yarn', yarn: 'cloth', cloth: 'dyed' };
+    const drawItem = (gg, type) => {
+      gg.innerHTML = '';
+      if (type === 'cotton') { el('path', { d: ellD(-18, -10, 20, 16) + ellD(14, -14, 22, 18) + ellD(0, -30, 20, 16), fill: PHI, stroke: K, 'stroke-width': 3 }, gg); }
+      if (type === 'yarn') { const s = el('g', { transform: 'translate(0,-26) scale(1.3)' }, gg); spool(s, false); }
+      if (type === 'cloth' || type === 'dyed') {
+        for (let i = 0; i < 3; i++) el('rect', { x: -40, y: -18 - i * 16, width: 80, height: 16, fill: type === 'dyed' ? RED : PHI, stroke: K, 'stroke-width': 3 }, gg);
+      }
+    };
+    const items = [], seq = [];
+    for (let i = 0; i < n; i++) seq.push(TYPES[Math.floor(R(0, i < 4 ? 3 : 4))]);
+    let spawned = 0, last = performance.now() - 2000, ok = 0, bad = 0, finished = false, lastT = performance.now();
+    const btns = [...$('lineUI').querySelectorAll('button')];
+    $('lineUI').classList.add('on'); dlg.classList.remove('show');
+    gText.textContent = '按 1 / 2 / 3 或点击下方按钮 · 色布不用加工'; gPrompt.classList.add('on');
+    const pop = (it, txt, good) => {
+      const t = el('text', { x: it.x, y: BY - 110, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 40, fill: good ? K : RED, text: txt }, g);
+      tween(700, k => { t.setAttribute('y', f1(BY - 110 - k * 50)); t.setAttribute('opacity', f1(1 - k)); }).then(() => t.remove());
+    };
+    const press = k => {
+      if (finished) return;
+      const b = btns[k - 1]; if (b) { b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 150); }
+      const it = items.find(it => !it.judged && Math.abs(it.x - GATE) < 95);
+      if (!it) return;
+      it.judged = true;
+      if (NEED[it.type] === k) { ok++; it.type = NEXT[it.type]; drawItem(it.g, it.type); pop(it, '✓', true); }
+      else { bad++; el('path', { d: 'M-30,-60 L30,0 M30,-60 L-30,0', stroke: RED, 'stroke-width': 7 }, it.g); pop(it, '✗', false); }
+    };
+    const onKey = e => { const k = { '1': 1, '2': 2, '3': 3 }[e.key]; if (k) { e.preventDefault(); press(k); } };
+    addEventListener('keydown', onKey);
+    const onBtn = e => { e.stopPropagation(); press(+e.currentTarget.dataset.k); };
+    btns.forEach(b => { b.addEventListener('pointerdown', onBtn); });
+    let off = 0;
+    const loop = () => {
+      if (finished) return;
+      const now = performance.now(), dt = Math.min(50, now - lastT) / 16.667; lastT = now;
+      const prog = spawned / n, v = 3.6 + prog * 2.6, gap = 1500 - prog * 650;
+      if (spawned < n && now - last > gap) {
+        last = now; const it = { x: 0, type: seq[spawned], g: el('g', {}, g), judged: false };
+        drawItem(it.g, it.type); items.push(it); spawned++;
+      }
+      off = (off + v * dt) % 26; dash.setAttribute('transform', `translate(${f1(off)},0)`);
+      for (let i = items.length - 1; i >= 0; i--) {
+        const it = items[i]; it.x += v * dt;
+        it.g.setAttribute('transform', `translate(${f1(it.x)},${BY})`);
+        if (!it.judged && it.x > GATE + 95) {
+          it.judged = true;
+          if (NEED[it.type] === 0) { ok++; pop(it, '放行', true); } else { bad++; pop(it, '漏', false); }
+        }
+        if (it.x > 1620) { it.g.remove(); items.splice(i, 1); }
+      }
+      if (spawned >= n && !items.length) return finish(false);
+      tick(loop);
+    };
+    function finish(skipped) {
+      if (finished) return; finished = true;
+      removeEventListener('keydown', onKey); btns.forEach(b => b.removeEventListener('pointerdown', onBtn));
+      $('lineUI').classList.remove('on'); gPrompt.classList.remove('on'); Cut.cancel = null;
+      res({ score: skipped ? null : ok / n, ok, bad });
+    }
+    tick(loop);
+    Cut.cancel = () => finish(true); if (Cut.skip) finish(true);
+  });
+}
+
+/* ================= 三段剧情 ================= */
+function streetBg(g, night = false) {
+  el('rect', { x: -100, y: -100, width: 1800, height: 1100, fill: night ? K : PAPER }, g);
+  hatch(g, 0, 60, 1600, 600, 14, night ? GREY : K, 2, night ? .5 : .3);
+  if (!night) el('circle', { cx: 1320, cy: 210, r: 80, fill: RED }, g);
+}
+// 壹 · 学徒织布
+async function ep0() {
+  await shot(g => {
+    streetBg(g);
+    for (let i = 0; i < 5; i++) shophouse(g, -60 + i * 190, 170, R(220, 300), GREY);
+    const sg = el('g', { transform: 'translate(-430,0) scale(1.35) translate(0,-180)' }, g);
+    el('use', { href: '#art0' }, sg);
+    el('rect', { x: -100, y: G, width: 1800, height: 300, fill: K }, g);
+    el('use', { href: '#sym-liu', x: 980, y: 300, width: 220, height: 440 }, g);
+  });
+  unlockCard('benniu');
+  await say('旁白', '清末，少年刘国钧离开家乡靖江，来到常州奔牛镇的店铺里当学徒。');
+  await say('旁白', '他省吃俭用，后来在奔牛开起了自己的小店。');
+  await say('旁白', '布，是人人都离不开的东西——要是能自己织布呢？');
+  const inkU = spendInk();
+  await say('旁白', `${inkU.used ? `备好纱线（用纱 ${inkU.used} / 8）。` : '纱线不多，布面会稀薄……'}试着织一匹布：提综、投梭、打纬，三步一循环。`);
+  const lm = await (async () => { let r; await shot(g => { el('rect', { x: -100, y: -100, width: 1800, height: 1100, fill: PAPER }, g); hatch(g, 0, 60, 1600, 860, 16, K, 1.6, .18); r = g; }); return loomGame(r, 10, inkU.f); })();
+  await say('旁白', lm.score == null ? '一匹布织成了。' : lm.score > .8 ? '布面平整，纹样清楚——这是一匹好布。' : '有几处疵点，但布总算织成了。');
+  unlockCard('loom');
+  const sc = lm.score == null ? null : lm.score * (.8 + .2 * inkU.f);
+  game.grades[0] = sc;
+  await result('壹 · 学徒织布', sc, sc == null ? ['已跳过，本段不评分'] : [`经纬织布：10 行，失误 ${lm.bad} 次`, `用纱：${inkU.used} / 8（纱足则布密）`]);
+}
+// 贰 · 东渡取经
+async function ep1() {
+  await shot(g => {
+    streetBg(g);
+    hatch(g, 0, 640, 1600, 900, 10, K, 2, .5);
+    const sg = el('g', { transform: 'translate(-2900,0) scale(1.55) translate(0,-260)' }, g);
+    el('use', { href: '#art1' }, sg);
+    el('use', { href: '#sym-liu', x: 1060, y: 330, width: 200, height: 400 }, g);
+  });
+  await say('旁白', '为了织出更好的布，刘国钧曾东渡日本考察纺织业。');
+  await say('旁白', '回来后，他改良设备、整顿管理，让工厂的机器更好地转起来。');
+  const inkU = spendInk();
+  let bg;
+  await shot(g => { el('rect', { x: -100, y: -100, width: 1800, height: 1100, fill: PAPER }, g); bg = g; });
+  await say('旁白', '近代工厂里，动力机带动头顶的天轴，再用皮带把动力分给每台机器。');
+  await say('旁白', '照着牌子上的要求连好皮带：直皮带同向转，交叉皮带反向转；主动轮越大，机器转得越快。');
+  const bt = await beltGame(bg);
+  unlockCard('belt'); unlockCard('dongdu');
+  const sc = bt.score == null ? null : bt.score * (.8 + .2 * inkU.f);
+  game.grades[1] = sc;
+  await result('贰 · 东渡取经', sc, sc == null ? ['已跳过，本段不评分'] : [`开车 ${bt.runs} 次，其中失败 ${bt.wrongRuns} 次`, `使用提示：${bt.hints} 次`, `用纱：${inkU.used} / 8`]);
+}
+// 叁 · 大成
+async function ep2() {
+  await shot(g => {
+    streetBg(g);
+    const sg = el('g', { transform: 'translate(-4700,0) scale(1.45) translate(0,-230)' }, g);
+    el('use', { href: '#art2' }, sg);
+    el('rect', { x: -100, y: 870, width: 1800, height: 100, fill: K }, g);
+  });
+  await say('旁白', '1930 年，刘国钧接办常州大纶纱厂，改组为大成纺织染公司。');
+  await say('旁白', '纺纱、织布、印染，在一家厂里连成了一条线。');
+  const inkU = spendInk();
+  let lg;
+  await shot(g => { el('rect', { x: -100, y: -100, width: 1800, height: 1100, fill: PAPER }, g); lg = g; });
+  await say('旁白', '看准工位：棉花要纺、纱锭要织、白布要染，染好的色布直接放行。');
+  const ln = await lineGame(lg, 18);
+  const lit = ln.score == null ? .8 : ln.score;
+  await shot(g => {
+    streetBg(g, true);
+    const wins = factory(g, 180, 1200, 380, 8, K, 0);
+    chimney(g, 1440, 560, 50, K);
+    el('rect', { x: -100, y: G, width: 1800, height: 300, fill: K }, g);
+    el('rect', { x: 640, y: G - 470, width: 260, height: 80, fill: RED, stroke: PHI, 'stroke-width': 4 }, g);
+    el('text', { x: 770, y: G - 412, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 56, fill: PHI, 'letter-spacing': 10, text: '大成' }, g);
+    wins.forEach((w, i) => { w.setAttribute('fill', WARM); w.style.opacity = 0; w.style.transition = `opacity .4s ${(i * .04).toFixed(2)}s`; });
+    setTimeout(() => wins.forEach(w => { if (rnd() < .25 + lit * .75) w.style.opacity = .95; }), 300);
+  });
+  await say('旁白', '机声隆隆，灯火彻夜。大成很快成长为常州近代纺织业的代表。');
+  unlockCard('dacheng');
+  const sc = ln.score == null ? null : ln.score * (.8 + .2 * inkU.f);
+  game.grades[2] = sc;
+  await result('叁 · 大成', sc, sc == null ? ['已跳过，本段不评分'] : [`流水线：正确 ${ln.ok} / 18，失误 ${ln.bad}`, `用纱：${inkU.used} / 8`]);
+}
+const EPISODES = [
+  { run: ep0, title: '<em>壹</em>学徒织布' },
+  { run: ep1, title: '<em>贰</em>东渡取经' },
+  { run: ep2, title: '<em>叁</em>大成' },
+];
+
+/* ================= 尾声 CG（引擎各场景相同，镜头为本篇） ================= */
+const cgEl = $('cg'), cgStage = $('cgStage'), cgSub = $('cgSub'), cgFlash = $('cgFlash'), cgTitle = $('cgTitle');
+let cgUid = 0;
+const lyr = parent => { const v = el('svg', { viewBox: '0 0 1600 900', preserveAspectRatio: 'xMidYMid slice', class: 'lyr' }); parent.appendChild(v); return v; };
+const cam = (L, sc = 1, x = 0, y = 0, r = 0) => { L.style.transform = `translate(${f1(x)}px,${f1(y)}px) scale(${sc.toFixed(4)}) rotate(${f1(r)}deg)`; };
+const CG_SUBS = [
+  [0.5, 2.2, '一梭，一线——'], [2.8, 2.6, '经纬交织，布一寸寸长出来。'],
+  [5.8, 2.4, '从奔牛的小店，到运河边的工厂，'], [8.3, 2.2, '一匹布，织进了一座城。'],
+  [11.0, 2.4, '机声隆隆，灯火彻夜。'], [13.6, 2.8, '织机声里，近代常州走向了工业城市。'],
+  [17.0, 2.6, '经纬之间，藏着秩序与计算——'], [19.8, 2.6, '下一页，交给数学。'],
+];
+const SHOTS = [
+  // ① 梭影：经线如帘，梭子飞驰，纬线一行行织上
+  { start: 0, dur: 5.5, enter: 'fade', build(c) {
+    const L0 = lyr(c), L1 = lyr(c), L2 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: K }, L0);
+    let wp = ''; for (let x = -200; x < 1800; x += 24) wp += `M${x},-200V1100`;
+    el('path', { d: wp, stroke: PHI, 'stroke-width': 3, opacity: .85 }, L0);
+    const rows = el('g', {}, L1);
+    const lines = []; for (let i = 0; i < 30; i++) lines.push(el('line', { x1: -400, x2: -400, stroke: PHI, 'stroke-width': 2, opacity: .5 }, L1));
+    const sh = el('g', {}, L2);
+    for (let i = 4; i >= 0; i--) el('path', { d: 'M-150,0 Q-90,-36 0,-36 Q90,-36 150,0 Q90,36 0,36 Q-90,36 -150,0 Z', fill: i ? ink(.0) : '#7a3b22', stroke: i ? PHI : K, 'stroke-width': i ? 2 : 6, opacity: i ? f1(.5 - i * .09) : 1, transform: `translate(${-i * 70},0)` }, sh);
+    return { L0, L1, rows, lines, sh };
+  }, update(c, t, k) {
+    cam(c.L0, 1.05 + .05 * k, Math.sin(t * 30) * 2);
+    const pass = t / .9, i = Math.floor(pass), ph = pass - i, dir = i % 2 ? -1 : 1;
+    const x = dir > 0 ? -300 + ph * 2200 : 1900 - ph * 2200, y = 720 - i * 70;
+    c.sh.setAttribute('transform', `translate(${f1(x)},${f1(y)}) scale(${dir},1)`);
+    while (c.rows.childNodes.length < i) {
+      const j = c.rows.childNodes.length, yy = 720 - j * 70;
+      el('rect', { x: -300, y: yy - 14, width: 2200, height: 28, fill: j % 3 === 1 ? RED : PHI }, c.rows);
+    }
+    c.lines.forEach((l, j) => { const yy = (j * 37 + t * 900) % 1100 - 100; l.setAttribute('x1', -200); l.setAttribute('x2', 1800); l.setAttribute('y1', f1(yy)); l.setAttribute('y2', f1(yy - 30)); });
+  } },
+  // ② 布匹奔流：一条织好的布斜穿画面，人物在前景
+  { start: 5.5, dur: 5.2, enter: 'flash', build(c) {
+    const L0 = lyr(c), L1 = lyr(c), L2 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: PAPER }, L0);
+    hatch(L0, -200, 0, 1800, 900, 16, K, 2, .25);
+    const id = 'pt' + (++cgUid), pat = el('pattern', { id, width: 120, height: 60, patternUnits: 'userSpaceOnUse' }, el('defs', {}, L1));
+    el('rect', { width: 120, height: 60, fill: PHI }, pat);
+    el('rect', { y: 20, width: 120, height: 14, fill: RED }, pat);
+    el('rect', { y: 44, width: 120, height: 5, fill: K }, pat);
+    el('path', { d: 'M0,8h20M40,8h20M80,8h20', stroke: K, 'stroke-width': 3 }, pat);
+    const cloth = el('path', { fill: `url(#${id})`, stroke: K, 'stroke-width': 6 }, L1);
+    el('use', { href: '#sym-liu', x: 1080, y: 250, width: 330, height: 660 }, L2);
+    return { L0, L1, L2, cloth, pat };
+  }, update(c, t, k) {
+    const top = [], bot = [];
+    for (let i = 0; i <= 30; i++) {
+      const u = i / 30, x = -200 + u * 2000, y = 900 - u * 1000 + Math.sin(u * 7 + t * 3) * 40;
+      top.push([x, y - 120 - Math.sin(u * 5 - t * 2) * 30]); bot.push([x, y + 120 + Math.sin(u * 5 - t * 2) * 30]);
+    }
+    c.cloth.setAttribute('d', 'M' + top.concat(bot.reverse()).map(p => `${f1(p[0])},${f1(p[1])}`).join('L') + 'Z');
+    c.pat.setAttribute('patternTransform', `rotate(-27) translate(${f1(t * 160)},0)`);
+    cam(c.L1, 1.05 + .05 * k); cam(c.L2, 1 + .06 * k, -30 * k, 0);
+  } },
+  // ③ 厂房亮灯：夜色里窗格次第亮起，工人鱼贯而入
+  { start: 10.7, dur: 6.0, enter: 'iris', build(c) {
+    const L0 = lyr(c), L1 = lyr(c), L2 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: '#3a352d' }, L0);
+    hatch(L0, -200, 40, 1800, 560, 16, GREY2, 2, .55);
+    el('circle', { cx: 300, cy: 200, r: 60, fill: PHI, opacity: .85 }, L0);
+    const wins = factory(L1, 100, 1400, 400, 9, K, 0);
+    chimney(L1, 1520, 600, 54, K);
+    el('rect', { x: 620, y: G - 500, width: 340, height: 96, fill: RED, stroke: PHI, 'stroke-width': 5 }, L1);
+    el('text', { x: 790, y: G - 432, 'text-anchor': 'middle', 'font-family': BRUSH, 'font-size': 66, fill: PHI, 'letter-spacing': 14, text: '大成' }, L1);
+    el('rect', { x: -400, y: G, width: 2400, height: 400, fill: K }, L1);
+    el('rect', { x: -400, y: G, width: 2400, height: 4, fill: PHI }, L1);
+    wins.forEach(w => w.setAttribute('fill', WARM));
+    const crowd = [];
+    for (let i = 0; i < 26; i++) {      // 上工的工人：布帽、短褂、提饭盒
+      const g = el('g', {}, L2), h = R(96, 132), k = h / 120, ga = el('g', { transform: `scale(${k.toFixed(3)})` }, g);
+      el('path', { d: 'M-8,-56 L-14,-4 M6,-56 L14,-4', stroke: PHI, 'stroke-width': 9, 'stroke-linecap': 'round' }, ga);
+      el('path', { d: 'M-16,-104 Q0,-110 16,-104 L18,-54 Q0,-48 -18,-54 Z', fill: PHI }, ga);
+      el('path', { d: 'M0,-100 L0,-52', stroke: '#3a352d', 'stroke-width': 2 }, ga);
+      el('path', { d: 'M14,-100 L22,-70 L20,-58', stroke: PHI, 'stroke-width': 7, fill: 'none', 'stroke-linecap': 'round' }, ga);
+      el('rect', { x: 14, y: -60, width: 14, height: 11, fill: rnd() < .3 ? '#b5321f' : PHI, stroke: '#3a352d', 'stroke-width': 1.5 }, ga);
+      el('circle', { cx: 2, cy: -116, r: 10, fill: PHI }, ga);
+      el('path', { d: 'M-10,-118 Q2,-132 14,-120 L16,-116 L-12,-114 Z', fill: '#3a352d' }, ga);
+      crowd.push({ g, x0: R(-900, 200), sp: R(90, 150), y: G + R(30, 110) });
+    }
+    return { L1, wins, crowd };
+  }, update(c, t, k) {
+    cam(c.L1, 1 + .04 * k);
+    c.wins.forEach((w, i) => w.setAttribute('opacity', t > .5 + i * .06 ? .95 : 0));
+    for (const p of c.crowd) p.g.setAttribute('transform', `translate(${f1(p.x0 + t * p.sp)},${f1(p.y)})`);
+  } },
+  // ④ 经纬成格：红白线织成网格，彩色纸块落入，引出下一章
+  { start: 16.7, dur: 6.3, enter: 'cut', build(c) {
+    const L0 = lyr(c), L1 = lyr(c);
+    el('rect', { x: -400, y: -400, width: 2400, height: 1700, fill: '#f4ecdc' }, L0);
+    const lines = [];
+    for (let i = 0; i < 17; i++) lines.push(el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: i % 4 === 0 ? RED : K, 'stroke-width': 3 }, L0));
+    for (let i = 0; i < 10; i++) lines.push(el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: i % 3 === 0 ? RED : K, 'stroke-width': 3 }, L0));
+    const COLS = ['#2f8f83', '#e0a526', '#e2674a', '#22314f', '#9cc7d8', '#f0b3a2'];
+    const tiles = [];
+    for (let i = 0; i < 40; i++) {
+      const cx = Math.floor(R(0, 16)), cy = Math.floor(R(0, 9));
+      const r = el('rect', { x: cx * 100 + 6, y: cy * 100 + 6, width: 88, height: 88, fill: COLS[i % COLS.length], opacity: 0, transform: '' }, L1);
+      tiles.push({ r, d: R(1.4, 3.6), x: cx * 100 + 50, y: cy * 100 + 50 });
+    }
+    return { lines, tiles };
+  }, update(c, t) {
+    c.lines.forEach((l, i) => {
+      const v = i < 17, q = easeOut(seg(t, i * .04, .8 + i * .04));
+      if (v) { const x = i * 100; l.setAttribute('x1', x); l.setAttribute('x2', x); l.setAttribute('y1', -50); l.setAttribute('y2', f1(-50 + 1000 * q)); }
+      else { const y = (i - 17) * 100; l.setAttribute('y1', y); l.setAttribute('y2', y); l.setAttribute('x1', -50); l.setAttribute('x2', f1(-50 + 1700 * q)); }
+    });
+    for (const p of c.tiles) {
+      const q = easeOut(seg(t, p.d, p.d + .5)), sc = .3 + .7 * q;
+      p.r.setAttribute('opacity', f1(q * .95));
+      p.r.setAttribute('transform', `translate(${p.x},${p.y}) scale(${sc.toFixed(3)}) rotate(${f1((1 - q) * 40)}) translate(${-p.x},${-p.y})`);
+    }
+    cgTitle.classList.toggle('on', t > 3.6);
+  } },
+];
+const CG_LEN = 23.0;
+function irisRing() {   // 齿轮形的圆环转场
+  const d = document.createElement('div'); d.className = 'iris';
+  const v = el('svg', { viewBox: '-130 -130 260 260' }); d.appendChild(v);
+  let p = '';
+  for (let i = 0; i < 24; i++) {
+    const a = i / 24 * Math.PI * 2, b = (i + .5) / 24 * Math.PI * 2;
+    p += `${i ? 'L' : 'M'}${f1(Math.cos(a) * 126)},${f1(Math.sin(a) * 126)}L${f1(Math.cos(a + .08) * 126)},${f1(Math.sin(a + .08) * 126)}L${f1(Math.cos(b - .05) * 114)},${f1(Math.sin(b - .05) * 114)}L${f1(Math.cos(b + .1) * 114)},${f1(Math.sin(b + .1) * 114)}`;
+  }
+  el('path', { d: p + 'Z M0,-100A100,100 0 1 0 0,100A100,100 0 1 0 0,-100Z', fill: K, 'fill-rule': 'evenodd' }, v);
+  el('circle', { r: 107, fill: 'none', stroke: RED, 'stroke-width': 4 }, v);
+  return d;
+}
+let cgRunning = false;
+function playCG() {
+  return new Promise(res => {
+    if (cgRunning) return res();
+    cgRunning = true; cgStage.innerHTML = ''; cgTitle.classList.remove('on'); cgSub.textContent = '';
+    cgEl.classList.add('on'); cgEl.style.opacity = 0; void cgEl.offsetWidth; cgEl.style.opacity = 1;
+    let t0 = performance.now(), cur = -1, ctx = null, box = null, prev = null, ring = null, done = false, hold = null;
+    if (location.hash === '#cg') window.__cgSeek = (sec, pause) => { t0 = performance.now() - sec * 1000; hold = pause ? sec : null; };
+    const finish = () => {
+      if (done) return; done = true; cgEl.style.opacity = 0;
+      setTimeout(() => { cgEl.classList.remove('on'); cgStage.innerHTML = ''; cgTitle.classList.remove('on'); cgRunning = false; res(); }, 800);
+    };
+    $('cgSkip').onclick = e => { e.stopPropagation(); finish(); };
+    const loop = () => {
+      if (done) return;
+      const t = hold != null ? hold : (performance.now() - t0) / 1000;
+      if (t >= CG_LEN) return finish();
+      let i = SHOTS.length - 1;
+      while (i > 0 && t < SHOTS[i].start) i--;
+      const sh = SHOTS[i];
+      if (i !== cur) {
+        if (prev) prev.remove();
+        prev = box; cur = i;
+        box = document.createElement('div'); box.className = 'shot'; cgStage.appendChild(box);
+        ctx = sh.build(box);
+        if (sh.enter === 'iris') { ring = irisRing(); box.appendChild(ring); }
+        if (sh.enter === 'flash') { cgFlash.style.transition = 'none'; cgFlash.style.opacity = 1; void cgFlash.offsetWidth; cgFlash.style.transition = 'opacity .7s'; cgFlash.style.opacity = 0; }
+        if ((sh.enter === 'cut' || sh.enter === 'flash') && prev) { prev.remove(); prev = null; }
+      }
+      const lt = t - sh.start, k = clamp(lt / sh.dur, 0, 1);
+      if (sh.enter === 'fade') { box.style.opacity = f1(clamp(lt / .8, 0, 1)); if (lt > .8 && prev) { prev.remove(); prev = null; } }
+      if (sh.enter === 'iris') {
+        const m = easeIO(clamp(lt / 1.6, 0, 1)), Rr = m * Math.hypot(innerWidth, innerHeight) / 2 * 1.1;
+        box.style.clipPath = lt < 1.6 ? `circle(${f1(Rr)}px at 50% 50%)` : 'none';
+        if (ring) {
+          ring.style.transform = `translate(-50%,-50%) scale(${(2.6 * Math.max(Rr, 1) / 1000).toFixed(4)}) rotate(${f1(lt * 90)}deg)`;
+          ring.style.opacity = f1(1 - seg(lt, 1.2, 1.6));
+          if (lt > 1.6) { ring.remove(); ring = null; if (prev) { prev.remove(); prev = null; } }
+        }
+      }
+      sh.update(ctx, lt, k);
+      const sub = CG_SUBS.find(([st, du]) => t >= st && t < st + du), txt = sub ? sub[2] : '';
+      if (cgSub.textContent !== txt) cgSub.textContent = txt;
+      tick(loop);
+    };
+    tick(loop);
+  });
+}
+
+/* ================= 世界交互 ================= */
+const stageEl = $('stage'), hint = $('hint'), card = $('card'), bookEl = $('book');
+const progressLis = [...document.querySelectorAll('#progress li')];
+const MINX = 300, MAXX = 3880, MAXV = 5, GRAV = .9, JUMP = -18;
+let state = 'intro', px = MINX, py = G, vx = 0, vy = 0, onGround = true, camX = 0, dragging = false, pX = 0, pDown = null;
+let wheelImp = 0, next = 0, keyDir = 0, wantJump = false, invuln = 0, walkPh = 0, facing = 1, bookOpen = false;
+const seen = { rick: false, air: false };
+updHud();
+const toScreenW = (wx, wy) => [(wx - camX) * s, wy * s];
+function addInk(n, wx, wy) {
+  game.ink += n; game.got += n; updHud();
+  const [x, y] = toScreenW(wx, wy); toast(`纱 +${n}`, x, y - 20);
+  if (game.got >= 10) unlockCard('dock');
+}
+function loseInk(n, wx, wy, label) { game.ink = Math.max(0, game.ink - n); updHud(); const [x, y] = toScreenW(wx, wy); toast(label, x, y - 20, true); }
+const jump = () => { if (state === 'play' && !bookOpen) wantJump = true; };
+stageEl.addEventListener('pointerdown', e => {
+  if (state !== 'play' || bookOpen) return;
+  dragging = true; pX = e.clientX; pDown = { x: e.clientX, y: e.clientY, t: performance.now() };
+  stageEl.classList.add('dragging'); stageEl.setPointerCapture(e.pointerId);
+});
+stageEl.addEventListener('pointermove', e => {
+  pX = e.clientX;
+  if (pDown && pDown.y - e.clientY > 50 && Math.abs(e.clientX - pDown.x) < 90) { jump(); pDown = null; }
+});
+const up = () => { dragging = false; pDown = null; stageEl.classList.remove('dragging'); };
+stageEl.addEventListener('pointerup', up); stageEl.addEventListener('pointercancel', up);
+const KX = { ArrowRight: 1, d: 1, ArrowLeft: -1, a: -1 };
+addEventListener('keydown', e => {
+  if (state !== 'play') return;
+  if (KX[e.key]) keyDir = KX[e.key];
+  if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') { e.preventDefault(); jump(); }
+});
+addEventListener('keyup', e => { if (KX[e.key]) keyDir = 0; });
+addEventListener('wheel', e => { if (state === 'play' && !bookOpen) wheelImp = clamp(wheelImp + (e.deltaY + e.deltaX) * .03, -MAXV, MAXV); }, { passive: true });
+$('jumpBtn').addEventListener('pointerdown', e => { e.stopPropagation(); jump(); });
+function openBook() { renderBook(); bookEl.classList.add('on'); bookOpen = true; up(); }
+$('bookBtn').addEventListener('click', openBook);
+$('endBook').addEventListener('click', openBook);
+$('bookClose').addEventListener('click', () => { bookEl.classList.remove('on'); bookOpen = false; });
+bookEl.addEventListener('click', e => { if (e.target === bookEl) { bookEl.classList.remove('on'); bookOpen = false; } });
+
+function jumpTo(i) {
+  for (let j = 0; j < i; j++) { const n = NODES[j]; n.live.removeAttribute('mask'); n.ghost.remove(); n.marker.style.opacity = 0; progressLis[j].classList.add('done'); }
+  next = i; px = NODES[i].trig - 90; camX = NaN; game.ink = 10; game.got = 10; updHud();
+}
+$('startBtn').addEventListener('click', () => {
+  $('intro').classList.add('open');
+  setTimeout(() => $('intro').style.display = 'none', 1500);
+  if (location.hash === '#cg') { setTimeout(() => playCG().then(showEnding), 1200); return; }
+  const m = location.hash.match(/^#ep([1-3])$/);
+  if (m) jumpTo(+m[1] - 1);
+  setTimeout(() => { state = 'play'; hint.classList.remove('hide'); $('jumpBtn').classList.add('on'); }, 900);
+});
+$('againBtn').addEventListener('click', () => location.reload());
+$('endCg').addEventListener('click', () => playCG());
+$('nextBtn').addEventListener('click', () => { location.href = NEXT_URL; });
+
+async function triggerNode(i) {
+  state = 'cut'; keyDir = 0; up(); hint.classList.add('hide'); card.classList.remove('show'); $('jumpBtn').classList.remove('on');
+  const n = NODES[i];
+  n.marker.style.opacity = 0;
+  await inkCover((n.cx - camX) * s, (G - 360) * s);
+  hud.style.opacity = 0;
+  $('cutTitle').innerHTML = EPISODES[i].title;
+  cutEl.classList.add('on');
+  Cut.skip = false; Cut.first = true;
+  await EPISODES[i].run();
+  dlg.classList.remove('show'); tip('');
+  await inkCover(innerWidth / 2, innerHeight / 2);
+  cutEl.classList.remove('on');
+  if (Cut.layer) { Cut.layer.remove(); Cut.layer = null; }
+  Cut.skip = false; hud.style.opacity = 1;
+  await inkUncover();
+  reveal(i);
+}
+// 木刻“刻出”：锯齿状的刀口从左向右推进，飞出木屑
+function reveal(i) {
+  const n = NODES[i], x0 = n.cx - 520, span = 1100, t0 = performance.now();
+  (function step() {
+    const k = clamp((performance.now() - t0) / 1800, 0, 1), xe = x0 + easeOut(k) * span;
+    let d = `M${x0},-40 L${f1(xe)},-40`;
+    for (let y = -40, j = 0; y <= 940; y += 30, j++) d += ` L${f1(xe + (j % 2 ? 22 : -10))},${y}`;
+    d += ` L${x0},940 Z`;
+    n.mp.setAttribute('d', d);
+    if (k < 1 && rnd() < .6) chips.push({ x: xe, y: R(G - 360, G), vx: R(2, 6), vy: R(-6, -1), e: el('rect', { width: R(4, 10), height: R(3, 6), fill: rnd() < .3 ? RED : PHI, stroke: K, 'stroke-width': 1 }, chipsG) });
+    n.ghost.setAttribute('opacity', f1(.1 * (1 - k)));
+    if (k < 1) tick(step); else { n.live.removeAttribute('mask'); n.ghost.remove(); }
+  })();
+  setTimeout(() => {
+    $('cardSeal').textContent = n.seal; $('cardTitle').textContent = n.title; $('cardText').textContent = n.text; $('cardNote').textContent = n.note;
+    card.classList.add('show'); setTimeout(() => card.classList.remove('show'), 9000);
+  }, 600);
+  const d = document.createElement('div'); d.className = 'drop';
+  d.style.left = ((n.cx - camX) * s) + 'px'; d.style.top = ((G - 360) * s) + 'px'; document.body.appendChild(d);
+  const r = progressLis[i].querySelector('i').getBoundingClientRect();
+  setTimeout(() => { d.style.left = (r.left + r.width / 2) + 'px'; d.style.top = (r.top + r.height / 2) + 'px'; d.style.opacity = 0; }, 40);
+  setTimeout(() => { progressLis[i].classList.add('done'); d.remove(); }, 1000);
+  if (i === NODES.length - 1) { state = 'moor'; setTimeout(() => playCG().then(showEnding), 4800); }
+  else { state = 'play'; $('jumpBtn').classList.add('on'); }
+}
+function showEnding() {
+  const names = ['学徒', '东渡', '大成'];
+  $('endGrades').innerHTML = game.grades.map((g, i) => { const gr = gradeOf(g); return `<div><b class="${gr === '—' ? 'none' : ''}">${gr}</b>${names[i]}</div>`; }).join('');
+  $('endGot').innerHTML = `共收集 <b>纱线 ${game.got}</b> · 图鉴 <b>${game.cards.size} / ${CARDS.length}</b>`;
+  saveChapter(CHAPTER_ID, { grades: game.grades, res: game.got, resName: RES_NAME, cards: [...game.cards] });
+  card.classList.remove('show'); $('ending').classList.add('show'); state = 'end';
+}
+
+let last = performance.now();
+function frame(t) {
+  const dt = Math.min(50, t - last) / 16.667; last = t;
+  let want = 0;
+  const active = state === 'play' && !bookOpen;
+  if (active) {
+    if (dragging) want = clamp(((camX + pX / s) - px) * .05, -MAXV, MAXV);
+    if (keyDir) want = keyDir * MAXV;
+    want = clamp(want + wheelImp, -MAXV, MAXV);
+  } else if (state === 'moor') want = clamp((MAXX - px) * .03, -2, 2);
+  wheelImp *= Math.pow(.9, dt);
+  vx += (want - vx) * .15 * dt;
+  if (wantJump && onGround && active) { vy = JUMP; onGround = false; }
+  wantJump = false;
+  if (!onGround) { vy += GRAV * dt; py += vy * dt; if (py >= G) { py = G; vy = 0; onGround = true; } }
+  px = clamp(px + vx * dt, MINX, MAXX);
+  if (invuln > 0) invuln -= dt;
+  walkPh += Math.abs(vx) * dt * .085;
+  if (vx > .3) facing = 1; else if (vx < -.3) facing = -1;
+
+  if (state === 'play' && next < NODES.length && px >= NODES[next].trig && onGround) triggerNode(next++);
+  if (px > MINX + 160) hint.classList.add('hide');
+
+  const camT = clamp(px - VW * .36, 0, Math.max(0, W - VW));
+  camX = Number.isFinite(camX) ? camX + (camT - camX) * .08 * dt : camT;
+  for (const L of Object.values(LAYERS)) L.div.style.transform = `translate3d(${-camX * L.f * s}px,0,0)`;
+
+  // 人物动作：走路摆臂摆腿，空中收腿
+  const sw = Math.sin(walkPh), amp = Math.min(1, Math.abs(vx) / 3);
+  const rot = (gp, a, cx, cy) => gp.setAttribute('transform', `rotate(${f1(a)},${cx},${cy})`);
+  if (onGround) {
+    rot(PL.bl, -sw * 24 * amp, 85, 236); rot(PL.fl, sw * 24 * amp, 85, 236);
+    rot(PL.ba, sw * 22 * amp, 72, 104); rot(PL.fa, -sw * 4 * amp, 92, 100); rot(PL.hem, sw * 2.6 * amp, 86, 168);
+  } else { rot(PL.bl, -30, 85, 236); rot(PL.fl, 26, 85, 236); rot(PL.ba, -46, 72, 104); rot(PL.fa, -8, 92, 100); rot(PL.hem, 4, 86, 168); }
+  const bob = onGround ? -Math.abs(sw) * 3 * amp : 0, blink = invuln > 0 && Math.floor(t / 90) % 2;
+  const sc = .82;
+  playerDiv.style.transform = `translate3d(${(px - camX - PW * sc / 2) * s}px,${(py - PH * sc + bob) * s}px,0) scaleX(${facing})`;
+  playerDiv.style.opacity = blink ? .35 : 1;
+
+  // 纱锭
+  for (const it of items) {
+    if (!it.alive) continue;
+    const y = it.y + Math.sin(t * .003 + it.ph) * 4;
+    it.el.setAttribute('transform', `translate(${f1(it.x)},${f1(y)})`);
+    if (state === 'play' && Math.abs(it.x - px) < 40 && y > py - 230 && y < py + 10) {
+      it.alive = false; it.el.style.transition = 'opacity .3s'; it.el.style.opacity = 0; setTimeout(() => it.el.remove(), 300);
+      addInk(it.air ? 2 : 1, it.x, y);
+    }
+    if (!seen.air && it.air && Math.abs(it.x - px) < 300 && state === 'play') { seen.air = true; banner('空中的红纱锭值 2 卷——跳起来够它！'); }
+  }
+  // 黄包车：靠近时启动，朝人迎面驶来
+  for (const h of hazards) {
+    if (h.done) continue;
+    if (!h.active && state === 'play' && px > h.x0 - 1150) { h.active = true; if (!seen.rick) { seen.rick = true; banner('黄包车来了——向上滑动 / ↑ / 空格 跳过去！'); } }
+    if (h.active && (state === 'play' || state === 'moor')) h.x -= h.sp * dt;
+    h.el.setAttribute('transform', `translate(${f1(h.x)},${G})`);
+    h.wheel.setAttribute('transform', `translate(30,-48) rotate(${f1(-(h.x0 - h.x) / 46 * 57.3)})`);
+    runLegs(h.legs, (h.x0 - h.x) * .055);
+    if (state === 'play' && invuln <= 0 && Math.abs(h.x - px) < 90 && py > G - 110) {
+      invuln = 80; vx = -6; vy = -8; onGround = false;
+      loseInk(2, px, G - 260, '撞上黄包车 · 纱 -2');
+    }
+    if (h.x < px - 1600) { h.done = true; h.el.remove(); }
+  }
+  // 木屑
+  for (let i = chips.length - 1; i >= 0; i--) {
+    const c = chips[i]; c.x += c.vx * dt; c.y += c.vy * dt; c.vy += .4 * dt;
+    c.e.setAttribute('transform', `translate(${f1(c.x)},${f1(c.y)}) rotate(${f1(c.x)})`);
+    if (c.y > G + 20) { c.e.remove(); chips.splice(i, 1); }
+  }
+  tick(frame);
+}
+tick(frame);
+})();
+</script>
+</body>
+</html>
