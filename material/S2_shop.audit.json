@@ -1,0 +1,2386 @@
+{
+  "file": "S2_shop",
+  "objects": 112,
+  "triangles": 9984,
+  "items": {
+    "S2-1": 3292,
+    "S2-2": 408,
+    "S2-3": 320,
+    "S2-4": 1916,
+    "S2-5": 1936,
+    "S2-6": 212,
+    "S2-7": 492,
+    "S2-8": 300,
+    "S2-9": 972,
+    "S2-10": 136
+  },
+  "budget_limits": {
+    "S2-1": 5000,
+    "S2-2": 2000,
+    "S2-3": 2000,
+    "S2-4": 4000,
+    "S2-5": 2000,
+    "S2-6": 800,
+    "S2-7": 1000,
+    "S2-8": 900,
+    "S2-9": 1000,
+    "S2-10": 300
+  },
+  "required_nodes": 100,
+  "missing_nodes": [],
+  "errors": [],
+  "object_manifest": [
+    {
+      "name": "S2_1_static",
+      "item": "S2-1",
+      "triangles": 3268,
+      "origin": [
+        -11.505,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.880001,
+        6.35,
+        3.485
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_shopName",
+      "item": "S2-1",
+      "triangles": 12,
+      "origin": [
+        -11.132,
+        4.0,
+        2.73
+      ],
+      "dimensions": [
+        0.004,
+        3.04,
+        0.34
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_shop_facade",
+      "item": "S2-1",
+      "triangles": 12,
+      "origin": [
+        -11.55,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.75,
+        6.25,
+        3.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "INT_counter",
+      "item": "S2-2",
+      "triangles": 396,
+      "origin": [
+        -8.8,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.7045,
+        2.6,
+        1.034
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_counter",
+      "item": "S2-2",
+      "triangles": 12,
+      "origin": [
+        -8.8,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.7,
+        2.6,
+        1.0
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "Shop_three_tier_shelf",
+      "item": "S2-3",
+      "triangles": 308,
+      "origin": [
+        -10.89,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.4525,
+        2.2,
+        2.2
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_shop_shelf",
+      "item": "S2-3",
+      "triangles": 12,
+      "origin": [
+        -10.89,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.45,
+        2.2,
+        2.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S2_4_static",
+      "item": "S2-4",
+      "triangles": 1916,
+      "origin": [
+        -10.82,
+        3.9225,
+        0.82
+      ],
+      "dimensions": [
+        0.3,
+        1.815,
+        1.575
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S2_5_static",
+      "item": "S2-5",
+      "triangles": 480,
+      "origin": [
+        -8.75,
+        4.25,
+        1.02
+      ],
+      "dimensions": [
+        0.171999,
+        0.458,
+        0.03
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_01_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.055,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_02_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.0875,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_03_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.12,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_04_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.1525,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_05_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.185,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_06_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.2175,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_07_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.25,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_08_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.2825,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_09_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.315,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_10_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.3475,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_11_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.38,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_12_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.4125,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_1",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7175,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_2",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_3",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7425,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_4",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.758,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_5",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.7735,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_6",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.789,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_bead_13_7",
+      "item": "S2-5",
+      "triangles": 16,
+      "origin": [
+        -8.8045,
+        4.445,
+        1.038
+      ],
+      "dimensions": [
+        0.014,
+        0.021,
+        0.014
+      ],
+      "pivot_role": "bead center",
+      "rotation_axis": "",
+      "translation_axis": "X",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S2_6_static",
+      "item": "S2-6",
+      "triangles": 188,
+      "origin": [
+        -8.763771,
+        3.5225,
+        1.0045
+      ],
+      "dimensions": [
+        0.237543,
+        0.645,
+        0.0515
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_ledgerL",
+      "item": "S2-6",
+      "triangles": 12,
+      "origin": [
+        -8.76,
+        3.425,
+        1.0435
+      ],
+      "dimensions": [
+        0.22,
+        0.15,
+        0.003
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_ledgerR",
+      "item": "S2-6",
+      "triangles": 12,
+      "origin": [
+        -8.76,
+        3.275,
+        1.0435
+      ],
+      "dimensions": [
+        0.22,
+        0.15,
+        0.003
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "S2_7_static",
+      "item": "S2-7",
+      "triangles": 336,
+      "origin": [
+        -8.780001,
+        4.99,
+        1.005
+      ],
+      "dimensions": [
+        0.157638,
+        0.15,
+        0.35
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_oilLamp",
+      "item": "S2-7",
+      "triangles": 156,
+      "origin": [
+        -8.780001,
+        4.99,
+        1.11
+      ],
+      "dimensions": [
+        0.12,
+        0.12,
+        0.21
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_customer_01",
+      "item": "S2-8",
+      "triangles": 56,
+      "origin": [
+        -6.95,
+        2.5,
+        0.035
+      ],
+      "dimensions": [
+        0.024,
+        0.72,
+        1.6
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "S2_8_static",
+      "item": "S2-8",
+      "triangles": 132,
+      "origin": [
+        -6.95,
+        4.2,
+        0.0
+      ],
+      "dimensions": [
+        0.42,
+        3.9,
+        0.05
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_customer_02",
+      "item": "S2-8",
+      "triangles": 56,
+      "origin": [
+        -6.95,
+        4.2,
+        0.035
+      ],
+      "dimensions": [
+        0.024,
+        0.72,
+        1.6
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_customer_03",
+      "item": "S2-8",
+      "triangles": 56,
+      "origin": [
+        -6.95,
+        5.9,
+        0.035
+      ],
+      "dimensions": [
+        0.024,
+        0.72,
+        1.6
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "S2_9_static",
+      "item": "S2-9",
+      "triangles": 972,
+      "origin": [
+        -6.35,
+        4.1,
+        0.0
+      ],
+      "dimensions": [
+        0.23,
+        5.018743,
+        0.95
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S2_10_static",
+      "item": "S2-10",
+      "triangles": 124,
+      "origin": [
+        -5.15,
+        5.8,
+        0.0
+      ],
+      "dimensions": [
+        0.8,
+        0.38,
+        1.103046
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_label_shop",
+      "item": "S2-10",
+      "triangles": 12,
+      "origin": [
+        -5.15,
+        5.797,
+        0.987955
+      ],
+      "dimensions": [
+        0.758,
+        0.279654,
+        0.116091
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    }
+  ]
+}

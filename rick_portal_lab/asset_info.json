@@ -1,0 +1,22 @@
+{
+  "blender": "5.2.1 LTS",
+  "file": "F:\\SJH\\hekesong\\cz\\rick_portal_lab\\Rick_Portal_and_Gun.blend",
+  "portal_objects": 107,
+  "gun_objects": 47,
+  "animation_frames": [
+    1,
+    120
+  ],
+  "fps": 24,
+  "cameras": [
+    "CAM 01 | both props - presentation",
+    "CAM 02 | portal face and organic rim",
+    "CAM 03 | gun reference three-quarter"
+  ],
+  "previews": [
+    "01_Portal_and_Gun.png",
+    "02_Portal_Closeup.png",
+    "03_Portal_Gun_Closeup.png"
+  ],
+  "external_images": []
+}

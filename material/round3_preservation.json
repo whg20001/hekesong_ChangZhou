@@ -1,0 +1,28 @@
+{
+  "protected_object_counts": {
+    "S1_lobby": 22
+  },
+  "untouched_packages": {
+    "S2_shop.blend": true,
+    "S2_shop.glb": true,
+    "S2_shop.png": true,
+    "S2_shop.audit.json": true,
+    "S3_tea.blend": true,
+    "S3_tea.glb": true,
+    "S3_tea.png": true,
+    "S3_tea.audit.json": true,
+    "S4_factory.blend": true,
+    "S4_factory.glb": true,
+    "S4_factory.png": true,
+    "S4_factory.audit.json": true,
+    "S5_exit.blend": true,
+    "S5_exit.glb": true,
+    "S5_exit.png": true,
+    "S5_exit.audit.json": true,
+    "S6_common.blend": true,
+    "S6_common.glb": true,
+    "S6_common.png": true,
+    "S6_common.audit.json": true
+  },
+  "passed": true
+}

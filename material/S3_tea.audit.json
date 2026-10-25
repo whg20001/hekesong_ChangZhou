@@ -1,0 +1,668 @@
+{
+  "file": "S3_tea",
+  "objects": 30,
+  "triangles": 7468,
+  "items": {
+    "S3-1": 1624,
+    "S3-2": 540,
+    "S3-3": 588,
+    "S3-4": 748,
+    "S3-5": 588,
+    "S3-6": 752,
+    "S3-7": 248,
+    "S3-8": 972,
+    "S3-9": 68,
+    "S3-10": 640,
+    "S3-11": 564,
+    "S3-12": 136
+  },
+  "budget_limits": {
+    "S3-1": 3000,
+    "S3-2": 1500,
+    "S3-3": 2000,
+    "S3-4": 2000,
+    "S3-5": 1500,
+    "S3-6": 1600,
+    "S3-7": 600,
+    "S3-8": 1000,
+    "S3-9": 300,
+    "S3-10": 800,
+    "S3-11": 600,
+    "S3-12": 300
+  },
+  "required_nodes": 17,
+  "missing_nodes": [],
+  "errors": [],
+  "object_manifest": [
+    {
+      "name": "S3_1_static",
+      "item": "S3-1",
+      "triangles": 1612,
+      "origin": [
+        -7.0,
+        15.5805,
+        0.0
+      ],
+      "dimensions": [
+        6.0,
+        0.459,
+        3.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_tea_background",
+      "item": "S3-1",
+      "triangles": 12,
+      "origin": [
+        -7.0,
+        15.66,
+        0.0
+      ],
+      "dimensions": [
+        6.0,
+        0.3,
+        3.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S3_2_static",
+      "item": "S3-2",
+      "triangles": 528,
+      "origin": [
+        -7.0,
+        13.1,
+        0.0
+      ],
+      "dimensions": [
+        1.6,
+        0.8,
+        0.864
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_Tea_table",
+      "item": "S3-2",
+      "triangles": 12,
+      "origin": [
+        -7.0,
+        13.1,
+        0.0
+      ],
+      "dimensions": [
+        1.6,
+        0.8,
+        0.8
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "INT_stove",
+      "item": "S3-3",
+      "triangles": 564,
+      "origin": [
+        -8.25,
+        13.1,
+        0.0
+      ],
+      "dimensions": [
+        0.389999,
+        0.413,
+        0.6
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_fire",
+      "item": "S3-3",
+      "triangles": 12,
+      "origin": [
+        -8.25,
+        12.897,
+        0.215
+      ],
+      "dimensions": [
+        0.21,
+        0.004,
+        0.15
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_stove",
+      "item": "S3-3",
+      "triangles": 12,
+      "origin": [
+        -8.25,
+        13.1,
+        0.0
+      ],
+      "dimensions": [
+        0.4,
+        0.4,
+        0.6
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "INT_kettle",
+      "item": "S3-4",
+      "triangles": 484,
+      "origin": [
+        -7.48,
+        13.1,
+        0.8
+      ],
+      "dimensions": [
+        0.289212,
+        0.23,
+        0.292
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_kettleLid",
+      "item": "S3-4",
+      "triangles": 264,
+      "origin": [
+        -7.48,
+        13.167,
+        0.985
+      ],
+      "dimensions": [
+        0.15,
+        0.150001,
+        0.052
+      ],
+      "pivot_role": "lid rear hinge",
+      "rotation_axis": "X",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_teapot",
+      "item": "S3-5",
+      "triangles": 328,
+      "origin": [
+        -6.72,
+        13.13,
+        0.84
+      ],
+      "dimensions": [
+        0.24586,
+        0.141812,
+        0.16
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_potLid",
+      "item": "S3-5",
+      "triangles": 260,
+      "origin": [
+        -6.72,
+        13.174,
+        0.972
+      ],
+      "dimensions": [
+        0.1,
+        0.09848,
+        0.031
+      ],
+      "pivot_role": "lid rear hinge",
+      "rotation_axis": "X",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_cup_1",
+      "item": "S3-6",
+      "triangles": 188,
+      "origin": [
+        -6.74,
+        13.02,
+        0.84
+      ],
+      "dimensions": [
+        0.08,
+        0.080001,
+        0.07
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_cup_2",
+      "item": "S3-6",
+      "triangles": 188,
+      "origin": [
+        -6.53,
+        13.02,
+        0.84
+      ],
+      "dimensions": [
+        0.08,
+        0.080001,
+        0.07
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_cup_3",
+      "item": "S3-6",
+      "triangles": 188,
+      "origin": [
+        -6.74,
+        13.18,
+        0.84
+      ],
+      "dimensions": [
+        0.08,
+        0.08,
+        0.07
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_cup_4",
+      "item": "S3-6",
+      "triangles": 188,
+      "origin": [
+        -6.53,
+        13.18,
+        0.84
+      ],
+      "dimensions": [
+        0.08,
+        0.08,
+        0.07
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_caddy",
+      "item": "S3-7",
+      "triangles": 124,
+      "origin": [
+        -7.02,
+        13.360001,
+        0.8
+      ],
+      "dimensions": [
+        0.1,
+        0.099999,
+        0.134
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_caddyLid",
+      "item": "S3-7",
+      "triangles": 124,
+      "origin": [
+        -7.02,
+        13.405,
+        0.934
+      ],
+      "dimensions": [
+        0.104,
+        0.104,
+        0.016
+      ],
+      "pivot_role": "lid rear hinge",
+      "rotation_axis": "X",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S3_8_static",
+      "item": "S3-8",
+      "triangles": 884,
+      "origin": [
+        -7.0,
+        15.34325,
+        2.35
+      ],
+      "dimensions": [
+        0.5,
+        0.1385,
+        0.5
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_hourHand",
+      "item": "S3-8",
+      "triangles": 44,
+      "origin": [
+        -7.0,
+        15.3,
+        2.6
+      ],
+      "dimensions": [
+        0.077324,
+        0.008,
+        0.104958
+      ],
+      "pivot_role": "clock axis",
+      "rotation_axis": "Y",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_minHand",
+      "item": "S3-8",
+      "triangles": 44,
+      "origin": [
+        -7.0,
+        15.288,
+        2.6
+      ],
+      "dimensions": [
+        0.104125,
+        0.006,
+        0.141846
+      ],
+      "pivot_role": "clock axis",
+      "rotation_axis": "Y",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "Gantt_frame",
+      "item": "S3-9",
+      "triangles": 44,
+      "origin": [
+        -11.68,
+        12.4,
+        1.4
+      ],
+      "dimensions": [
+        0.08,
+        2.4,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_gantt",
+      "item": "S3-9",
+      "triangles": 12,
+      "origin": [
+        -11.631,
+        12.4,
+        1.44
+      ],
+      "dimensions": [
+        0.004,
+        2.32,
+        1.32
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_gantt_board",
+      "item": "S3-9",
+      "triangles": 12,
+      "origin": [
+        -11.68,
+        12.4,
+        1.4
+      ],
+      "dimensions": [
+        0.08,
+        2.4,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S3_10_static",
+      "item": "S3-10",
+      "triangles": 616,
+      "origin": [
+        -6.95,
+        12.15,
+        0.0
+      ],
+      "dimensions": [
+        1.6,
+        0.4,
+        0.45
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_Tea_stool_1",
+      "item": "S3-10",
+      "triangles": 12,
+      "origin": [
+        -7.55,
+        12.15,
+        0.0
+      ],
+      "dimensions": [
+        0.4,
+        0.4,
+        0.45
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Tea_stool_2",
+      "item": "S3-10",
+      "triangles": 12,
+      "origin": [
+        -6.35,
+        12.15,
+        0.0
+      ],
+      "dimensions": [
+        0.4,
+        0.4,
+        0.45
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S3_11_static",
+      "item": "S3-11",
+      "triangles": 340,
+      "origin": [
+        -7.0,
+        13.1,
+        2.896
+      ],
+      "dimensions": [
+        0.354,
+        0.354,
+        1.104
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_pendant",
+      "item": "S3-11",
+      "triangles": 224,
+      "origin": [
+        -7.0,
+        13.1,
+        2.845
+      ],
+      "dimensions": [
+        0.11,
+        0.11,
+        0.09
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S3_12_static",
+      "item": "S3-12",
+      "triangles": 124,
+      "origin": [
+        -4.1,
+        10.1,
+        0.0
+      ],
+      "dimensions": [
+        0.8,
+        0.38,
+        1.103046
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_label_tea",
+      "item": "S3-12",
+      "triangles": 12,
+      "origin": [
+        -4.1,
+        10.097,
+        0.987955
+      ],
+      "dimensions": [
+        0.758,
+        0.279654,
+        0.116091
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    }
+  ]
+}

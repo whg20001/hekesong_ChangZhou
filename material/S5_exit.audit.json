@@ -1,0 +1,324 @@
+{
+  "file": "S5_exit",
+  "objects": 16,
+  "triangles": 2940,
+  "items": {
+    "S5-1": 2380,
+    "S5-2": 448,
+    "S5-3": 112
+  },
+  "budget_limits": {
+    "S5-1": 4000,
+    "S5-2": 1000,
+    "S5-3": 500
+  },
+  "required_nodes": 10,
+  "missing_nodes": [],
+  "errors": [],
+  "object_manifest": [
+    {
+      "name": "ANIM_fib_1",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        8.661765,
+        4.7,
+        0.785294
+      ],
+      "dimensions": [
+        0.084235,
+        0.12,
+        0.084235
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_2",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        8.75,
+        4.7,
+        0.785294
+      ],
+      "dimensions": [
+        0.084235,
+        0.12,
+        0.084235
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_3",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        8.705882,
+        4.7,
+        0.917647
+      ],
+      "dimensions": [
+        0.172471,
+        0.12,
+        0.172471
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_4",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        8.485294,
+        4.7,
+        0.873529
+      ],
+      "dimensions": [
+        0.260706,
+        0.12,
+        0.260706
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_5",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        8.573529,
+        4.7,
+        0.520588
+      ],
+      "dimensions": [
+        0.437176,
+        0.12,
+        0.437176
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_6",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        9.147058,
+        4.7,
+        0.652941
+      ],
+      "dimensions": [
+        0.701882,
+        0.12,
+        0.701882
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_7",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        8.926471,
+        4.7,
+        1.579412
+      ],
+      "dimensions": [
+        1.143059,
+        0.12,
+        1.143059
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "ANIM_fib_8",
+      "item": "S5-1",
+      "triangles": 44,
+      "origin": [
+        7.426471,
+        4.7,
+        1.226471
+      ],
+      "dimensions": [
+        1.848941,
+        0.12,
+        1.848941
+      ],
+      "pivot_role": "square center",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S5_1_static",
+      "item": "S5-1",
+      "triangles": 2016,
+      "origin": [
+        8.000004,
+        4.7,
+        0.0
+      ],
+      "dimensions": [
+        3.017993,
+        0.3,
+        2.161941
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_golden_spiral",
+      "item": "S5-1",
+      "triangles": 12,
+      "origin": [
+        8.0,
+        4.7,
+        0.0
+      ],
+      "dimensions": [
+        3.0,
+        0.3,
+        2.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S5_2_static",
+      "item": "S5-2",
+      "triangles": 412,
+      "origin": [
+        10.6,
+        1.9,
+        0.0
+      ],
+      "dimensions": [
+        1.2,
+        0.6,
+        1.066
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_Guestbook_desk",
+      "item": "S5-2",
+      "triangles": 12,
+      "origin": [
+        10.6,
+        1.9,
+        0.0
+      ],
+      "dimensions": [
+        1.2,
+        0.6,
+        1.0
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "SIGN_guestbook",
+      "item": "S5-2",
+      "triangles": 24,
+      "origin": [
+        10.6,
+        1.9,
+        1.0385
+      ],
+      "dimensions": [
+        0.440999,
+        0.288,
+        0.003
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "S5_3_static",
+      "item": "S5-3",
+      "triangles": 88,
+      "origin": [
+        7.4,
+        0.23375,
+        0.0
+      ],
+      "dimensions": [
+        4.0,
+        0.1275,
+        2.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_epilogue",
+      "item": "S5-3",
+      "triangles": 12,
+      "origin": [
+        7.4,
+        0.305,
+        0.645
+      ],
+      "dimensions": [
+        3.56,
+        0.004,
+        1.51
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_epilogue",
+      "item": "S5-3",
+      "triangles": 12,
+      "origin": [
+        7.4,
+        0.22,
+        0.0
+      ],
+      "dimensions": [
+        4.0,
+        0.1,
+        2.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "blank_surface": false,
+      "collision": true
+    }
+  ]
+}

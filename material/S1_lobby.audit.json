@@ -1,0 +1,777 @@
+{
+  "file": "S1_lobby",
+  "revision": "round3",
+  "objects": 33,
+  "triangles": 24800,
+  "items": {
+    "S1-1": 20444,
+    "S1-2": 680,
+    "S1-3": 276,
+    "S1-4": 380,
+    "S1-5": 800,
+    "S1-6": 56,
+    "S1-7": 592,
+    "S1-8": 1572
+  },
+  "budget_limits": {
+    "S1-1": 21500,
+    "S1-2": 2000,
+    "S1-3": 800,
+    "S1-4": 1500,
+    "S1-5": 4000,
+    "S1-6": 500,
+    "S1-7": 2000,
+    "S1-8": 2500
+  },
+  "required_nodes": 21,
+  "missing_nodes": [],
+  "errors": [],
+  "object_manifest": [
+    {
+      "name": "SIGN_statue",
+      "item": "S1-1",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        5.094,
+        0.535
+      ],
+      "dimensions": [
+        0.48,
+        0.004,
+        0.27
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_statue",
+      "item": "S1-1",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        5.5,
+        0.0
+      ],
+      "dimensions": [
+        0.84,
+        0.84,
+        2.0
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "Statue_bronze_bust",
+      "item": "S1-1",
+      "triangles": 16500,
+      "origin": [
+        0.0,
+        5.5,
+        1.1
+      ],
+      "dimensions": [
+        0.644119,
+        0.355961,
+        0.902498
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "bust",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "Statue_spectacles",
+      "item": "S1-1",
+      "triangles": 2612,
+      "origin": [
+        0.0,
+        5.5,
+        1.1
+      ],
+      "dimensions": [
+        0.336336,
+        0.207035,
+        0.0854
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "bust",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "Statue_pedestal",
+      "item": "S1-1",
+      "triangles": 940,
+      "origin": [
+        0.0,
+        5.5,
+        0.0
+      ],
+      "dimensions": [
+        0.8,
+        0.8,
+        1.1
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "pedestal",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "Statue_plaque_brass_frame",
+      "item": "S1-1",
+      "triangles": 368,
+      "origin": [
+        0.0,
+        5.089,
+        0.52
+      ],
+      "dimensions": [
+        0.51,
+        0.012,
+        0.3
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "pedestal",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S1_2_static",
+      "item": "S1-2",
+      "triangles": 608,
+      "origin": [
+        3.7345,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.151,
+        6.5,
+        2.8
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_timeline_01",
+      "item": "S1-2",
+      "triangles": 12,
+      "origin": [
+        3.685,
+        1.48,
+        1.23
+      ],
+      "dimensions": [
+        0.004,
+        0.9,
+        1.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_timeline_02",
+      "item": "S1-2",
+      "triangles": 12,
+      "origin": [
+        3.685,
+        2.49,
+        1.23
+      ],
+      "dimensions": [
+        0.004,
+        0.9,
+        1.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_timeline_03",
+      "item": "S1-2",
+      "triangles": 12,
+      "origin": [
+        3.685,
+        3.5,
+        1.23
+      ],
+      "dimensions": [
+        0.004,
+        0.9,
+        1.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_timeline_04",
+      "item": "S1-2",
+      "triangles": 12,
+      "origin": [
+        3.685,
+        4.51,
+        1.23
+      ],
+      "dimensions": [
+        0.004,
+        0.9,
+        1.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_timeline_05",
+      "item": "S1-2",
+      "triangles": 12,
+      "origin": [
+        3.685,
+        5.52,
+        1.23
+      ],
+      "dimensions": [
+        0.004,
+        0.9,
+        1.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "SIGN_timeline_06",
+      "item": "S1-2",
+      "triangles": 12,
+      "origin": [
+        3.685,
+        6.53,
+        1.23
+      ],
+      "dimensions": [
+        0.004,
+        0.9,
+        1.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "Lobby_bench",
+      "item": "S1-3",
+      "triangles": 264,
+      "origin": [
+        -1.1,
+        7.25,
+        0.0
+      ],
+      "dimensions": [
+        2.0,
+        0.45,
+        0.45
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_lobby_bench",
+      "item": "S1-3",
+      "triangles": 12,
+      "origin": [
+        -1.1,
+        7.25,
+        0.0
+      ],
+      "dimensions": [
+        2.0,
+        0.5,
+        0.45
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S1_4_static",
+      "item": "S1-4",
+      "triangles": 356,
+      "origin": [
+        2.35,
+        0.85,
+        0.0
+      ],
+      "dimensions": [
+        1.68,
+        0.66,
+        1.101
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_brochure",
+      "item": "S1-4",
+      "triangles": 12,
+      "origin": [
+        2.6,
+        0.85,
+        1.109
+      ],
+      "dimensions": [
+        0.23,
+        0.29,
+        0.002
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_reception",
+      "item": "S1-4",
+      "triangles": 12,
+      "origin": [
+        2.35,
+        0.85,
+        0.0
+      ],
+      "dimensions": [
+        1.68,
+        0.66,
+        1.06
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S1_5_static",
+      "item": "S1-5",
+      "triangles": 800,
+      "origin": [
+        0.202598,
+        6.774903,
+        0.0
+      ],
+      "dimensions": [
+        6.407392,
+        2.048038,
+        1.4928
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "Hall_title_brass_frame",
+      "item": "S1-6",
+      "triangles": 44,
+      "origin": [
+        0.0,
+        7.86,
+        2.55
+      ],
+      "dimensions": [
+        3.1,
+        0.045,
+        0.9
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_hallTitle",
+      "item": "S1-6",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        7.833,
+        2.6
+      ],
+      "dimensions": [
+        3.0,
+        0.004,
+        0.8
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "S1_7_static",
+      "item": "S1-7",
+      "triangles": 544,
+      "origin": [
+        -3.4,
+        5.95,
+        -0.0
+      ],
+      "dimensions": [
+        0.6,
+        2.8,
+        1.1
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_vitrine_01",
+      "item": "S1-7",
+      "triangles": 12,
+      "origin": [
+        -3.4,
+        5.15,
+        0.744
+      ],
+      "dimensions": [
+        0.43,
+        0.9,
+        0.004
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_vitrine_01",
+      "item": "S1-7",
+      "triangles": 12,
+      "origin": [
+        -3.4,
+        5.15,
+        0.0
+      ],
+      "dimensions": [
+        0.6,
+        1.2,
+        1.1
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "SIGN_vitrine_02",
+      "item": "S1-7",
+      "triangles": 12,
+      "origin": [
+        -3.4,
+        6.75,
+        0.744
+      ],
+      "dimensions": [
+        0.43,
+        0.9,
+        0.004
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "COL_vitrine_02",
+      "item": "S1-7",
+      "triangles": 12,
+      "origin": [
+        -3.4,
+        6.75,
+        0.0
+      ],
+      "dimensions": [
+        0.6,
+        1.2,
+        1.1
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "Timeline_picture_light_housings",
+      "item": "S1-8",
+      "triangles": 1500,
+      "origin": [
+        3.711,
+        1.48,
+        2.66
+      ],
+      "dimensions": [
+        0.339,
+        5.45,
+        0.106
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_picLight_01",
+      "item": "S1-8",
+      "triangles": 12,
+      "origin": [
+        3.43,
+        1.48,
+        2.595
+      ],
+      "dimensions": [
+        0.018,
+        0.34,
+        0.006
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_picLight_02",
+      "item": "S1-8",
+      "triangles": 12,
+      "origin": [
+        3.43,
+        2.49,
+        2.595
+      ],
+      "dimensions": [
+        0.018,
+        0.34,
+        0.006
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_picLight_03",
+      "item": "S1-8",
+      "triangles": 12,
+      "origin": [
+        3.43,
+        3.5,
+        2.595
+      ],
+      "dimensions": [
+        0.018,
+        0.34,
+        0.006
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_picLight_04",
+      "item": "S1-8",
+      "triangles": 12,
+      "origin": [
+        3.43,
+        4.51,
+        2.595
+      ],
+      "dimensions": [
+        0.018,
+        0.34,
+        0.006
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_picLight_05",
+      "item": "S1-8",
+      "triangles": 12,
+      "origin": [
+        3.43,
+        5.52,
+        2.595
+      ],
+      "dimensions": [
+        0.018,
+        0.34,
+        0.006
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_picLight_06",
+      "item": "S1-8",
+      "triangles": 12,
+      "origin": [
+        3.43,
+        6.53,
+        2.595
+      ],
+      "dimensions": [
+        0.018,
+        0.34,
+        0.006
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "component": "",
+      "blank_surface": false,
+      "collision": false
+    }
+  ],
+  "image_textures": [
+    {
+      "name": "Hua_Bust_AO_Verdigris_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true
+    }
+  ],
+  "statue_components": {
+    "triangles": {
+      "bust": 19112,
+      "pedestal": 1332
+    },
+    "limits": {
+      "bust": 20000,
+      "pedestal": 1500
+    }
+  }
+}

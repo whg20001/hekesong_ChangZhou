@@ -1,0 +1,154 @@
+{
+  "checks": [
+    {
+      "package": "S0_shell",
+      "nodes": 57,
+      "triangles": 9526,
+      "glb_bytes": 150020,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 2.4e-07,
+      "max_dimension_roundtrip_error_m": 0.00069584
+    },
+    {
+      "package": "S1_lobby",
+      "nodes": 23,
+      "triangles": 8394,
+      "glb_bytes": 99936,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 5e-07,
+      "max_dimension_roundtrip_error_m": 0.00014407
+    },
+    {
+      "package": "S2_shop",
+      "nodes": 112,
+      "triangles": 9984,
+      "glb_bytes": 222836,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 4.8e-07,
+      "max_dimension_roundtrip_error_m": 0.00011576
+    },
+    {
+      "package": "S3_tea",
+      "nodes": 30,
+      "triangles": 7468,
+      "glb_bytes": 104444,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 4.8e-07,
+      "max_dimension_roundtrip_error_m": 0.00014644
+    },
+    {
+      "package": "S4_factory",
+      "nodes": 37,
+      "triangles": 7184,
+      "glb_bytes": 117596,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 5.3e-07,
+      "max_dimension_roundtrip_error_m": 0.00024414
+    },
+    {
+      "package": "S5_exit",
+      "nodes": 16,
+      "triangles": 2940,
+      "glb_bytes": 45188,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 9.7e-07,
+      "max_dimension_roundtrip_error_m": 0.00010377
+    },
+    {
+      "package": "S6_common",
+      "nodes": 7,
+      "triangles": 865,
+      "glb_bytes": 19196,
+      "all_meshes_draco": true,
+      "max_origin_roundtrip_error_m": 3.6e-07,
+      "max_dimension_roundtrip_error_m": 3.166e-05
+    }
+  ],
+  "feedback_checks": [
+    {
+      "item": "A1",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "B2",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "A1",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "B2",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "B1",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "B1",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "A3",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "A5",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "A3",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "A5",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "B3",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "B3",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "A2",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "A2",
+      "stage": "glb_roundtrip",
+      "passed": true
+    },
+    {
+      "item": "A4",
+      "stage": "blend",
+      "passed": true
+    },
+    {
+      "item": "A4",
+      "stage": "glb_roundtrip",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "layout_openings": 6,
+  "total_glb_bytes": 759216,
+  "total_triangles": 46361,
+  "passed": true
+}

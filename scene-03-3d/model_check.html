@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>展馆模型检视</title>
+<style>
+  html,body{margin:0;height:100%;background:#111;overflow:hidden;font:13px/1.5 system-ui,sans-serif;color:#eee}
+  canvas{display:block}
+  #info{position:fixed;left:10px;top:10px;background:#0009;padding:6px 10px;border-radius:6px;white-space:pre}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="info">加载中…</div>
+<script type="module">
+// 检视 material/ 里 Codex 交付的展馆模型：第一人称机位、COL_ 显隐、SIGN_ 高亮
+// 控制台：__view(x, y, 朝向角度, 俯仰角度)，坐标用 Blender 平面图坐标；__col(true) 显示碰撞盒；__sign(true) 高亮 SIGN_
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const FILES = ['S0_shell', 'S1_lobby', 'S2_shop', 'S3_tea', 'S4_factory', 'S5_exit', 'S6_common'];
+const info = document.getElementById('info');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#1B2A4A');
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .35;
+scene.add(new THREE.HemisphereLight('#ffe9c8', '#3a2a20', .9));
+const cam = new THREE.PerspectiveCamera(70, 1, .05, 80);
+window.__scene = scene; window.__cam = cam;
+
+const B = (x, y, z) => new THREE.Vector3(x, z, -y);   // Blender → three
+const cols = [], signs = [];
+const loader = new GLTFLoader();
+const draco = new DRACOLoader();
+draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
+loader.setDRACOLoader(draco);
+
+let loaded = 0;
+for (const f of FILES) {
+  loader.load(`../material/${f}.glb?v=${Date.now()}`, g => {
+    g.scene.traverse(o => {
+      if (o.name.startsWith('COL_')) { cols.push(o); o.visible = false; }
+      if (o.name.startsWith('SIGN_')) signs.push(o);
+      if (o.name.startsWith('EMIT_spot')) {
+        const p = new THREE.Vector3(); o.getWorldPosition(p);
+        const l = new THREE.PointLight('#ffc98a', 6, 7, 1.6); l.position.copy(p).add(new THREE.Vector3(0, -.15, 0)); scene.add(l);
+      }
+    });
+    if (f === 'S6_common') g.scene.position.copy(B(0, 1.5, 0));   // 通用件在序厅入口附近
+    scene.add(g.scene);
+    info.textContent = `已加载 ${++loaded}/${FILES.length}`;
+    if (loaded === FILES.length) { window.__ready = true; info.textContent = '加载完成'; }
+  }, undefined, e => { info.textContent = `${f} 加载失败：${e.message}`; console.error(e); });
+}
+
+let yaw = 0, pitch = 0, pos = B(0, 1, 1.6);
+window.__view = (x, y, yawDeg, pitchDeg = 0, z = 1.6) => {
+  pos = B(x, y, z); yaw = THREE.MathUtils.degToRad(yawDeg); pitch = THREE.MathUtils.degToRad(pitchDeg); draw();
+};
+window.__col = v => { cols.forEach(o => o.visible = v); draw(); };
+window.__sign = v => {
+  signs.forEach(o => o.traverse(m => {
+    if (!m.isMesh) return;
+    m.userData.mat ??= m.material;
+    m.material = v ? new THREE.MeshBasicMaterial({ color: '#ff2e88' }) : m.userData.mat;
+  }));
+  draw();
+};
+// 朝向 0 = 面朝 +Y（Blender），正值向左转
+function draw() {
+  const w = innerWidth || 800, h = innerHeight || 600;
+  renderer.setSize(w, h); cam.aspect = w / h; cam.updateProjectionMatrix();
+  cam.position.copy(pos);
+  cam.rotation.set(pitch, yaw, 0, 'YXZ');
+  renderer.render(scene, cam);
+}
+window.__draw = draw;
+let drag = null;
+addEventListener('pointerdown', e => drag = [e.clientX, e.clientY]);
+addEventListener('pointerup', () => drag = null);
+addEventListener('pointermove', e => {
+  if (!drag) return;
+  yaw -= (e.clientX - drag[0]) * .004; pitch = THREE.MathUtils.clamp(pitch - (e.clientY - drag[1]) * .004, -1.2, 1.2);
+  drag = [e.clientX, e.clientY]; draw();
+});
+const keys = {};
+addEventListener('keydown', e => keys[e.code] = true);
+addEventListener('keyup', e => keys[e.code] = false);
+let last = performance.now();
+function tick(t) {
+  const dt = Math.min(.05, (t - last) / 1000); last = t;
+  const f = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0), s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
+  if (f || s) {
+    pos.x += (-Math.sin(yaw) * f + Math.cos(yaw) * s) * 3 * dt;
+    pos.z += (-Math.cos(yaw) * f - Math.sin(yaw) * s) * 3 * dt;
+  }
+  draw();
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+addEventListener('resize', draw);
+</script>
+</body>
+</html>

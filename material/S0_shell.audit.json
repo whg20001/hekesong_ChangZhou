@@ -1,0 +1,1227 @@
+{
+  "file": "S0_shell",
+  "objects": 57,
+  "triangles": 9526,
+  "items": {
+    "S0-1": 1080,
+    "S0-2": 1648,
+    "S0-3": 788,
+    "S0-4": 672,
+    "S0-5": 554,
+    "S0-6": 404,
+    "S0-7": 4268,
+    "S0-8": 112
+  },
+  "budget_limits": {
+    "S0-1": 2000,
+    "S0-2": 6000,
+    "S0-3": 3000,
+    "S0-4": 2000,
+    "S0-5": 1500,
+    "S0-6": 1500,
+    "S0-7": 9000,
+    "S0-8": 400
+  },
+  "required_nodes": 8,
+  "missing_nodes": [],
+  "errors": [],
+  "object_manifest": [
+    {
+      "name": "S0_1_static",
+      "item": "S0-1",
+      "triangles": 1080,
+      "origin": [
+        0.0,
+        8.0,
+        -0.18
+      ],
+      "dimensions": [
+        24.0,
+        16.0,
+        0.181
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S0_2_static",
+      "item": "S0-2",
+      "triangles": 1408,
+      "origin": [
+        0.0,
+        8.0,
+        0.0
+      ],
+      "dimensions": [
+        24.200001,
+        16.200001,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_Wall_west",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -12.0,
+        8.0,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        16.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_north",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        16.0,
+        0.0
+      ],
+      "dimensions": [
+        24.0,
+        0.2,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_south_left",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -6.5,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        11.0,
+        0.2,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_south_right",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        6.5,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        11.0,
+        0.2,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_south_header",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        0.0,
+        2.8
+      ],
+      "dimensions": [
+        2.0,
+        0.2,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_east_lower",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        12.0,
+        1.5,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        3.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_east_upper",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        12.0,
+        10.5,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        11.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_east_header",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        12.0,
+        4.0,
+        2.8
+      ],
+      "dimensions": [
+        0.2,
+        2.0,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_shop_south",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -4.0,
+        1.0,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        2.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_shop_north",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -4.0,
+        6.0,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        4.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_shop_header",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -4.0,
+        3.0,
+        2.8
+      ],
+      "dimensions": [
+        0.2,
+        2.0,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_lobby_exit",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        4.0,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        8.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_cross_west",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -10.5,
+        8.0,
+        0.0
+      ],
+      "dimensions": [
+        3.0,
+        0.2,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_cross_middle",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        8.0,
+        0.0
+      ],
+      "dimensions": [
+        14.0,
+        0.2,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_cross_east",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        10.5,
+        8.0,
+        0.0
+      ],
+      "dimensions": [
+        3.0,
+        0.2,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_cross_shop_header",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -8.0,
+        8.0,
+        2.8
+      ],
+      "dimensions": [
+        2.0,
+        0.2,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_cross_exit_header",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        8.0,
+        8.0,
+        2.8
+      ],
+      "dimensions": [
+        2.0,
+        0.2,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_tea_factory_south",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -2.0,
+        9.5,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        3.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_tea_factory_north",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -2.0,
+        14.5,
+        0.0
+      ],
+      "dimensions": [
+        0.2,
+        3.0,
+        4.2
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "COL_Wall_tea_factory_header",
+      "item": "S0-2",
+      "triangles": 12,
+      "origin": [
+        -2.0,
+        12.0,
+        2.8
+      ],
+      "dimensions": [
+        0.2,
+        2.0,
+        1.4
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "S0_3_static",
+      "item": "S0-3",
+      "triangles": 788,
+      "origin": [
+        0.0,
+        8.0,
+        4.18
+      ],
+      "dimensions": [
+        24.0,
+        16.0,
+        0.3375
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S0_4_static",
+      "item": "S0-4",
+      "triangles": 672,
+      "origin": [
+        0.0,
+        8.0,
+        0.0
+      ],
+      "dimensions": [
+        24.244999,
+        16.244999,
+        4.125
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S0_5_static",
+      "item": "S0-5",
+      "triangles": 542,
+      "origin": [
+        0.0,
+        -0.05375,
+        0.0
+      ],
+      "dimensions": [
+        2.0,
+        0.1975,
+        2.8
+      ],
+      "pivot_role": "prop bottom",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "COL_entrance",
+      "item": "S0-5",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        2.0,
+        0.14,
+        2.8
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": true
+    },
+    {
+      "name": "INT_exitDoor_L",
+      "item": "S0-6",
+      "triangles": 124,
+      "origin": [
+        12.0,
+        3.0,
+        0.0
+      ],
+      "dimensions": [
+        0.17212,
+        0.96,
+        2.72
+      ],
+      "pivot_role": "door hinge",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "INT_exitDoor_R",
+      "item": "S0-6",
+      "triangles": 124,
+      "origin": [
+        12.0,
+        5.0,
+        0.0
+      ],
+      "dimensions": [
+        0.17212,
+        0.96,
+        2.72
+      ],
+      "pivot_role": "door hinge",
+      "rotation_axis": "Z",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S0_6_static",
+      "item": "S0-6",
+      "triangles": 132,
+      "origin": [
+        12.0,
+        4.0,
+        0.0
+      ],
+      "dimensions": [
+        0.23,
+        2.21,
+        2.91
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_exitPortal",
+      "item": "S0-6",
+      "triangles": 12,
+      "origin": [
+        12.08,
+        4.0,
+        0.02
+      ],
+      "dimensions": [
+        0.008,
+        1.88,
+        2.72
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "SIGN_exit",
+      "item": "S0-6",
+      "triangles": 12,
+      "origin": [
+        11.86,
+        4.0,
+        2.975
+      ],
+      "dimensions": [
+        0.004,
+        1.55,
+        0.29
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": true,
+      "collision": false
+    },
+    {
+      "name": "S0_7_static",
+      "item": "S0-7",
+      "triangles": 3476,
+      "origin": [
+        0.0,
+        8.91,
+        3.675732
+      ],
+      "dimensions": [
+        20.6,
+        10.113777,
+        0.394268
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_01",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -1.8,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_02",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -0.6,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_03",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        0.6,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_04",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        1.8,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_05",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -9.8,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_06",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -8.6,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_07",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -7.4,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_08",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -6.2,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_09",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -8.8,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_10",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -7.6,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_11",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -6.4,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_12",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        -5.2,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_13",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        3.2,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_14",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        4.4,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_15",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        5.6,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_16",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        6.8,
+        11.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_17",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        6.2,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_18",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        7.4,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_19",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        8.6,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_20",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        9.8,
+        3.922,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_21",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        0.0,
+        13.822,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_spot_22",
+      "item": "S0-7",
+      "triangles": 36,
+      "origin": [
+        9.5,
+        13.522,
+        3.676367
+      ],
+      "dimensions": [
+        0.116029,
+        0.115364,
+        0.051265
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "S0_8_static",
+      "item": "S0-8",
+      "triangles": 88,
+      "origin": [
+        5.8225,
+        2.1775,
+        3.0175
+      ],
+      "dimensions": [
+        12.17,
+        4.17,
+        0.615
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_exitSign_01",
+      "item": "S0-8",
+      "triangles": 12,
+      "origin": [
+        0.0,
+        0.15,
+        3.03
+      ],
+      "dimensions": [
+        0.5,
+        0.04,
+        0.18
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    },
+    {
+      "name": "EMIT_exitSign_02",
+      "item": "S0-8",
+      "triangles": 12,
+      "origin": [
+        11.85,
+        4.0,
+        3.44
+      ],
+      "dimensions": [
+        0.04,
+        0.5,
+        0.18
+      ],
+      "pivot_role": "bottom center",
+      "rotation_axis": "",
+      "translation_axis": "",
+      "stretch_axis": "",
+      "blank_surface": false,
+      "collision": false
+    }
+  ]
+}
